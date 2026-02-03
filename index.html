@@ -1,120 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Best Deals Online</title>
-  <meta name="description" content="Curated deal pages and quick-buy lists." />
-  <style>
-    :root {
-      color-scheme: light;
-      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-      --bg: #f5f6f8;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #475569;
-      --border: rgba(15, 23, 42, 0.10);
-      --shadow: 0 24px 40px rgba(15, 23, 42, 0.12);
-      --accent: #0f766e;
-      --link: #1d4ed8;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Best Deals Online</title>
+    <meta name="description" content="Curated deals and best-value picks." />
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: var(--bg);
-      color: var(--text);
-    }
+    <!-- Fast path: Tailwind via CDN so the React template works immediately on GitHub Pages.
+         If you want full Tailwind build (better perf), we can add it next. -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    main {
-      max-width: 760px;
-      padding: 44px 24px;
-      margin: 24px;
-      display: grid;
-      gap: 14px;
-      text-align: center;
-      background: var(--card);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3rem);
-      letter-spacing: -0.02em;
-    }
-
-    p {
-      margin: 0;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: var(--muted);
-    }
-
-    .status {
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    a.card {
-      text-decoration: none;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      min-width: 220px;
-      background: #fff;
-      display: grid;
-      gap: 4px;
-      text-align: left;
-    }
-
-    a.card:hover { border-color: rgba(15, 23, 42, 0.18); }
-
-    .card .title {
-      font-weight: 800;
-      letter-spacing: -0.01em;
-    }
-
-    .card .desc {
-      font-size: 0.95rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .fineprint {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-top: 10px;
-    }
-
-    .fineprint a { color: var(--link); }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>Best Deals Online</h1>
-    <p>Curated pages with minimal fluff. Click a list and grab what you need.</p>
-    <p class="status">Site status: Online.</p>
-
-    <div class="links">
-      <a class="card" href="/drummer-deals.html">
-        <div class="title">Drummer Deals</div>
-        <div class="desc">Under $50 / under $100 upgrades + rotating hot deals.</div>
-      </a>
-    </div>
-
-    <div class="fineprint">Affiliate note: some links on deal pages may earn a small commission at no extra cost to you.</div>
-  </main>
-</body>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+      body { margin: 0; }
+      .container { max-width: 1200px; }
+    </style>
+    <script type="module" crossorigin src="./assets/index-CQ79eiRp.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DqaHWNdh.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
