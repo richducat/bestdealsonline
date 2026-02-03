@@ -35,10 +35,10 @@ import {
 // ===== CONFIG =====
 const AMAZON_TAG = 'bestdeals0ad2-20'
 
-// Serverless "price + product data" endpoint.
-// You will deploy this as a Cloudflare Worker (recommended).
-// Until it's live, the app falls back to local seed products.
-const DEALS_API_BASE = 'https://YOUR_WORKER_SUBDOMAIN.workers.dev'
+// Data source
+// For now (no PA-API keys), we use a static JSON file committed with the site.
+// Later, we can swap this to a Worker-backed PA-API endpoint for live prices.
+const PRODUCTS_JSON_URL = './data/products.json'
 
 function amazonSearchLink(query, campaign = 'bdo_storefront') {
   const q = encodeURIComponent(query)
@@ -177,10 +177,10 @@ const Hero = ({ apiStatus }) => (
           </span>
         </h1>
         <p className="text-blue-100 text-lg mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
-          We pull live product data (title/image/price) via Amazon’s API when available.
+          Curated picks across categories. Click through to see live pricing on Amazon.
         </p>
         <div className="text-xs text-blue-200">
-          API status: <span className="font-bold">{apiStatus}</span>
+          Catalog status: <span className="font-bold">{apiStatus}</span>
         </div>
       </div>
 
@@ -338,15 +338,10 @@ const Footer = () => (
   </footer>
 )
 
-async function fetchDeals({ categories, limit }) {
-  const url = new URL(`${DEALS_API_BASE}/v1/deals`)
-  url.searchParams.set('categories', categories.join(','))
-  url.searchParams.set('limit', String(limit))
-
-  const res = await fetch(url.toString(), { headers: { Accept: 'application/json' } })
-  if (!res.ok) throw new Error(`API error: ${res.status}`)
-  const json = await res.json()
-  return json
+async function fetchProductsJson() {
+  const res = await fetch(PRODUCTS_JSON_URL, { headers: { Accept: 'application/json' } })
+  if (!res.ok) throw new Error(`products.json fetch failed: ${res.status}`)
+  return await res.json()
 }
 
 const App = () => {
@@ -359,18 +354,14 @@ const App = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    // Try to load from API. If it fails, the site still works with seed products.
     ;(async () => {
       try {
-        const data = await fetchDeals({
-          categories: ['Electronics', 'Home', 'Kitchen', 'Tools', 'Kids', 'Beauty', 'Fitness', 'Pets'],
-          limit: 300,
-        })
+        const data = await fetchProductsJson()
         if (data?.items?.length) {
           setProducts(data.items)
-          setApiStatus('connected')
+          setApiStatus('static catalog (300)')
         } else {
-          setApiStatus('connected (no items)')
+          setApiStatus('static catalog (empty)')
         }
       } catch (e) {
         setApiStatus('offline (using seed items)')
