@@ -97,6 +97,7 @@ const IconMap = {
   Coffee,
   Footprints,
   Tag,
+  Heart,
 }
 
 const getIcon = (name) => IconMap[name] || Tag
@@ -223,7 +224,11 @@ const ProductCard = ({ product }) => {
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.title} className="max-h-40 object-contain" loading="lazy" />
         ) : (
-          <Icon size={72} strokeWidth={1.5} className="text-slate-400 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500" />
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-500">
+            <Icon size={64} strokeWidth={1.5} className="text-slate-400 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500" />
+            <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400">{product.category}</div>
+            <div className="text-[10px] text-slate-400">(Images require Amazon PA-API)</div>
+          </div>
         )}
       </div>
 
@@ -290,6 +295,69 @@ const ProductCard = ({ product }) => {
             </a>
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+const CompactProductCard = ({ product }) => {
+  const Icon = getIcon(product.iconName)
+  return (
+    <a
+      href={product.affiliateLink}
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+      className="min-w-[240px] max-w-[240px] bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex flex-col gap-2"
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">
+          {product.category}
+        </div>
+        <ExternalLink size={14} className="text-slate-400" />
+      </div>
+      <div className="h-20 rounded-lg bg-gradient-to-b from-gray-50 to-white border border-slate-100 flex items-center justify-center">
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt={product.title} className="max-h-16 object-contain" loading="lazy" />
+        ) : (
+          <Icon size={34} className="text-slate-400" />
+        )}
+      </div>
+      <div className="font-bold text-slate-800 text-sm line-clamp-2">{product.title}</div>
+      <div className="text-xs text-slate-500">Check price on Amazon</div>
+    </a>
+  )
+}
+
+const TopPicks = ({ products }) => {
+  const cats = ['Electronics', 'Home', 'Kitchen', 'Tools', 'Kids', 'Beauty', 'Fitness', 'Pets']
+  const byCat = new Map(cats.map((c) => [c, []]))
+  for (const p of products) {
+    if (byCat.has(p.category) && byCat.get(p.category).length < 10) {
+      byCat.get(p.category).push(p)
+    }
+  }
+
+  return (
+    <div className="container mx-auto px-4 pt-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-extrabold text-slate-900">Top Picks</h2>
+        <div className="text-xs text-slate-500">Pinned quick-click lists (best for ads)</div>
+      </div>
+
+      <div className="grid gap-6">
+        {cats.map((cat) => (
+          <div key={cat}>
+            <div className="flex items-baseline justify-between mb-2">
+              <div className="font-bold text-slate-800">{cat}</div>
+              <div className="text-xs text-slate-500">Top {byCat.get(cat).length}</div>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
+              {byCat.get(cat).map((p) => (
+                <CompactProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -405,6 +473,8 @@ const App = () => {
 
       <main className="flex-grow">
         <Hero apiStatus={apiStatus} />
+
+        {selectedCategory === 'All' && !searchQuery && <TopPicks products={products} />}
 
         <div className="bg-white border-b border-slate-200 sticky top-[60px] md:top-[74px] z-30 shadow-sm">
           <div className="container mx-auto px-4 py-3 flex flex-col md:flex-row gap-4 items-center justify-between">
