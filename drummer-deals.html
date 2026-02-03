@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Drummer Deals | Best Deals Online</title>
+  <meta name="description" content="A short, high-signal list of drummer gear upgrades under $50 and under $100, plus rotating hot deals." />
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #475569;
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 24px 40px rgba(15, 23, 42, 0.12);
+      --accent: #0f766e;
+      --accent-2: #1d4ed8;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: var(--accent-2); }
+    a:visited { color: #4f46e5; }
+
+    header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav a {
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 14px;
+    }
+
+    .nav a:hover { color: var(--text); }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 10px;
+      padding: 22px;
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      letter-spacing: -0.02em;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .pillrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #fbfbfc;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 920px) {
+      .grid { grid-template-columns: 1.05fr 0.95fr; }
+    }
+
+    section {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    section h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    section p {
+      margin: 0 0 12px 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      background: #ffffff;
+    }
+
+    .item .top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .item .name {
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .item .price {
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .item .why {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: #0f766e;
+      color: white;
+      width: fit-content;
+    }
+
+    .btn:hover { filter: brightness(0.98); }
+
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    footer {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    .disclosure {
+      border-left: 4px solid #eab308;
+      padding: 10px 12px;
+      background: #fffbeb;
+      border-radius: 12px;
+      color: #713f12;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/">BestDealsOnline</a>
+      <nav class="nav">
+        <a href="/drummer-deals.html">Drummer Deals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Drummer Deals: the short list (Under $50 / Under $100)</h1>
+      <p class="sub">A high-signal set of drummer gear upgrades that actually move the needle. I update this page over time—save it and check back.</p>
+      <div class="pillrow">
+        <div class="pill">Best for: practice + gigs</div>
+        <div class="pill">Fast wins: heads, IEMs, dampening, pads</div>
+        <div class="pill">UTM-ready links for tracking</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>🔥 Hot Deals (rotate these 5 slots)</h2>
+        <p>When there’s a real discount, it goes here. These are your “spike” items for Story posts.</p>
+        <ul class="list">
+          <li class="item">
+            <div class="top"><div class="name">Deal Slot #1</div><div class="price">(put real discount here)</div></div>
+            <p class="why">Replace this with a real deal item (e.g., snare head, IEMs, stick multipack). When you have an Amazon Associates Tracking ID, replace the link below.</p>
+            <a class="btn" href="#" rel="nofollow" target="_blank">View Deal</a>
+          </li>
+          <li class="item"><div class="top"><div class="name">Deal Slot #2</div><div class="price">—</div></div><p class="why">Placeholder.</p><a class="btn" href="#" rel="nofollow" target="_blank">View Deal</a></li>
+          <li class="item"><div class="top"><div class="name">Deal Slot #3</div><div class="price">—</div></div><p class="why">Placeholder.</p><a class="btn" href="#" rel="nofollow" target="_blank">View Deal</a></li>
+          <li class="item"><div class="top"><div class="name">Deal Slot #4</div><div class="price">—</div></div><p class="why">Placeholder.</p><a class="btn" href="#" rel="nofollow" target="_blank">View Deal</a></li>
+          <li class="item"><div class="top"><div class="name">Deal Slot #5</div><div class="price">—</div></div><p class="why">Placeholder.</p><a class="btn" href="#" rel="nofollow" target="_blank">View Deal</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>✅ Under $50 (easy wins)</h2>
+        <p>Low-friction buys. These tend to convert even when the account is “cold.”</p>
+        <ul class="list">
+          <li class="item">
+            <div class="top"><div class="name">12" practice pad (Evans RealFeel-style)</div><div class="price">Under $50</div></div>
+            <p class="why">Quiet reps, stick control, endurance. The most consistent “I actually use it” upgrade.</p>
+            <a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a>
+          </li>
+          <li class="item"><div class="top"><div class="name">Gel dampeners (MoonGel-style)</div><div class="price">Under $50</div></div><p class="why">Fast tone control. Especially good for snare/toms in small rooms.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Musician earplugs (high fidelity)</div><div class="price">Under $50</div></div><p class="why">Protect your ears without killing the mix.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Kick beater patch (Evans EQ-style)</div><div class="price">Under $50</div></div><p class="why">Saves heads + adds attack. Cheap, effective.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Stick multipack (your model)</div><div class="price">Under $50</div></div><p class="why">People always need sticks. Packs are the easiest purchase decision.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>💥 Under $100 (biggest quality-of-life upgrades)</h2>
+        <p>These are the ones that make people message you: “why didn’t I do this sooner?”</p>
+        <ul class="list">
+          <li class="item"><div class="top"><div class="name">Budget in-ear monitors (IEMs)</div><div class="price">Under $100</div></div><p class="why">Huge upgrade for rehearsal/gigs. Better than blasting wedges and frying ears.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Snare head upgrade (HD Dry / Controlled Sound-style)</div><div class="price">Under $100</div></div><p class="why">Best “sound per dollar.” This is the first thing to swap.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Tom head upgrade (G2 / Emperor-style)</div><div class="price">Under $100</div></div><p class="why">Gets you closer to that studio sound fast. You’ll feel it immediately.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Throne upgrade (budget but solid)</div><div class="price">Under $100</div></div><p class="why">Back + legs. Underrated. You play better when you’re not suffering.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+          <li class="item"><div class="top"><div class="name">Single mic for content/practice (SM57-style)</div><div class="price">~$100</div></div><p class="why">If you post clips, audio matters. One good mic beats 10 bad ones.</p><a class="btn secondary" href="#" rel="nofollow" target="_blank">Get it</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Post template (copy/paste)</h2>
+        <p>Use this for IG Stories to drive traffic back here:</p>
+        <p><strong>Frame 1:</strong> “Drummers: I made a short ‘best upgrades under $50/$100’ list.”</p>
+        <p><strong>Frame 2:</strong> “Practice + gigs. Stuff I actually recommend.”</p>
+        <p><strong>Frame 3:</strong> “Link: Drummer Deals — I update it.”</p>
+        <p class="hint">Add UTM to the link sticker like: <code>?utm_source=instagram&utm_medium=story&utm_campaign=drummerdeals_day1</code></p>
+      </section>
+
+      <section>
+        <h2>Next step: swap placeholders for affiliate links</h2>
+        <p>Once you have your Amazon Associates Tracking ID, generate product links and replace each <code>#</code> link on this page.</p>
+        <div class="disclosure"><strong>Affiliate disclosure:</strong> Some links may be affiliate links. If you buy through them, we may earn a small commission at no extra cost to you.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div><strong>BestDealsOnline.us</strong> — curated picks with minimal fluff.</div>
+    <div style="margin-top:8px;">Questions or suggestions? Reply to the IG story and tell us what you want added (heads, pedals, IEMs, sticks, etc.).</div>
+  </footer>
+</body>
+</html>
