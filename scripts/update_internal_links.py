@@ -61,6 +61,7 @@ CATEGORY_RULES = {
             ("/toaster-oven-under-100.html", "Toaster ovens under $100"),
             ("/immersion-blender-under-50.html", "Immersion blenders under $50"),
             ("/food-scale-under-25.html", "Food scales under $25"),
+            ("/air-fryer-liners-under-25.html", "Air fryer liners under $25"),
         ],
     },
     "electronics": {
@@ -79,6 +80,12 @@ CATEGORY_RULES = {
             ("/gaming-mouse-under-50.html", "Gaming mice under $50"),
             ("/usb-microphone-under-100.html", "USB microphones under $100"),
             ("/smart-plug-under-25.html", "Smart plugs under $25"),
+            ("/dash-cam-under-100.html", "Dash cams under $100"),
+            ("/mini-projector-under-100.html", "Mini projectors under $100"),
+            ("/portable-monitor-under-100.html", "Portable monitors under $100"),
+            ("/gaming-headset-under-50.html", "Gaming headsets under $50"),
+            ("/wireless-mouse-under-25.html", "Wireless mice under $25"),
+            ("/phone-tripod-under-25.html", "Phone tripods under $25"),
         ],
     },
     "home": {
@@ -98,6 +105,8 @@ CATEGORY_RULES = {
             ("/stick-vacuum-under-100.html", "Stick vacuums under $100"),
             ("/mattress-topper-under-100.html", "Mattress toppers under $100"),
             ("/desk-lamp-under-30.html", "Desk lamps under $30"),
+            ("/heated-blanket-under-50.html", "Heated blankets under $50"),
+            ("/dehumidifier-under-100.html", "Dehumidifiers under $100"),
         ],
     },
     "fitness": {
@@ -162,6 +171,7 @@ CATEGORY_RULES = {
             ("/flashlight-under-50.html", "Flashlights under $50"),
             ("/cordless-screwdriver-under-50.html", "Cordless screwdrivers under $50"),
             ("/laser-level-under-100.html", "Laser levels under $100"),
+            ("/electric-screwdriver-under-50.html", "Electric screwdrivers under $50"),
         ],
     },
     "beauty": {
@@ -211,11 +221,11 @@ def detect_category(filename: str) -> str:
         if f.startswith("drummer-"):
             return "drummer"
     # simple keyword rules
-    if any(k in f for k in ["air-fryer", "blender", "coffee-maker", "rice-cooker", "nonstick-cookware", "meal-prep", "bento", "electric-kettle", "toaster-oven", "immersion-blender", "food-scale"]):
+    if any(k in f for k in ["air-fryer", "blender", "coffee-maker", "rice-cooker", "nonstick-cookware", "meal-prep", "bento", "electric-kettle", "toaster-oven", "immersion-blender", "food-scale", "air-fryer-liners"]):
         return "kitchen"
-    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-"]):
+    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-", "dash-cam", "projector", "portable-monitor", "gaming-headset", "wireless-mouse", "phone-tripod"]):
         return "electronics"
-    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-"]):
+    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-", "heated-blanket", "dehumidifier"]):
         return "home"
     if any(k in f for k in ["dumbbells", "kettlebell", "pull-up", "resistance-bands", "foam-roller", "yoga-mat", "fitness-tracker", "massage-gun", "ab-roller", "fitness-"]):
         return "fitness"
@@ -223,7 +233,7 @@ def detect_category(filename: str) -> str:
         return "kids"
     if any(k in f for k in ["cat-", "dog-", "pet-", "pets-", "interactive-cat", "dog-toys", "pet-nail-grinder"]):
         return "pets"
-    if any(k in f for k in ["tool", "cordless-drill", "impact-driver", "oscillating-multi-tool", "socket-set", "torque-wrench", "tape-measure", "flashlight", "cordless-screwdriver", "laser-level", "tools-"]):
+    if any(k in f for k in ["tool", "cordless-drill", "impact-driver", "oscillating-multi-tool", "socket-set", "torque-wrench", "tape-measure", "flashlight", "cordless-screwdriver", "laser-level", "tools-", "electric-screwdriver"]):
         return "tools"
     if any(k in f for k in ["skincare", "retinol", "vitamin-c", "makeup", "blow-dryer", "hair-dryer", "flat-iron", "electric-toothbrush", "niacinamide-serum", "sunscreen", "beauty-"]):
         return "beauty"

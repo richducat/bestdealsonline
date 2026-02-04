@@ -26,6 +26,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestdealsonline.us/air-fryer-liners-under-25.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bestdealsonline.us/air-fryer-under-100.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -121,6 +126,16 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestdealsonline.us/dash-cam-under-100.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/dehumidifier-under-100.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bestdealsonline.us/desk-lamp-under-30.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -147,6 +162,11 @@
   </url>
   <url>
     <loc>https://bestdealsonline.us/electric-kettle-under-50.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/electric-screwdriver-under-50.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -201,12 +221,22 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestdealsonline.us/gaming-headset-under-50.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bestdealsonline.us/gaming-mouse-under-50.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://bestdealsonline.us/hair-dryer-under-50.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/heated-blanket-under-50.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -346,6 +376,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestdealsonline.us/mini-projector-under-100.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bestdealsonline.us/niacinamide-serum-under-25.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -389,6 +424,16 @@
     <loc>https://bestdealsonline.us/pets-deals.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/phone-tripod-under-25.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/portable-monitor-under-100.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://bestdealsonline.us/power-bank-under-50.html</loc>
@@ -532,6 +577,11 @@
   </url>
   <url>
     <loc>https://bestdealsonline.us/wireless-earbuds-under-50.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/wireless-mouse-under-25.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
