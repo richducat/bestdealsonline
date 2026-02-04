@@ -73,8 +73,23 @@ def should_process(p: Path) -> bool:
     return True
 
 
+def pick_hero_svg(canonical: str) -> str:
+    # Choose a minimal SVG based on URL keywords. Keep it simple and predictable.
+    u = canonical.lower()
+    if "/electronics" in u or any(k in u for k in ["wifi", "router", "dash-cam", "projector", "headset", "keyboard", "mouse", "charger", "usb", "hdmi", "bluetooth", "speaker"]):
+        return "/assets/hero/electronics.svg"
+    if "/kitchen" in u or any(k in u for k in ["air-fryer", "coffee", "kettle", "rice-cooker", "cookware", "toaster", "blender", "meal-prep"]):
+        return "/assets/hero/kitchen.svg"
+    if "/tools" in u or any(k in u for k in ["drill", "tool", "screwdriver", "flashlight", "impact", "socket", "wrench", "laser-level"]):
+        return "/assets/hero/tools.svg"
+    # default to home for most remainder
+    if "/home" in u or any(k in u for k in ["curtains", "bed", "mattress", "humidifier", "dehumidifier", "vacuum", "shower", "storage", "laundry", "pillow", "doormat", "trash", "smoke", "leak"]):
+        return "/assets/hero/home.svg"
+    return "/assets/hero/default.svg"
+
+
 def build_page(*, title: str, description: str, canonical: str, h1: str, intro: str, main_inner: str) -> str:
-    # Slight layout differentiation from hubs: hero has a right-side info panel.
+    # Slight layout differentiation from hubs: hero has a right-side info panel + minimal SVG.
     return f"""<!doctype html>
 <html lang=\"en\">
 <head>
@@ -136,13 +151,19 @@ def build_page(*, title: str, description: str, canonical: str, h1: str, intro: 
           <p class=\"text-blue-100 text-base md:text-lg mt-4 max-w-2xl\">{intro}</p>
         </div>
         <div class=\"lg:col-span-4\">
-          <div class=\"bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm\">
-            <div class=\"text-xs uppercase tracking-[0.3em] text-yellow-300 font-bold\">Quick tips</div>
-            <ul class=\"mt-3 space-y-2 text-sm text-blue-100\">
-              <li>Open a query → compare live prices.</li>
-              <li>Use “Related pages” to browse deeper.</li>
-              <li>Check <a class=\"underline hover:text-yellow-200\" href=\"/best-deals-online-today.html\">Today</a> for the shortlist.</li>
-            </ul>
+          <div class=\"grid grid-cols-1 gap-4\">
+            <div class=\"bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm\">
+              <div class=\"text-xs uppercase tracking-[0.3em] text-yellow-300 font-bold\">Quick tips</div>
+              <ul class=\"mt-3 space-y-2 text-sm text-blue-100\">
+                <li>Open a query → compare live prices.</li>
+                <li>Use “Related pages” to browse deeper.</li>
+                <li>Check <a class=\"underline hover:text-yellow-200\" href=\"/best-deals-online-today.html\">Today</a> for the shortlist.</li>
+              </ul>
+            </div>
+
+            <div class=\"hidden md:block bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm\">
+              <img src=\"{pick_hero_svg(canonical)}\" width=\"720\" height=\"480\" loading=\"lazy\" decoding=\"async\" alt=\"\" class=\"w-full h-auto opacity-95\" />
+            </div>
           </div>
         </div>
       </div>
