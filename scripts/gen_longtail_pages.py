@@ -81,7 +81,11 @@ def build_page(slug: str, title: str, description: str, intro: str, quick_amz_la
   <meta property=\"og:description\" content=\"{html.escape(description)}\" />
   <meta property=\"og:type\" content=\"website\" />
   <meta property=\"og:url\" content=\"{canonical}\" />
+  <meta property=\"og:image\" content=\"{SITE}/assets/og-default.svg\" />
   <meta name=\"twitter:card\" content=\"summary_large_image\" />
+  <meta name=\"twitter:image\" content=\"{SITE}/assets/og-default.svg\" />
+
+  <link rel=\"icon\" href=\"/assets/favicon.svg\" type=\"image/svg+xml\" />
 
   <script src=\"https://cdn.tailwindcss.com\"></script>
   <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap\" rel=\"stylesheet\">
