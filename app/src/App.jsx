@@ -40,6 +40,19 @@ const AMAZON_TAG = 'bestdeals0ad2-20'
 // Later, we can swap this to a Worker-backed PA-API endpoint for live prices.
 const PRODUCTS_JSON_URL = './data/products.json'
 
+function trackOutboundClick({ url, label, category }) {
+  try {
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'outbound_click', {
+        event_category: category || 'outbound',
+        event_label: label || url,
+        link_url: url,
+        transport_type: 'beacon',
+      })
+    }
+  } catch (_) {}
+}
+
 function amazonSearchLink(query, campaign = 'bdo_storefront') {
   const q = encodeURIComponent(query)
   return `https://www.amazon.com/s?k=${q}&tag=${AMAZON_TAG}&utm_source=bestdealsonline&utm_medium=site&utm_campaign=${encodeURIComponent(
@@ -286,6 +299,13 @@ const ProductCard = ({ product }) => {
               href={product.affiliateLink}
               target="_blank"
               rel="nofollow noopener noreferrer"
+              onClick={() =>
+                trackOutboundClick({
+                  url: product.affiliateLink,
+                  label: product.title,
+                  category: product.category || 'outbound',
+                })
+              }
               className="block w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 text-center font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
             >
               Check price on Amazon <ExternalLink size={16} />
@@ -304,6 +324,13 @@ const CompactProductCard = ({ product }) => {
       href={product.affiliateLink}
       target="_blank"
       rel="nofollow noopener noreferrer"
+      onClick={() =>
+        trackOutboundClick({
+          url: product.affiliateLink,
+          label: product.title,
+          category: product.category || 'outbound',
+        })
+      }
       className="min-w-[240px] max-w-[240px] bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex flex-col gap-2"
     >
       <div className="flex items-center justify-between">
@@ -402,6 +429,13 @@ const UnderBudget = ({ title, query }) => (
     href={amazonSearchLink(query, 'bdo_under_budget')}
     target="_blank"
     rel="nofollow noopener noreferrer"
+    onClick={() =>
+      trackOutboundClick({
+        url: amazonSearchLink(query, 'bdo_under_budget'),
+        label: title,
+        category: 'budget',
+      })
+    }
     className="bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex items-center justify-between"
   >
     <div>
