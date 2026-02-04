@@ -325,6 +325,16 @@ const CompactProductCard = ({ product }) => {
   )
 }
 
+const JumpBar = () => (
+  <div className="bg-white/80 backdrop-blur border-b border-slate-200 sticky top-[60px] md:top-[74px] z-30">
+    <div className="container mx-auto px-4 py-2 flex gap-2 overflow-x-auto hide-scrollbar">
+      <a href="#categories" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Categories</a>
+      <a href="#budget" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
+      <a href="#top-picks" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
+      <a href="#trending" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
+    </div>
+  </div>
+)
 const CategoryTiles = ({ onPick }) => {
   const tiles = [
     { key: 'Electronics', img: '/images/categories/electronics.webp', blurb: 'Chargers, audio, smart home' },
@@ -562,15 +572,20 @@ const App = () => {
       <main className="flex-grow">
         <Hero apiStatus={apiStatus} />
 
+        <JumpBar />
+
         {selectedCategory === 'All' && !searchQuery && (
           <>
+            <div id="categories" />
             <CategoryTiles
               onPick={(cat) => {
                 setSelectedCategory(cat)
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
             />
+            <div id="budget" />
             <UnderBudgetRow />
+            <div id="top-picks" />
             <TopPicks products={products} />
           </>
         )}
@@ -613,6 +628,7 @@ const App = () => {
           </div>
         </div>
 
+        <div id="trending" />
         <div className="container mx-auto px-4 py-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
