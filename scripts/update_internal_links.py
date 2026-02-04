@@ -28,7 +28,7 @@ NEW_FOOTER = (
     "<footer class='border-t border-slate-200'>"
     "<div class='max-w-5xl mx-auto px-4 py-8 text-sm text-slate-500'>"
     "<div class='flex flex-col gap-3'>"
-    "<div><strong>Affiliate disclosure:</strong> We may earn a commission when you buy through links on this site, at no extra cost to you.</div>"
+    "<div><strong>Affiliate disclosure:</strong> We may earn a commission when you buy through links on this site, at no extra cost to you. <span class='ml-2'><a class='underline hover:text-slate-900' href='/affiliate-disclosure.html'>Details</a></span><div class='text-xs text-slate-400 mt-1'>As an Amazon Associate, we earn from qualifying purchases.</div></div>"
     "<div class='flex flex-wrap gap-x-4 gap-y-2'>"
     "<a class='hover:text-slate-900' href='/electronics-deals.html'>Electronics hub</a>"
     "<a class='hover:text-slate-900' href='/kitchen-deals.html'>Kitchen hub</a>"
@@ -38,6 +38,7 @@ NEW_FOOTER = (
     "<a class='hover:text-slate-900' href='/pets-deals.html'>Pets hub</a>"
     "<a class='hover:text-slate-900' href='/tools-deals.html'>Tools hub</a>"
     "<a class='hover:text-slate-900' href='/beauty-deals.html'>Beauty hub</a>"
+    "<a class='hover:text-slate-900' href='/privacy.html'>Privacy</a>"
     "</div>"
     "</div></div></footer>"
 )

@@ -122,7 +122,7 @@ const DisclosureBanner = () => {
     <div className="bg-slate-100 border-b border-slate-200 text-xs text-slate-600 py-2 px-4 flex justify-between items-center">
       <span>
         <strong>Affiliate Disclosure:</strong> BestDealsOnline.us is reader-supported. When you buy through links on our
-        site, we may earn an affiliate commission at no extra cost to you.
+        site, we may earn an affiliate commission at no extra cost to you. <a className="underline" href="/affiliate-disclosure.html">Details</a>
       </span>
       <button onClick={() => setVisible(false)} className="text-slate-400 hover:text-slate-800" aria-label="Dismiss">
         <X size={14} />
@@ -506,28 +506,38 @@ const Footer = () => (
           <span className="font-bold text-lg">BestDealsOnline</span>
         </div>
         <p className="mb-6 leading-relaxed">
-          Amazon-only storefront. Product data is fetched via Amazon’s Product Advertising API where available.
+          Amazon-only picks and under-$ guides. Click through to see live prices on Amazon.
         </p>
       </div>
       <div>
-        <h4 className="text-white font-bold mb-6 text-base">Categories</h4>
+        <h4 className="text-white font-bold mb-6 text-base">Hubs</h4>
         <ul className="space-y-3">
-          <li><a href="#" className="hover:text-yellow-400 transition-colors">Electronics</a></li>
-          <li><a href="#" className="hover:text-yellow-400 transition-colors">Kitchen</a></li>
-          <li><a href="#" className="hover:text-yellow-400 transition-colors">Tools</a></li>
+          <li><a href="/electronics-deals.html" className="hover:text-yellow-400 transition-colors">Electronics</a></li>
+          <li><a href="/kitchen-deals.html" className="hover:text-yellow-400 transition-colors">Kitchen</a></li>
+          <li><a href="/home-deals.html" className="hover:text-yellow-400 transition-colors">Home</a></li>
+          <li><a href="/fitness-deals.html" className="hover:text-yellow-400 transition-colors">Fitness</a></li>
+          <li><a href="/kids-deals.html" className="hover:text-yellow-400 transition-colors">Kids</a></li>
+          <li><a href="/pets-deals.html" className="hover:text-yellow-400 transition-colors">Pets</a></li>
+          <li><a href="/tools-deals.html" className="hover:text-yellow-400 transition-colors">Tools</a></li>
+          <li><a href="/beauty-deals.html" className="hover:text-yellow-400 transition-colors">Beauty</a></li>
         </ul>
       </div>
       <div>
         <h4 className="text-white font-bold mb-6 text-base">Links</h4>
         <ul className="space-y-3">
+          <li><a href="/affiliate-disclosure.html" className="hover:text-yellow-400 transition-colors">Affiliate disclosure</a></li>
+          <li><a href="/privacy.html" className="hover:text-yellow-400 transition-colors">Privacy</a></li>
           <li><a href="/drummer-deals.html" className="hover:text-yellow-400 transition-colors">Drummer Deals</a></li>
         </ul>
       </div>
       <div>
-        <h4 className="text-white font-bold mb-6 text-base">Affiliate Disclosure</h4>
+        <h4 className="text-white font-bold mb-6 text-base">Amazon Associate disclosure</h4>
         <p className="leading-relaxed mb-4 text-xs">
-          BestDealsOnline.us is reader-supported. When you buy through links on our site, we may earn an affiliate
-          commission at no extra cost to you.
+          As an Amazon Associate, we earn from qualifying purchases.
+        </p>
+        <p className="leading-relaxed mb-0 text-xs">
+          This site may earn a commission when you buy through links (at no extra cost to you).{' '}
+          <a className="underline hover:text-yellow-400" href="/affiliate-disclosure.html">Details</a>
         </p>
       </div>
     </div>

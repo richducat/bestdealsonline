@@ -16,6 +16,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestdealsonline.us/affiliate-disclosure.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bestdealsonline.us/air-fryer-accessories-under-50.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -387,6 +392,11 @@
   </url>
   <url>
     <loc>https://bestdealsonline.us/power-bank-under-50.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestdealsonline.us/privacy.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
