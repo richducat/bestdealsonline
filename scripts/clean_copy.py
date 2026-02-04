@@ -21,6 +21,8 @@ REPLACEMENTS = {
     "Use-case intent.": "Use-case shoppers search for.",
     "Alternate wording.": "Same idea, different wording.",
     "Comparison searches.": "Comparison-style search.",
+    "After-purchase accessory intent.": "Replacement/add-on search.",
+    "Dorm/desk intent.": "Small-space search.",
 
     # Overly SEO-y / disclaimer-y phrasing
     "Strong health-related intent without claims.": "Common search people use.",
