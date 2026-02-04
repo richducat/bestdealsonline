@@ -180,9 +180,6 @@ const Hero = ({ apiStatus }) => (
         <p className="text-blue-100 text-lg mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
           Curated picks across categories. Click through to see live pricing on Amazon.
         </p>
-        <div className="text-xs text-blue-200">
-          Catalog status: <span className="font-bold">{apiStatus}</span>
-        </div>
       </div>
 
       <div className="md:w-1/2 flex justify-center relative">
@@ -330,14 +327,14 @@ const CompactProductCard = ({ product }) => {
 
 const CategoryTiles = ({ onPick }) => {
   const tiles = [
-    { key: 'Electronics', img: './images/categories/electronics.webp', blurb: 'Chargers, audio, smart home' },
-    { key: 'Home', img: './images/categories/home.webp', blurb: 'Sleep, organization, comfort' },
-    { key: 'Kitchen', img: './images/categories/kitchen.webp', blurb: 'Meal prep, appliances, coffee' },
-    { key: 'Tools', img: './images/categories/tools.webp', blurb: 'DIY essentials & kits' },
-    { key: 'Kids', img: './images/categories/kids.webp', blurb: 'School & toys' },
-    { key: 'Beauty', img: './images/categories/beauty.webp', blurb: 'Skincare & grooming' },
-    { key: 'Fitness', img: './images/categories/fitness.webp', blurb: 'Home gym basics' },
-    { key: 'Pets', img: './images/categories/pets.webp', blurb: 'Pet comfort & care' },
+    { key: 'Electronics', img: '/images/categories/electronics.webp', blurb: 'Chargers, audio, smart home' },
+    { key: 'Home', img: '/images/categories/home.webp', blurb: 'Sleep, organization, comfort' },
+    { key: 'Kitchen', img: '/images/categories/kitchen.webp', blurb: 'Meal prep, appliances, coffee' },
+    { key: 'Tools', img: '/images/categories/tools.webp', blurb: 'DIY essentials & kits' },
+    { key: 'Kids', img: '/images/categories/kids.webp', blurb: 'School & toys' },
+    { key: 'Beauty', img: '/images/categories/beauty.webp', blurb: 'Skincare & grooming' },
+    { key: 'Fitness', img: '/images/categories/fitness.webp', blurb: 'Home gym basics' },
+    { key: 'Pets', img: '/images/categories/pets.webp', blurb: 'Pet comfort & care' },
   ]
 
   return (
@@ -352,9 +349,9 @@ const CategoryTiles = ({ onPick }) => {
             <button
               key={t.key}
               onClick={() => onPick(t.key)}
-              className="group text-left rounded-xl overflow-hidden border border-slate-100 hover:shadow-md transition-all bg-white"
+              className="group text-left rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all bg-white"
             >
-              <div className="h-24 md:h-28 bg-slate-50">
+              <div className="h-28 md:h-32 bg-slate-50">
                 <img src={t.img} alt={t.key} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" loading="lazy" />
               </div>
               <div className="p-3">
@@ -407,7 +404,7 @@ const TopPicks = ({ products }) => {
     <div className="container mx-auto px-4 pt-10">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-extrabold text-slate-900">Top Picks</h2>
-        <div className="text-xs text-slate-500">Pinned quick-click lists (best for ads)</div>
+        
       </div>
 
       <div className="grid gap-6">
