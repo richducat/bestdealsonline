@@ -338,25 +338,46 @@ const CategoryTiles = ({ onPick }) => {
   ]
 
   return (
-    <div className="container mx-auto px-4 -mt-6 md:-mt-10 relative z-20">
+    <div className="container mx-auto px-4 -mt-10 relative z-20">
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 md:p-6">
-        <div className="flex items-baseline justify-between mb-3">
-          <div className="font-extrabold text-slate-900 text-lg">Shop by category</div>
-          <div className="text-xs text-slate-500">Quick entry points (good for ads)</div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse categories</h2>
+          <div className="text-xs text-slate-500">Tap a category to jump into picks</div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {tiles.map((t) => (
             <button
               key={t.key}
               onClick={() => onPick(t.key)}
-              className="group text-left rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all bg-white"
+              className="text-left bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300 flex flex-col h-full group overflow-hidden"
             >
-              <div className="h-28 md:h-32 bg-slate-50">
-                <img src={t.img} alt={t.key} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" loading="lazy" />
+              <div className="relative h-44 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center overflow-hidden">
+                <img
+                  src={t.img}
+                  alt={t.key}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute top-3 left-3">
+                  <span className="bg-slate-900/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-md">
+                    Category
+                  </span>
+                </div>
               </div>
-              <div className="p-3">
-                <div className="font-bold text-slate-800">{t.key}</div>
-                <div className="text-xs text-slate-500">{t.blurb}</div>
+
+              <div className="p-5 flex-grow flex flex-col">
+                <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded w-fit mb-2">
+                  {t.key}
+                </div>
+                <div className="font-bold text-slate-800 text-lg leading-tight mb-2">{t.key} Picks</div>
+                <div className="text-sm text-slate-600 mb-4">{t.blurb}</div>
+
+                <div className="mt-auto">
+                  <div className="w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 text-center font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                    View {t.key} <ArrowUpRight size={16} />
+                  </div>
+                </div>
               </div>
             </button>
           ))}
@@ -382,7 +403,11 @@ const UnderBudget = ({ title, query }) => (
 )
 
 const UnderBudgetRow = () => (
-  <div className="container mx-auto px-4 pt-8">
+  <div className="container mx-auto px-4 pt-10">
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Shop by budget</h2>
+      <div className="text-xs text-slate-500">Quick filters that convert</div>
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       <UnderBudget title="Under $25 finds" query="best deals under 25" />
       <UnderBudget title="Under $50 upgrades" query="best deals under 50" />
