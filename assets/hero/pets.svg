@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-label="Pets">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fde68a" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#93c5fd" stop-opacity="0.22"/>
+    </linearGradient>
+  </defs>
+  <rect x="80" y="100" width="560" height="280" rx="28" fill="url(#g)" stroke="rgba(255,255,255,0.18)"/>
+  <circle cx="260" cy="250" r="46" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <circle cx="210" cy="205" r="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <circle cx="310" cy="205" r="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <circle cx="215" cy="290" r="16" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <circle cx="305" cy="290" r="16" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <rect x="390" y="205" width="230" height="110" rx="22" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
+  <path d="M430 255h150" stroke="rgba(255,255,255,0.28)" stroke-width="16" stroke-linecap="round"/>
+</svg>
