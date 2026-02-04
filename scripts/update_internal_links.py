@@ -95,6 +95,16 @@ CATEGORY_RULES = {
             ("/router-mesh-under-100.html", "Mesh Wi‑Fi under $100"),
             ("/wireless-keyboard-under-50.html", "Wireless keyboards under $50"),
             ("/electric-toothbrush-under-25.html", "Electric toothbrushes under $25"),
+            ("/smart-light-bulbs-under-25.html", "Smart bulbs under $25"),
+            ("/led-strip-lights-under-25.html", "LED strip lights under $25"),
+            ("/hdmi-cable-under-15.html", "HDMI cables under $15"),
+            ("/usb-c-cable-under-15.html", "USB‑C cables under $15"),
+            ("/bluetooth-adapter-under-25.html", "Bluetooth adapters under $25"),
+            ("/phone-car-mount-under-20.html", "Phone car mounts under $20"),
+            ("/mouse-pad-under-15.html", "Mouse pads under $15"),
+            ("/screen-protector-under-15.html", "Screen protectors under $15"),
+            ("/laptop-stand-under-25.html", "Laptop stands under $25"),
+            ("/cable-management-under-15.html", "Cable management under $15"),
         ],
     },
     "home": {
@@ -125,6 +135,16 @@ CATEGORY_RULES = {
             ("/shower-caddy-under-25.html", "Shower caddies under $25"),
             ("/laundry-hamper-under-25.html", "Laundry hampers under $25"),
             ("/shoe-rack-under-50.html", "Shoe racks under $50"),
+            ("/smoke-detector-under-25.html", "Smoke detectors under $25"),
+            ("/carbon-monoxide-detector-under-25.html", "CO detectors under $25"),
+            ("/water-leak-detector-under-50.html", "Water leak detectors under $50"),
+            ("/smart-lock-under-100.html", "Smart locks under $100"),
+            ("/trash-can-under-50.html", "Trash cans under $50"),
+            ("/microfiber-cloths-under-15.html", "Microfiber cloths under $15"),
+            ("/storage-bins-under-25.html", "Storage bins under $25"),
+            ("/extension-cord-under-15.html", "Extension cords under $15"),
+            ("/doormat-under-25.html", "Doormats under $25"),
+            ("/shower-curtain-under-25.html", "Shower curtains under $25"),
         ],
     },
     "fitness": {
@@ -241,9 +261,9 @@ def detect_category(filename: str) -> str:
     # simple keyword rules
     if any(k in f for k in ["air-fryer", "blender", "coffee-maker", "rice-cooker", "nonstick-cookware", "meal-prep", "bento", "electric-kettle", "toaster-oven", "immersion-blender", "food-scale", "air-fryer-liners"]):
         return "kitchen"
-    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-", "dash-cam", "projector", "portable-monitor", "gaming-headset", "wireless-mouse", "phone-tripod", "security-camera", "video-doorbell", "surge-protector", "usb-hub", "wireless-charger", "smart-speaker", "router-mesh", "wireless-keyboard", "electric-toothbrush-under-25"]):
+    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-", "dash-cam", "projector", "portable-monitor", "gaming-headset", "wireless-mouse", "phone-tripod", "security-camera", "video-doorbell", "surge-protector", "usb-hub", "wireless-charger", "smart-speaker", "router-mesh", "wireless-keyboard", "electric-toothbrush-under-25", "smart-light-bulbs", "led-strip-lights", "hdmi-cable", "usb-c-cable", "bluetooth-adapter", "phone-car-mount", "mouse-pad", "screen-protector", "laptop-stand", "cable-management"]):
         return "electronics"
-    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-", "heated-blanket", "dehumidifier", "steam-mop", "space-heater", "air-purifier-filter", "mattress-protector", "pillow-under-25", "closet-organizer", "shower-caddy", "laundry-hamper", "shoe-rack"]):
+    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-", "heated-blanket", "dehumidifier", "steam-mop", "space-heater", "air-purifier-filter", "mattress-protector", "pillow-under-25", "closet-organizer", "shower-caddy", "laundry-hamper", "shoe-rack", "smoke-detector", "carbon-monoxide-detector", "water-leak-detector", "smart-lock", "trash-can", "microfiber-cloths", "storage-bins", "extension-cord", "doormat", "shower-curtain"]):
         return "home"
     if any(k in f for k in ["dumbbells", "kettlebell", "pull-up", "resistance-bands", "foam-roller", "yoga-mat", "fitness-tracker", "massage-gun", "ab-roller", "fitness-"]):
         return "fitness"

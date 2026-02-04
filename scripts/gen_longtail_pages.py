@@ -74,47 +74,89 @@ def build_page(slug: str, title: str, description: str, intro: str, quick_amz_la
 <head>
   <meta charset=\"utf-8\" />
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-  <title>{html.escape(title)} (2026) | Best Deals Online</title>
+  <title>{html.escape(title)} (2026) | BestDealsOnline</title>
   <meta name=\"description\" content=\"{html.escape(description)}\" />
   <link rel=\"canonical\" href=\"{canonical}\" />
-  <meta property=\"og:title\" content=\"{html.escape(title)} (2026) | Best Deals Online\" />
+  <meta property=\"og:title\" content=\"{html.escape(title)} (2026) | BestDealsOnline\" />
   <meta property=\"og:description\" content=\"{html.escape(description)}\" />
   <meta property=\"og:type\" content=\"website\" />
   <meta property=\"og:url\" content=\"{canonical}\" />
-  <meta name=\"twitter:card\" content=\"summary\" />
+  <meta name=\"twitter:card\" content=\"summary_large_image\" />
+
   <script src=\"https://cdn.tailwindcss.com\"></script>
   <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap\" rel=\"stylesheet\">
-  <style> :root {{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }} </style>
+  <style>
+    :root {{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }}
+  </style>
 </head>
-<body class=\"bg-slate-50 text-slate-900\">
-  <header class=\"bg-slate-900 text-white\">
-    <div class=\"max-w-5xl mx-auto px-4 py-5 flex items-center justify-between\">
-      <a href=\"/\" class=\"font-extrabold tracking-tight\">BestDealsOnline</a>
-{NAV}
+<body class=\"bg-slate-950 text-slate-50\">
+  <!-- Simple disclosure (mirrors homepage intent; full page lives at /affiliate-disclosure.html) -->
+  <div class=\"bg-slate-100 text-slate-700 text-xs border-b border-slate-200\">
+    <div class=\"container mx-auto px-4 py-2\">
+      <strong>Affiliate disclosure:</strong> When you buy through links on this site, we may earn a commission at no extra cost to you.
+      <a class=\"underline\" href=\"/affiliate-disclosure.html\">Details</a>
+    </div>
+  </div>
+
+  <!-- Navbar-ish header (aesthetic aligned with homepage) -->
+  <header class=\"bg-slate-900 text-white sticky top-0 z-40 shadow-lg\">
+    <div class=\"container mx-auto px-4 py-4 flex items-center justify-between gap-4\">
+      <a href=\"/\" class=\"flex items-center gap-3\">
+        <span class=\"bg-yellow-500 text-slate-900 p-2 rounded-lg font-black\">B</span>
+        <span class=\"leading-tight\">
+          <span class=\"block font-extrabold tracking-tight text-lg\">BestDealsOnline</span>
+          <span class=\"block text-[10px] text-yellow-400 uppercase tracking-[0.25em]\">Amazon Picks</span>
+        </span>
+      </a>
+      <nav class=\"hidden md:flex flex-wrap gap-4 text-sm text-slate-200\">
+        <a class=\"hover:text-yellow-400\" href=\"/electronics-deals.html\">Electronics</a>
+        <a class=\"hover:text-yellow-400\" href=\"/home-deals.html\">Home</a>
+        <a class=\"hover:text-yellow-400\" href=\"/kitchen-deals.html\">Kitchen</a>
+        <a class=\"hover:text-yellow-400\" href=\"/tools-deals.html\">Tools</a>
+        <a class=\"hover:text-yellow-400\" href=\"/drummer-deals.html\">Drummer</a>
+        <a class=\"hover:text-yellow-400\" href=\"/blog/index.html\">Blog</a>
+      </nav>
     </div>
   </header>
-  <main class=\"max-w-5xl mx-auto px-4 py-10\">
 
-<h1 class='text-3xl md:text-4xl font-extrabold tracking-tight mb-3'>{html.escape(title)}</h1>
-<p class='text-slate-600 leading-relaxed mb-8'>{html.escape(intro)}</p>
-<div class='grid grid-cols-1 md:grid-cols-3 gap-4 mb-10'>
-{quick1}
-{quick2}
-{quick3}
-</div>
-<section class='mb-10'>
-<h2 class='text-2xl font-extrabold mb-3'>{html.escape(title)} (high intent)</h2>
-<div class='grid grid-cols-1 md:grid-cols-2 gap-4'>
-""" + "\n".join(cards) + """
-</div>
-</section>
-<section class='mt-12'>
-<h2 class='text-xl font-extrabold mb-3'>Related pages</h2>
-<div class='flex flex-wrap gap-2 text-sm'>
-{related}
-</div></section>
-</main>
-{FOOTER}
+  <!-- Hero -->
+  <section class=\"bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900\">
+    <div class=\"container mx-auto px-4 py-10 md:py-14\">
+      <div class=\"max-w-4xl\">
+        <p class=\"inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/40 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full mb-5\">Updated picks • live pricing on Amazon</p>
+        <h1 class=\"text-3xl md:text-5xl font-extrabold tracking-tight\">{html.escape(title)}</h1>
+        <p class=\"text-blue-100 text-base md:text-lg mt-4 max-w-2xl\">{html.escape(intro)}</p>
+      </div>
+    </div>
+  </section>
+
+  <main class=\"bg-slate-50 text-slate-900\">
+    <div class=\"container mx-auto px-4 py-10\">
+      <!-- Quick actions -->
+      <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 mb-10\">
+        {quick1}
+        {quick2}
+        {quick3}
+      </div>
+
+      <section class=\"mb-10\">
+        <h2 class=\"text-2xl font-extrabold mb-3\">High-intent searches</h2>
+        <p class=\"text-slate-600 mb-5\">Click a query to see live prices. These are the searches buyers actually type.</p>
+        <div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\">
+""" + "\n".join(cards) + f"""
+        </div>
+      </section>
+
+      <section class=\"mt-12\">
+        <h2 class=\"text-xl font-extrabold mb-3\">Related pages</h2>
+        <div class=\"flex flex-wrap gap-2 text-sm\">
+          {related}
+        </div>
+      </section>
+    </div>
+
+    {FOOTER}
+  </main>
 </body></html>
 """
 
@@ -1326,6 +1368,510 @@ def main():
                 ("/closet-organizer-under-50.html", "Closet organizers under $50"),
                 ("/blackout-curtains-under-50.html", "Blackout curtains under $50"),
                 ("/storage-ottoman-under-100.html", "Storage ottomans under $100"),
+            ],
+        },
+
+        # ==== BATCH 3: MATCH HOMEPAGE AESTHETIC (Electronics + Home) ====
+        {
+            "slug": "smart-light-bulbs-under-25.html",
+            "title": "Best Smart Light Bulb Deals Under $25",
+            "description": "Smart light bulbs under $25 (Wi‑Fi or Bluetooth). Click through to see live prices on Amazon.",
+            "intro": "Smart bulbs are a classic impulse upgrade. These searches capture buyers looking for Alexa/Google compatibility and simple setup under $25.",
+            "quick_amz_label": "Shop smart bulbs on Amazon",
+            "quick_amz_query": "smart light bulbs under $25",
+            "quick_internal_href": "/electronics-under-50.html",
+            "quick_internal_label": "Electronics under $50",
+            "queries": [
+                ("smart light bulbs under $25", "The core query."),
+                ("smart bulb alexa under $25", "Alexa intent."),
+                ("smart bulb google home under $25", "Google intent."),
+                ("smart bulb no hub under $25", "No-hub intent."),
+                ("color changing smart bulb under $25", "RGB intent."),
+                ("best smart bulb under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/smart-plug-under-25.html", "Smart plugs under $25"),
+                ("/smart-speaker-under-50.html", "Smart speakers under $50"),
+                ("/router-mesh-under-100.html", "Mesh Wi‑Fi under $100"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "led-strip-lights-under-25.html",
+            "title": "Best LED Strip Light Deals Under $25",
+            "description": "LED strip lights under $25 for bedrooms and desks. Click through to see live prices on Amazon.",
+            "intro": "LED strip lights are cheap, high-volume buys. These searches cover length, app control, and room use-cases under $25.",
+            "quick_amz_label": "Shop LED strip lights on Amazon",
+            "quick_amz_query": "led strip lights under $25",
+            "quick_internal_href": "/electronics-under-50.html",
+            "quick_internal_label": "Electronics under $50",
+            "queries": [
+                ("led strip lights under $25", "The core query."),
+                ("rgb led strip lights under $25", "Color intent."),
+                ("led strip lights for bedroom under $25", "Bedroom use-case."),
+                ("led strip lights with remote under $25", "Remote intent."),
+                ("smart led strip lights under $25", "Smart control intent."),
+                ("best led strip lights under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/smart-light-bulbs-under-25.html", "Smart bulbs under $25"),
+                ("/bluetooth-speaker-under-50.html", "Bluetooth speakers under $50"),
+                ("/smart-plug-under-25.html", "Smart plugs under $25"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "hdmi-cable-under-15.html",
+            "title": "Best HDMI Cable Deals Under $15",
+            "description": "HDMI cables under $15 (4K/60 options). Click through to see live prices on Amazon.",
+            "intro": "HDMI cables are small, easy conversions. These searches cover length, 4K support, and braided durability under $15.",
+            "quick_amz_label": "Shop HDMI cables on Amazon",
+            "quick_amz_query": "hdmi cable under $15",
+            "quick_internal_href": "/electronics-under-50.html",
+            "quick_internal_label": "Electronics under $50",
+            "queries": [
+                ("hdmi cable under $15", "The core query."),
+                ("4k hdmi cable under $15", "4K intent."),
+                ("hdmi cable 10 ft under $15", "Length intent."),
+                ("braided hdmi cable under $15", "Durability intent."),
+                ("hdmi cable for ps5 under $15", "Console intent."),
+                ("best hdmi cable under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/mini-projector-under-100.html", "Mini projectors under $100"),
+                ("/gaming-headset-under-50.html", "Gaming headsets under $50"),
+                ("/surge-protector-under-25.html", "Surge protectors under $25"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "usb-c-cable-under-15.html",
+            "title": "Best USB‑C Cable Deals Under $15",
+            "description": "USB‑C cables under $15 for charging and data. Click through to see live prices on Amazon.",
+            "intro": "USB‑C cables are frequent add-on purchases. These searches focus on fast charging, durability, and multi-pack deals under $15.",
+            "quick_amz_label": "Shop USB‑C cables on Amazon",
+            "quick_amz_query": "usb c cable under $15",
+            "quick_internal_href": "/usb-c-charger-under-50.html",
+            "quick_internal_label": "USB‑C chargers under $50",
+            "queries": [
+                ("usb c cable under $15", "The core query."),
+                ("usb c cable 2 pack under $15", "Multi-pack intent."),
+                ("fast charging usb c cable under $15", "Fast-charge intent."),
+                ("braided usb c cable under $15", "Durability intent."),
+                ("usb c to usb a cable under $15", "Compatibility intent."),
+                ("best usb c cable under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/usb-c-charger-under-50.html", "USB‑C chargers under $50"),
+                ("/power-bank-under-50.html", "Power banks under $50"),
+                ("/wireless-charger-under-25.html", "Wireless chargers under $25"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "bluetooth-adapter-under-25.html",
+            "title": "Best Bluetooth Adapter Deals Under $25",
+            "description": "Bluetooth adapters under $25 (USB / transmitter / receiver). Click through to see live prices on Amazon.",
+            "intro": "Bluetooth adapters solve an immediate problem: adding Bluetooth to a PC/TV/car stereo. These searches capture high-intent buyers under $25.",
+            "quick_amz_label": "Shop Bluetooth adapters on Amazon",
+            "quick_amz_query": "bluetooth adapter under $25",
+            "quick_internal_href": "/electronics-under-50.html",
+            "quick_internal_label": "Electronics under $50",
+            "queries": [
+                ("bluetooth adapter under $25", "The core query."),
+                ("usb bluetooth adapter under $25", "PC intent."),
+                ("bluetooth transmitter for tv under $25", "TV intent."),
+                ("bluetooth receiver for car under $25", "Car intent."),
+                ("bluetooth 5.0 adapter under $25", "Spec intent."),
+                ("best bluetooth adapter under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/wireless-earbuds-under-50.html", "Wireless earbuds under $50"),
+                ("/bluetooth-speaker-under-50.html", "Bluetooth speakers under $50"),
+                ("/smart-speaker-under-50.html", "Smart speakers under $50"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "phone-car-mount-under-20.html",
+            "title": "Best Phone Car Mount Deals Under $20",
+            "description": "Phone car mounts under $20 (dash/vent/windshield). Click through to see live prices on Amazon.",
+            "intro": "Car mounts are cheap, high-intent buys. These searches focus on stability, MagSafe-style mounts, and vent vs dash options under $20.",
+            "quick_amz_label": "Shop phone car mounts on Amazon",
+            "quick_amz_query": "phone car mount under $20",
+            "quick_internal_href": "/phone-tripod-under-25.html",
+            "quick_internal_label": "Phone tripods under $25",
+            "queries": [
+                ("phone car mount under $20", "The core query."),
+                ("magnetic phone car mount under $20", "Magnetic intent."),
+                ("vent phone mount under $20", "Vent intent."),
+                ("dashboard phone mount under $20", "Dash intent."),
+                ("phone mount for iphone under $20", "iPhone intent."),
+                ("best phone car mount under $20", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/phone-tripod-under-25.html", "Phone tripods under $25"),
+                ("/wireless-charger-under-25.html", "Wireless chargers under $25"),
+                ("/dash-cam-under-100.html", "Dash cams under $100"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+        {
+            "slug": "mouse-pad-under-15.html",
+            "title": "Best Mouse Pad Deals Under $15",
+            "description": "Mouse pads under $15 for work and gaming. Click through to see live prices on Amazon.",
+            "intro": "Mouse pads are tiny add-on purchases that convert easily. These searches cover extended pads, non-slip bases, and desk setups under $15.",
+            "quick_amz_label": "Shop mouse pads on Amazon",
+            "quick_amz_query": "mouse pad under $15",
+            "quick_internal_href": "/wireless-mouse-under-25.html",
+            "quick_internal_label": "Wireless mice under $25",
+            "queries": [
+                ("mouse pad under $15", "The core query."),
+                ("large mouse pad under $15", "Large pad intent."),
+                ("extended mouse pad under $15", "Desk mat intent."),
+                ("gaming mouse pad under $15", "Gaming intent."),
+                ("non slip mouse pad under $15", "Feature intent."),
+                ("best mouse pad under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/wireless-mouse-under-25.html", "Wireless mice under $25"),
+                ("/wireless-keyboard-under-50.html", "Wireless keyboards under $50"),
+                ("/mechanical-keyboard-under-100.html", "Mechanical keyboards under $100"),
+                ("/surge-protector-under-25.html", "Surge protectors under $25"),
+            ],
+        },
+        {
+            "slug": "screen-protector-under-15.html",
+            "title": "Best Screen Protector Deals Under $15",
+            "description": "Screen protectors under $15 for phones and tablets. Click through to see live prices on Amazon.",
+            "intro": "Screen protectors are a low-friction add-on purchase. These searches cover tempered glass, privacy protectors, and model-specific fit under $15.",
+            "quick_amz_label": "Shop screen protectors on Amazon",
+            "quick_amz_query": "screen protector under $15",
+            "quick_internal_href": "/wireless-charger-under-25.html",
+            "quick_internal_label": "Wireless chargers under $25",
+            "queries": [
+                ("screen protector under $15", "The core query."),
+                ("tempered glass screen protector under $15", "Tempered glass intent."),
+                ("privacy screen protector under $15", "Privacy intent."),
+                ("iphone screen protector under $15", "iPhone intent."),
+                ("samsung screen protector under $15", "Samsung intent."),
+                ("best screen protector under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/wireless-charger-under-25.html", "Wireless chargers under $25"),
+                ("/usb-c-cable-under-15.html", "USB‑C cables under $15"),
+                ("/power-bank-under-50.html", "Power banks under $50"),
+                ("/electronics-under-50.html", "Electronics under $50"),
+            ],
+        },
+
+        # Home mini-batch
+        {
+            "slug": "smoke-detector-under-25.html",
+            "title": "Best Smoke Detector Deals Under $25",
+            "description": "Smoke detectors under $25 for basic home safety. Click through to see live prices on Amazon.",
+            "intro": "Safety products are high intent and low hesitation. These searches cover battery life, sensor type, and multi-pack value under $25.",
+            "quick_amz_label": "Shop smoke detectors on Amazon",
+            "quick_amz_query": "smoke detector under $25",
+            "quick_internal_href": "/home-under-50.html",
+            "quick_internal_label": "Home under $50",
+            "queries": [
+                ("smoke detector under $25", "The core query."),
+                ("smoke alarm under $25", "Alternate wording."),
+                ("photoelectric smoke detector under $25", "Sensor type intent."),
+                ("smoke detector 2 pack under $25", "Multi-pack value."),
+                ("smoke detector with long battery under $25", "Battery life intent."),
+                ("best smoke detector under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/carbon-monoxide-detector-under-25.html", "CO detectors under $25"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+                ("/laundry-hamper-under-25.html", "Laundry hampers under $25"),
+            ],
+        },
+        {
+            "slug": "carbon-monoxide-detector-under-25.html",
+            "title": "Best Carbon Monoxide Detector Deals Under $25",
+            "description": "Carbon monoxide detectors under $25 for home safety. Click through to see live prices on Amazon.",
+            "intro": "CO detectors are a must-have safety item and buyers are usually ready to purchase. These searches cover plug-in vs battery and combo units under $25.",
+            "quick_amz_label": "Shop CO detectors on Amazon",
+            "quick_amz_query": "carbon monoxide detector under $25",
+            "quick_internal_href": "/home-under-50.html",
+            "quick_internal_label": "Home under $50",
+            "queries": [
+                ("carbon monoxide detector under $25", "The core query."),
+                ("co detector under $25", "Short-form intent."),
+                ("plug in carbon monoxide detector under $25", "Plug-in intent."),
+                ("battery carbon monoxide detector under $25", "Battery intent."),
+                ("smoke and carbon monoxide detector combo under $25", "Combo intent."),
+                ("best carbon monoxide detector under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/smoke-detector-under-25.html", "Smoke detectors under $25"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/space-heater-under-50.html", "Space heaters under $50"),
+                ("/dehumidifier-under-100.html", "Dehumidifiers under $100"),
+            ],
+        },
+        {
+            "slug": "water-leak-detector-under-50.html",
+            "title": "Best Water Leak Detector Deals Under $50",
+            "description": "Water leak detectors under $50 to catch leaks early. Click through to see live prices on Amazon.",
+            "intro": "Leak detectors are a strong problem/solution buy. These searches cover alarm volume, Wi‑Fi alerts, and multi-pack coverage under $50.",
+            "quick_amz_label": "Shop water leak detectors on Amazon",
+            "quick_amz_query": "water leak detector under $50",
+            "quick_internal_href": "/home-under-50.html",
+            "quick_internal_label": "Home under $50",
+            "queries": [
+                ("water leak detector under $50", "The core query."),
+                ("water sensor alarm under $50", "Alarm intent."),
+                ("wifi water leak detector under $50", "Wi‑Fi alert intent."),
+                ("water leak detector for basement under $50", "Use-case intent."),
+                ("water leak detector 3 pack under $50", "Multi-pack intent."),
+                ("best water leak detector under $50", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/closet-organizer-under-50.html", "Closet organizers under $50"),
+                ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+                ("/steam-mop-under-100.html", "Steam mops under $100"),
+            ],
+        },
+        {
+            "slug": "smart-lock-under-100.html",
+            "title": "Best Smart Lock Deals Under $100",
+            "description": "Smart locks under $100 for keyless entry. Click through to see live prices on Amazon.",
+            "intro": "Smart locks are high-intent security upgrades. These searches cover keypad vs key, app control, and compatibility under $100.",
+            "quick_amz_label": "Shop smart locks on Amazon",
+            "quick_amz_query": "smart lock under $100",
+            "quick_internal_href": "/video-doorbell-under-100.html",
+            "quick_internal_label": "Video doorbells under $100",
+            "queries": [
+                ("smart lock under $100", "The core query."),
+                ("keypad smart lock under $100", "Keypad intent."),
+                ("smart deadbolt under $100", "Deadbolt intent."),
+                ("smart lock no hub under $100", "No-hub intent."),
+                ("smart lock compatible with alexa under $100", "Compatibility intent."),
+                ("best smart lock under $100", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/video-doorbell-under-100.html", "Video doorbells under $100"),
+                ("/security-camera-under-50.html", "Security cameras under $50"),
+                ("/router-mesh-under-100.html", "Mesh Wi‑Fi under $100"),
+                ("/home-under-100.html", "Home under $100"),
+            ],
+        },
+        {
+            "slug": "trash-can-under-50.html",
+            "title": "Best Trash Can Deals Under $50",
+            "description": "Trash cans under $50 for kitchens and bathrooms. Click through to see live prices on Amazon.",
+            "intro": "Trash cans are surprisingly high-intent. These searches cover step cans, slim cans, and odor control under $50.",
+            "quick_amz_label": "Shop trash cans on Amazon",
+            "quick_amz_query": "trash can under $50",
+            "quick_internal_href": "/kitchen-under-50.html",
+            "quick_internal_label": "Kitchen under $50",
+            "queries": [
+                ("trash can under $50", "The core query."),
+                ("step trash can under $50", "Step can intent."),
+                ("slim trash can under $50", "Small-space intent."),
+                ("trash can with lid under $50", "Lid intent."),
+                ("bathroom trash can under $50", "Bathroom intent."),
+                ("best trash can under $50", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/kitchen-deals.html", "Kitchen deals hub"),
+                ("/meal-prep-containers-under-25.html", "Meal prep containers under $25"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+            ],
+        },
+        {
+            "slug": "microfiber-cloths-under-15.html",
+            "title": "Best Microfiber Cloth Deals Under $15",
+            "description": "Microfiber cloths under $15 for cleaning. Click through to see live prices on Amazon.",
+            "intro": "Microfiber cloth multi-packs are cheap, evergreen buys. These searches cover pack size, lint-free options, and kitchen vs car cleaning under $15.",
+            "quick_amz_label": "Shop microfiber cloths on Amazon",
+            "quick_amz_query": "microfiber cloths under $15",
+            "quick_internal_href": "/home-under-50.html",
+            "quick_internal_label": "Home under $50",
+            "queries": [
+                ("microfiber cloths under $15", "The core query."),
+                ("microfiber cleaning cloths under $15", "Cleaning intent."),
+                ("lint free microfiber cloth under $15", "Lint-free intent."),
+                ("microfiber cloths for glasses under $15", "Use-case intent."),
+                ("microfiber towel pack under $15", "Pack intent."),
+                ("best microfiber cloths under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/steam-mop-under-100.html", "Steam mops under $100"),
+                ("/stick-vacuum-under-100.html", "Stick vacuums under $100"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+            ],
+        },
+        {
+            "slug": "storage-bins-under-25.html",
+            "title": "Best Storage Bin Deals Under $25",
+            "description": "Storage bins under $25 for closets and shelves. Click through to see live prices on Amazon.",
+            "intro": "Storage bins are a simple home organization buy. These searches cover fabric bins, clear bins, and stackable options under $25.",
+            "quick_amz_label": "Shop storage bins on Amazon",
+            "quick_amz_query": "storage bins under $25",
+            "quick_internal_href": "/closet-organizer-under-50.html",
+            "quick_internal_label": "Closet organizers under $50",
+            "queries": [
+                ("storage bins under $25", "The core query."),
+                ("fabric storage bins under $25", "Fabric intent."),
+                ("clear storage bins under $25", "Clear bin intent."),
+                ("stackable storage bins under $25", "Stackable intent."),
+                ("storage bins for closet under $25", "Closet intent."),
+                ("best storage bins under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/closet-organizer-under-50.html", "Closet organizers under $50"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/laundry-hamper-under-25.html", "Laundry hampers under $25"),
+                ("/shoe-rack-under-50.html", "Shoe racks under $50"),
+            ],
+        },
+        {
+            "slug": "extension-cord-under-15.html",
+            "title": "Best Extension Cord Deals Under $15",
+            "description": "Extension cords under $15 for home and office. Click through to see live prices on Amazon.",
+            "intro": "Extension cords are evergreen add-ons. These searches cover length, flat plug designs, and indoor/outdoor use under $15.",
+            "quick_amz_label": "Shop extension cords on Amazon",
+            "quick_amz_query": "extension cord under $15",
+            "quick_internal_href": "/surge-protector-under-25.html",
+            "quick_internal_label": "Surge protectors under $25",
+            "queries": [
+                ("extension cord under $15", "The core query."),
+                ("extension cord 10 ft under $15", "Length intent."),
+                ("flat plug extension cord under $15", "Flat plug intent."),
+                ("indoor extension cord under $15", "Indoor intent."),
+                ("outdoor extension cord under $15", "Outdoor intent."),
+                ("best extension cord under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/surge-protector-under-25.html", "Surge protectors under $25"),
+                ("/smart-plug-under-25.html", "Smart plugs under $25"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/router-mesh-under-100.html", "Mesh Wi‑Fi under $100"),
+            ],
+        },
+        {
+            "slug": "laptop-stand-under-25.html",
+            "title": "Best Laptop Stand Deals Under $25",
+            "description": "Laptop stands under $25 for better posture and airflow. Click through to see live prices on Amazon.",
+            "intro": "Laptop stands are a straightforward desk upgrade. These searches cover adjustable stands, folding stands, and portable options under $25.",
+            "quick_amz_label": "Shop laptop stands on Amazon",
+            "quick_amz_query": "laptop stand under $25",
+            "quick_internal_href": "/portable-monitor-under-100.html",
+            "quick_internal_label": "Portable monitors under $100",
+            "queries": [
+                ("laptop stand under $25", "The core query."),
+                ("adjustable laptop stand under $25", "Adjustable intent."),
+                ("foldable laptop stand under $25", "Portable intent."),
+                ("laptop stand for macbook under $25", "Compatibility intent."),
+                ("laptop riser under $25", "Alternate wording."),
+                ("best laptop stand under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/portable-monitor-under-100.html", "Portable monitors under $100"),
+                ("/wireless-keyboard-under-50.html", "Wireless keyboards under $50"),
+                ("/wireless-mouse-under-25.html", "Wireless mice under $25"),
+                ("/surge-protector-under-25.html", "Surge protectors under $25"),
+            ],
+        },
+        {
+            "slug": "cable-management-under-15.html",
+            "title": "Best Cable Management Deals Under $15",
+            "description": "Cable management under $15 (clips, sleeves, ties). Click through to see live prices on Amazon.",
+            "intro": "Cable management products are cheap desk add-ons and convert well. These searches cover clips, Velcro ties, and under-desk trays under $15.",
+            "quick_amz_label": "Shop cable management on Amazon",
+            "quick_amz_query": "cable management under $15",
+            "quick_internal_href": "/surge-protector-under-25.html",
+            "quick_internal_label": "Surge protectors under $25",
+            "queries": [
+                ("cable management under $15", "The core query."),
+                ("cable clips under $15", "Clip intent."),
+                ("velcro cable ties under $15", "Tie intent."),
+                ("cable sleeve under $15", "Sleeve intent."),
+                ("under desk cable management under $15", "Under-desk intent."),
+                ("best cable management under $15", "Comparison searches."),
+            ],
+            "related": [
+                ("/electronics-deals.html", "Electronics deals hub"),
+                ("/surge-protector-under-25.html", "Surge protectors under $25"),
+                ("/usb-hub-under-25.html", "USB hubs under $25"),
+                ("/wireless-keyboard-under-50.html", "Wireless keyboards under $50"),
+                ("/mouse-pad-under-15.html", "Mouse pads under $15"),
+            ],
+        },
+        {
+            "slug": "doormat-under-25.html",
+            "title": "Best Doormat Deals Under $25",
+            "description": "Doormats under $25 to keep entryways clean. Click through to see live prices on Amazon.",
+            "intro": "Doormats are low-cost home essentials. These searches cover outdoor mats, non-slip backing, and easy-clean options under $25.",
+            "quick_amz_label": "Shop doormats on Amazon",
+            "quick_amz_query": "doormat under $25",
+            "quick_internal_href": "/home-under-50.html",
+            "quick_internal_label": "Home under $50",
+            "queries": [
+                ("doormat under $25", "The core query."),
+                ("outdoor doormat under $25", "Outdoor intent."),
+                ("non slip doormat under $25", "Non-slip intent."),
+                ("doormat for front door under $25", "Front door intent."),
+                ("washable doormat under $25", "Washable intent."),
+                ("best doormat under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/shoe-rack-under-50.html", "Shoe racks under $50"),
+                ("/storage-bins-under-25.html", "Storage bins under $25"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/trash-can-under-50.html", "Trash cans under $50"),
+            ],
+        },
+        {
+            "slug": "shower-curtain-under-25.html",
+            "title": "Best Shower Curtain Deals Under $25",
+            "description": "Shower curtains under $25 for bathrooms. Click through to see live prices on Amazon.",
+            "intro": "Shower curtains are common apartment and dorm buys. These searches cover waterproof liners, mildew resistance, and extra-long sizes under $25.",
+            "quick_amz_label": "Shop shower curtains on Amazon",
+            "quick_amz_query": "shower curtain under $25",
+            "quick_internal_href": "/shower-caddy-under-25.html",
+            "quick_internal_label": "Shower caddies under $25",
+            "queries": [
+                ("shower curtain under $25", "The core query."),
+                ("waterproof shower curtain under $25", "Waterproof intent."),
+                ("mildew resistant shower curtain under $25", "Mildew intent."),
+                ("extra long shower curtain under $25", "Size intent."),
+                ("shower curtain liner under $25", "Liner intent."),
+                ("best shower curtain under $25", "Comparison searches."),
+            ],
+            "related": [
+                ("/home-deals.html", "Home deals hub"),
+                ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+                ("/shower-head-under-50.html", "Shower heads under $50"),
+                ("/home-under-50.html", "Home under $50"),
+                ("/microfiber-cloths-under-15.html", "Microfiber cloths under $15"),
             ],
         },
     ]
