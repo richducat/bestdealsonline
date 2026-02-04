@@ -328,6 +328,72 @@ const CompactProductCard = ({ product }) => {
   )
 }
 
+const CategoryTiles = ({ onPick }) => {
+  const tiles = [
+    { key: 'Electronics', img: './images/categories/electronics.webp', blurb: 'Chargers, audio, smart home' },
+    { key: 'Home', img: './images/categories/home.webp', blurb: 'Sleep, organization, comfort' },
+    { key: 'Kitchen', img: './images/categories/kitchen.webp', blurb: 'Meal prep, appliances, coffee' },
+    { key: 'Tools', img: './images/categories/tools.webp', blurb: 'DIY essentials & kits' },
+    { key: 'Kids', img: './images/categories/kids.webp', blurb: 'School & toys' },
+    { key: 'Beauty', img: './images/categories/beauty.webp', blurb: 'Skincare & grooming' },
+    { key: 'Fitness', img: './images/categories/fitness.webp', blurb: 'Home gym basics' },
+    { key: 'Pets', img: './images/categories/pets.webp', blurb: 'Pet comfort & care' },
+  ]
+
+  return (
+    <div className="container mx-auto px-4 -mt-6 md:-mt-10 relative z-20">
+      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 md:p-6">
+        <div className="flex items-baseline justify-between mb-3">
+          <div className="font-extrabold text-slate-900 text-lg">Shop by category</div>
+          <div className="text-xs text-slate-500">Quick entry points (good for ads)</div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {tiles.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => onPick(t.key)}
+              className="group text-left rounded-xl overflow-hidden border border-slate-100 hover:shadow-md transition-all bg-white"
+            >
+              <div className="h-24 md:h-28 bg-slate-50">
+                <img src={t.img} alt={t.key} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" loading="lazy" />
+              </div>
+              <div className="p-3">
+                <div className="font-bold text-slate-800">{t.key}</div>
+                <div className="text-xs text-slate-500">{t.blurb}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const UnderBudget = ({ title, query }) => (
+  <a
+    href={amazonSearchLink(query, 'bdo_under_budget')}
+    target="_blank"
+    rel="nofollow noopener noreferrer"
+    className="bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex items-center justify-between"
+  >
+    <div>
+      <div className="font-extrabold text-slate-900">{title}</div>
+      <div className="text-xs text-slate-500">Click to see live prices on Amazon</div>
+    </div>
+    <ExternalLink size={18} className="text-slate-400" />
+  </a>
+)
+
+const UnderBudgetRow = () => (
+  <div className="container mx-auto px-4 pt-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <UnderBudget title="Under $25 finds" query="best deals under 25" />
+      <UnderBudget title="Under $50 upgrades" query="best deals under 50" />
+      <UnderBudget title="Under $100 big wins" query="best deals under 100" />
+    </div>
+  </div>
+)
+
 const TopPicks = ({ products }) => {
   const cats = ['Electronics', 'Home', 'Kitchen', 'Tools', 'Kids', 'Beauty', 'Fitness', 'Pets']
   const byCat = new Map(cats.map((c) => [c, []]))
@@ -474,7 +540,18 @@ const App = () => {
       <main className="flex-grow">
         <Hero apiStatus={apiStatus} />
 
-        {selectedCategory === 'All' && !searchQuery && <TopPicks products={products} />}
+        {selectedCategory === 'All' && !searchQuery && (
+          <>
+            <CategoryTiles
+              onPick={(cat) => {
+                setSelectedCategory(cat)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+            />
+            <UnderBudgetRow />
+            <TopPicks products={products} />
+          </>
+        )}
 
         <div className="bg-white border-b border-slate-200 sticky top-[60px] md:top-[74px] z-30 shadow-sm">
           <div className="container mx-auto px-4 py-3 flex flex-col md:flex-row gap-4 items-center justify-between">
