@@ -86,6 +86,15 @@ CATEGORY_RULES = {
             ("/gaming-headset-under-50.html", "Gaming headsets under $50"),
             ("/wireless-mouse-under-25.html", "Wireless mice under $25"),
             ("/phone-tripod-under-25.html", "Phone tripods under $25"),
+            ("/security-camera-under-50.html", "Security cameras under $50"),
+            ("/video-doorbell-under-100.html", "Video doorbells under $100"),
+            ("/surge-protector-under-25.html", "Surge protectors under $25"),
+            ("/usb-hub-under-25.html", "USB hubs under $25"),
+            ("/wireless-charger-under-25.html", "Wireless chargers under $25"),
+            ("/smart-speaker-under-50.html", "Smart speakers under $50"),
+            ("/router-mesh-under-100.html", "Mesh Wi‑Fi under $100"),
+            ("/wireless-keyboard-under-50.html", "Wireless keyboards under $50"),
+            ("/electric-toothbrush-under-25.html", "Electric toothbrushes under $25"),
         ],
     },
     "home": {
@@ -107,6 +116,15 @@ CATEGORY_RULES = {
             ("/desk-lamp-under-30.html", "Desk lamps under $30"),
             ("/heated-blanket-under-50.html", "Heated blankets under $50"),
             ("/dehumidifier-under-100.html", "Dehumidifiers under $100"),
+            ("/steam-mop-under-100.html", "Steam mops under $100"),
+            ("/space-heater-under-50.html", "Space heaters under $50"),
+            ("/air-purifier-filter-under-25.html", "Air purifier filters under $25"),
+            ("/mattress-protector-under-25.html", "Mattress protectors under $25"),
+            ("/pillow-under-25.html", "Pillows under $25"),
+            ("/closet-organizer-under-50.html", "Closet organizers under $50"),
+            ("/shower-caddy-under-25.html", "Shower caddies under $25"),
+            ("/laundry-hamper-under-25.html", "Laundry hampers under $25"),
+            ("/shoe-rack-under-50.html", "Shoe racks under $50"),
         ],
     },
     "fitness": {
@@ -223,9 +241,9 @@ def detect_category(filename: str) -> str:
     # simple keyword rules
     if any(k in f for k in ["air-fryer", "blender", "coffee-maker", "rice-cooker", "nonstick-cookware", "meal-prep", "bento", "electric-kettle", "toaster-oven", "immersion-blender", "food-scale", "air-fryer-liners"]):
         return "kitchen"
-    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-", "dash-cam", "projector", "portable-monitor", "gaming-headset", "wireless-mouse", "phone-tripod"]):
+    if any(k in f for k in ["wireless-earbuds", "headphones", "wifi-router", "webcam", "mechanical-keyboard", "power-bank", "usb-c-charger", "bluetooth-speaker", "gaming-mouse", "usb-microphone", "smart-plug", "electronics-", "dash-cam", "projector", "portable-monitor", "gaming-headset", "wireless-mouse", "phone-tripod", "security-camera", "video-doorbell", "surge-protector", "usb-hub", "wireless-charger", "smart-speaker", "router-mesh", "wireless-keyboard", "electric-toothbrush-under-25"]):
         return "electronics"
-    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-", "heated-blanket", "dehumidifier"]):
+    if any(k in f for k in ["air-purifier", "humidifier", "blackout-curtains", "bed-sheet", "bed-sheets", "shower-head", "led-floor-lamp", "storage-ottoman", "stick-vacuum", "mattress-topper", "desk-lamp", "home-", "heated-blanket", "dehumidifier", "steam-mop", "space-heater", "air-purifier-filter", "mattress-protector", "pillow-under-25", "closet-organizer", "shower-caddy", "laundry-hamper", "shoe-rack"]):
         return "home"
     if any(k in f for k in ["dumbbells", "kettlebell", "pull-up", "resistance-bands", "foam-roller", "yoga-mat", "fitness-tracker", "massage-gun", "ab-roller", "fitness-"]):
         return "fitness"
