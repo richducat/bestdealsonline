@@ -90,6 +90,19 @@ const SEED_PRODUCTS = [
 
 const CATEGORIES = ['All', 'Electronics', 'Home', 'Kitchen', 'Tools', 'Kids', 'Beauty', 'Fitness', 'Pets']
 
+const CATEGORY_IMAGE_MAP = {
+  Electronics: '/images/categories/electronics.webp',
+  Home: '/images/categories/home.webp',
+  Kitchen: '/images/categories/kitchen.webp',
+  Tools: '/images/categories/tools.webp',
+  Kids: '/images/categories/kids.webp',
+  Beauty: '/images/categories/beauty.webp',
+  Fitness: '/images/categories/fitness.webp',
+  Pets: '/images/categories/pets.webp',
+}
+
+const getCategoryImage = (category) => CATEGORY_IMAGE_MAP[category] || '/images/categories/home.webp'
+
 const SORT_OPTIONS = [
   { label: 'Recommended', value: 'recommended' },
   { label: 'Top Rated', value: 'rating_desc' },
@@ -234,10 +247,20 @@ const ProductCard = ({ product }) => {
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.title} className="max-h-40 object-contain" loading="lazy" />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-500">
-            <Icon size={64} strokeWidth={1.5} className="text-slate-400 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500" />
-            <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400">{product.category}</div>
-            <div className="text-[10px] text-slate-400">(Images require Amazon PA-API)</div>
+          <div className="w-full h-full relative overflow-hidden rounded-xl">
+            <img
+              src={getCategoryImage(product.category)}
+              alt={`${product.category} lifestyle`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/10 to-transparent" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white">
+              <Icon size={64} strokeWidth={1.5} className="text-white/90 drop-shadow" />
+              <div className="text-[11px] font-bold uppercase tracking-widest text-white/90 drop-shadow">
+                {product.category}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -339,11 +362,16 @@ const CompactProductCard = ({ product }) => {
         </div>
         <ExternalLink size={14} className="text-slate-400" />
       </div>
-      <div className="h-20 rounded-lg bg-gradient-to-b from-gray-50 to-white border border-slate-100 flex items-center justify-center">
+      <div className="h-20 rounded-lg bg-gradient-to-b from-gray-50 to-white border border-slate-100 overflow-hidden flex items-center justify-center">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.title} className="max-h-16 object-contain" loading="lazy" />
         ) : (
-          <Icon size={34} className="text-slate-400" />
+          <img
+            src={getCategoryImage(product.category)}
+            alt={`${product.category} lifestyle`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
         )}
       </div>
       <div className="font-bold text-slate-800 text-sm line-clamp-2">{product.title}</div>
