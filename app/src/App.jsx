@@ -823,7 +823,7 @@ const App = () => {
 
         <JumpBar />
 
-        <div className="mt-3">
+        <div className="mt-10">
           <DealLens />
         </div>
 
