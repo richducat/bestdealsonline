@@ -322,8 +322,16 @@ const DealLens = () => {
   const base = (q || '').trim()
   const query = base.length ? base : 'deals'
 
-  const linkFor = (label, queryText, campaign) => {
-    const href = amazonSearchLink(queryText, campaign)
+  const amazonCouponsLink = (searchText, campaign) => {
+    const q = encodeURIComponent(searchText)
+    // Amazon coupon hub supports in-page search via searchText.
+    // We still include our affiliate tag in case it's honored on downstream clicks.
+    return `https://www.amazon.com/coupons?searchText=${q}&tag=${AMAZON_TAG}&utm_source=bestdealsonline&utm_medium=site&utm_campaign=${encodeURIComponent(
+      campaign
+    )}`
+  }
+
+  const linkFor = (label, href, campaign) => {
     return (
       <a
         href={href}
@@ -367,9 +375,9 @@ const DealLens = () => {
           </div>
 
           <div className="flex flex-wrap gap-2 justify-start lg:justify-end">
-            {linkFor('Coupon deals', `${query} coupon`, 'deal_lens_coupon')}
-            {linkFor('Clip coupons', `clip coupon ${query}`, 'deal_lens_clip')}
-            {linkFor('Today\'s deals', `${query} deals today`, 'deal_lens_today')}
+            {linkFor('Coupons hub', amazonCouponsLink(query, 'deal_lens_coupons_hub'), 'deal_lens_coupons_hub')}
+            {linkFor('Search coupons', amazonCouponsLink(`${query}`, 'deal_lens_coupons_search'), 'deal_lens_coupons_search')}
+            {linkFor("Today's deals", amazonSearchLink(`${query} deals today`, 'deal_lens_today'), 'deal_lens_today')}
           </div>
         </div>
       </div>
