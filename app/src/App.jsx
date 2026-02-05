@@ -376,7 +376,8 @@ const DealLens = () => {
 
           <div className="flex flex-wrap gap-2 justify-start lg:justify-end">
             {linkFor('Coupons hub', amazonCouponsLink(query, 'deal_lens_coupons_hub'), 'deal_lens_coupons_hub')}
-            {linkFor('Search coupons', amazonCouponsLink(`${query}`, 'deal_lens_coupons_search'), 'deal_lens_coupons_search')}
+            {linkFor('Coupon-eligible', amazonCouponsLink(`${query} coupon`, 'deal_lens_coupon_eligible'), 'deal_lens_coupon_eligible')}
+            {linkFor('Subscribe & Save', amazonSearchLink(`${query} subscribe and save`, 'deal_lens_sns'), 'deal_lens_sns')}
             {linkFor("Today's deals", amazonSearchLink(`${query} deals today`, 'deal_lens_today'), 'deal_lens_today')}
           </div>
         </div>
