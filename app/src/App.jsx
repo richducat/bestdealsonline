@@ -209,12 +209,11 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
         </div>
 
         <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-center gap-4 md:gap-6 text-sm font-medium w-full md:w-auto mt-4 md:mt-0`}>
-          <a href="/drummer-deals.html" className="hover:text-yellow-400 transition-colors flex items-center gap-1">
-            <ArrowUpRight size={16} className="text-yellow-400" /> Drummer Deals
-          </a>
-          <button className="flex items-center gap-2 hover:text-yellow-400 transition-colors">
-            <Heart size={18} /> <span className="md:inline">Saved</span>
-          </button>
+          <a href="/" className="hover:text-yellow-400 transition-colors">Home</a>
+          <a href="#categories" className="hover:text-yellow-400 transition-colors">Categories</a>
+          <a href="/blog/index.html" className="hover:text-yellow-400 transition-colors">Blog</a>
+          <a href="/best-deals-online-today.html" className="hover:text-yellow-400 transition-colors">Today</a>
+          <a href="/drummer-deals.html" className="hover:text-yellow-400 transition-colors">Drummer Deals</a>
         </div>
       </div>
     </div>
@@ -563,6 +562,7 @@ const JumpBar = () => (
       <a href="#budget" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
       <a href="#top-picks" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
       <a href="#trending" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
+      <a href="/blog/index.html" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Blog</a>
     </div>
   </div>
 )
