@@ -285,7 +285,44 @@ def detect_category(filename: str) -> str:
     return "home"
 
 
-def build_related_section(category: str, filename: str) -> str:
+def build_ladder_section(filename: str, existing: set[str]) -> str:
+    """Build a budget ladder for pages like xxx-under-25.html."""
+    m = re.match(r"^(?P<base>.+)-under-(?P<price>\d+)\.html$", filename)
+    if not m:
+        return ""
+
+    base = m.group("base")
+    price = int(m.group("price"))
+
+    ladder_points = [15, 20, 25, 30, 50, 75, 100]
+
+    links = []
+    for p in ladder_points:
+        slug = f"{base}-under-{p}.html"
+        if slug not in existing:
+            continue
+        label = f"Under ${p}"
+        href = f"/{slug}"
+        cls = "px-3 py-1.5 rounded-full border text-sm font-semibold "
+        if p == price:
+            cls += "border-slate-900 bg-slate-900 text-white"
+        else:
+            cls += "border-slate-200 bg-white hover:bg-slate-50 text-slate-700"
+        links.append(f"<a class='{cls}' href='{href}'>{label}</a>")
+
+    if len(links) < 2:
+        return ""
+
+    return (
+        "<section class='mt-10'>\n"
+        "<div class='text-xs font-extrabold uppercase tracking-[0.25em] text-slate-500 mb-2'>Budget ladder</div>\n"
+        "<div class='flex flex-wrap gap-2'>\n"
+        + "\n".join(links)
+        + "\n</div></section>"
+    )
+
+
+def build_related_section(category: str, filename: str, existing: set[str]) -> str:
     rules = CATEGORY_RULES[category]
     hub_href, hub_label = rules["hub"]
     candidates = [rules["hub"]] + rules["core"]
@@ -311,7 +348,9 @@ def build_related_section(category: str, filename: str) -> str:
         ]
     )
 
-    return (
+    ladder = build_ladder_section(filename, existing)
+
+    related = (
         "<section class='mt-12'>\n"
         "<h2 class='text-xl font-extrabold mb-3'>Related pages</h2>\n"
         "<div class='flex flex-wrap gap-2 text-sm'>\n"
@@ -319,10 +358,13 @@ def build_related_section(category: str, filename: str) -> str:
         "</div></section>"
     )
 
+    return (ladder + "\n" + related) if ladder else related
+
 
 def main():
     root = Path(__file__).resolve().parents[1]
     html_files = sorted([p for p in root.glob("*.html") if p.name != "index.html"])
+    existing = set(p.name for p in html_files)
 
     for p in html_files:
         s = p.read_text(encoding="utf-8")
@@ -337,7 +379,7 @@ def main():
 
         # related section
         cat = detect_category(p.name)
-        rel = build_related_section(cat, p.name)
+        rel = build_related_section(cat, p.name, existing)
         # replace existing related section (first occurrence)
         s2 = re.sub(r"<section class='mt-12'>.*?</section>", rel, s2, count=1, flags=re.S)
 
