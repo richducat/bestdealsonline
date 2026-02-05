@@ -1,4 +1,30 @@
 import React, { useEffect, useMemo, useState } from 'react'
+
+function pickDailyProduct(products) {
+  const items = Array.isArray(products) ? products.filter((p) => p && p.affiliateLink) : []
+  if (!items.length) return null
+
+  // Stable per-day selection.
+  const d = new Date()
+  const seed = Number(String(d.getFullYear()) + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'))
+  const idx = seed % items.length
+  return items[idx]
+}
+
+function msUntilNextMidnight() {
+  const now = new Date()
+  const next = new Date(now)
+  next.setHours(24, 0, 0, 0)
+  return Math.max(0, next.getTime() - now.getTime())
+}
+
+function formatCountdown(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000))
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
 import {
   Search,
   ShoppingBag,
@@ -195,35 +221,91 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
   </nav>
 )
 
-const Hero = ({ apiStatus }) => (
-  <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 text-white py-10 md:py-16 relative overflow-hidden">
-    <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
-      <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
-        <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/50 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-6 backdrop-blur-sm">
-          <Clock size={12} /> <span>Updated: {new Date().toLocaleDateString()}</span>
-        </div>
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight tracking-tight">
-          General Amazon deals.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-            Fast picks across categories.
-          </span>
-        </h1>
-        <p className="text-blue-100 text-lg mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
-          Curated picks across categories. Click through to see live pricing on Amazon.
-        </p>
-      </div>
+const Hero = ({ apiStatus, products }) => {
+  const deal = useMemo(() => pickDailyProduct(products), [products])
+  const [msLeft, setMsLeft] = useState(msUntilNextMidnight())
 
-      <div className="md:w-1/2 flex justify-center relative">
-        <div className="relative w-72 h-72 md:w-96 md:h-96 bg-gradient-to-tr from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700 group cursor-pointer">
-          <ShoppingBag
-            size={140}
-            className="text-yellow-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500"
-          />
+  useEffect(() => {
+    const t = setInterval(() => setMsLeft(msUntilNextMidnight()), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 text-white py-10 md:py-16 relative overflow-hidden">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+        <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/50 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-6 backdrop-blur-sm">
+            <Clock size={12} /> <span>Updated: {new Date().toLocaleDateString()}</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight tracking-tight">
+            General Amazon deals.<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
+              Fast picks across categories.
+            </span>
+          </h1>
+          <p className="text-blue-100 text-lg mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
+            Curated picks across categories. Click through to see live pricing on Amazon.
+          </p>
+
+          {deal ? (
+            <div className="mt-6 bg-white/10 border border-white/15 rounded-2xl p-4 md:p-5 backdrop-blur-sm" data-section="deal_of_day">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-xs font-extrabold uppercase tracking-[0.25em] text-yellow-300">Deal of the day</div>
+                <div className="text-xs text-blue-100">Resets in</div>
+              </div>
+              <div className="flex items-end justify-between gap-4 mt-2">
+                <div className="text-lg md:text-2xl font-extrabold leading-tight">{deal.title}</div>
+                <div className="font-mono text-lg md:text-2xl font-extrabold text-yellow-200">{formatCountdown(msLeft)}</div>
+              </div>
+              <div className="flex gap-3 mt-4 items-center">
+                <div className="w-20 h-14 rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                  <img
+                    src={deal.imageUrl || getCategoryImage(deal.category)}
+                    alt={deal.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <a
+                  href={deal.affiliateLink}
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                  onClick={() =>
+                    trackOutboundClick({
+                      url: deal.affiliateLink,
+                      label: `Deal of day: ${deal.title}`,
+                      category: deal.category || 'outbound',
+                      section: 'deal_of_day',
+                      productId: deal.id,
+                      productTitle: deal.title,
+                      position: 0,
+                      campaign: 'deal_of_day',
+                    })
+                  }
+                  className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-extrabold px-4 py-2.5 rounded-xl transition-colors shadow-sm hover:shadow-md"
+                >
+                  Check price on Amazon <ExternalLink size={16} className="ml-2" />
+                </a>
+              </div>
+              <div className="text-[11px] text-blue-100/80 mt-3">
+                Tip: this is a rotating featured pick. Always check live pricing and recent reviews on Amazon.
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="md:w-1/2 flex justify-center relative">
+          <div className="relative w-72 h-72 md:w-96 md:h-96 bg-gradient-to-tr from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700 group cursor-pointer">
+            <ShoppingBag
+              size={140}
+              className="text-yellow-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500"
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 const ProductCard = ({ product, tracking }) => {
   const [copied, setCopied] = useState(false)
@@ -667,7 +749,7 @@ const App = () => {
       <Navbar onSearch={setSearchQuery} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
       <main className="flex-grow">
-        <Hero apiStatus={apiStatus} />
+        <Hero apiStatus={apiStatus} products={products} />
 
         <JumpBar />
 
