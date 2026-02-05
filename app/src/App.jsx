@@ -316,6 +316,67 @@ const Hero = ({ apiStatus, products }) => {
   )
 }
 
+const DealLens = () => {
+  const [q, setQ] = useState('')
+
+  const base = (q || '').trim()
+  const query = base.length ? base : 'deals'
+
+  const linkFor = (label, queryText, campaign) => {
+    const href = amazonSearchLink(queryText, campaign)
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+        onClick={() =>
+          trackOutboundClick({
+            url: href,
+            label,
+            category: 'coupons',
+            section: 'deal_lens',
+            campaign,
+          })
+        }
+        className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-colors"
+      >
+        {label} <ExternalLink size={14} className="ml-2" />
+      </a>
+    )
+  }
+
+  return (
+    <div className="bg-white border-y border-slate-200" data-section="deal_lens">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-6">
+          <div className="flex-1">
+            <div className="text-xs font-extrabold uppercase tracking-[0.25em] text-slate-500">Deal Lens</div>
+            <div className="text-lg font-extrabold text-slate-900 mt-1">Coupons + hidden discounts (fast)</div>
+            <div className="text-sm text-slate-600 mt-1">Type what you want and open Amazon in “coupon mode”.</div>
+          </div>
+
+          <div className="flex-1">
+            <label className="block text-xs font-bold text-slate-600 mb-2" htmlFor="deal-lens-q">Search</label>
+            <input
+              id="deal-lens-q"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="e.g., USB-C charger, air fryer, kids headphones"
+              className="w-full py-3 px-4 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2 justify-start lg:justify-end">
+            {linkFor('Coupon deals', `${query} coupon`, 'deal_lens_coupon')}
+            {linkFor('Clip coupons', `clip coupon ${query}`, 'deal_lens_clip')}
+            {linkFor('Today\'s deals', `${query} deals today`, 'deal_lens_today')}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ProductCard = ({ product, tracking }) => {
   const [copied, setCopied] = useState(false)
   const Icon = getIcon(product.iconName)
@@ -761,6 +822,8 @@ const App = () => {
         <Hero apiStatus={apiStatus} products={products} />
 
         <JumpBar />
+
+        <DealLens />
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
