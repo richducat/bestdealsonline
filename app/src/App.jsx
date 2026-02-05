@@ -823,7 +823,9 @@ const App = () => {
 
         <JumpBar />
 
-        <DealLens />
+        <div className="mt-3">
+          <DealLens />
+        </div>
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
