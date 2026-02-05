@@ -40,13 +40,18 @@ const AMAZON_TAG = 'bestdeals0ad2-20'
 // Later, we can swap this to a Worker-backed PA-API endpoint for live prices.
 const PRODUCTS_JSON_URL = './data/products.json'
 
-function trackOutboundClick({ url, label, category }) {
+function trackOutboundClick({ url, label, category, section, productId, productTitle, position, campaign }) {
   try {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       window.gtag('event', 'outbound_click', {
         event_category: category || 'outbound',
-        event_label: label || url,
+        event_label: label || productTitle || url,
         link_url: url,
+        section: section || undefined,
+        product_id: productId || undefined,
+        product_title: productTitle || undefined,
+        position: typeof position === 'number' ? position : undefined,
+        campaign: campaign || undefined,
         transport_type: 'beacon',
       })
     }
@@ -220,7 +225,7 @@ const Hero = ({ apiStatus }) => (
   </div>
 )
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, tracking }) => {
   const [copied, setCopied] = useState(false)
   const Icon = getIcon(product.iconName)
 
@@ -327,6 +332,11 @@ const ProductCard = ({ product }) => {
                   url: product.affiliateLink,
                   label: product.title,
                   category: product.category || 'outbound',
+                  section: tracking?.section,
+                  productId: product.id,
+                  productTitle: product.title,
+                  position: tracking?.position,
+                  campaign: tracking?.campaign,
                 })
               }
               className="block w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 text-center font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
@@ -340,7 +350,7 @@ const ProductCard = ({ product }) => {
   )
 }
 
-const CompactProductCard = ({ product }) => {
+const CompactProductCard = ({ product, tracking }) => {
   const Icon = getIcon(product.iconName)
   return (
     <a
@@ -352,6 +362,11 @@ const CompactProductCard = ({ product }) => {
           url: product.affiliateLink,
           label: product.title,
           category: product.category || 'outbound',
+          section: tracking?.section,
+          productId: product.id,
+          productTitle: product.title,
+          position: tracking?.position,
+          campaign: tracking?.campaign,
         })
       }
       className="min-w-[240px] max-w-[240px] bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex flex-col gap-2"
@@ -462,6 +477,8 @@ const UnderBudget = ({ title, query }) => (
         url: amazonSearchLink(query, 'bdo_under_budget'),
         label: title,
         category: 'budget',
+        section: 'homepage_budget',
+        campaign: 'bdo_under_budget',
       })
     }
     className="bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all p-4 flex items-center justify-between"
@@ -512,8 +529,16 @@ const TopPicks = ({ products }) => {
               <div className="text-xs text-slate-500">Top {byCat.get(cat).length}</div>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
-              {byCat.get(cat).map((p) => (
-                <CompactProductCard key={p.id} product={p} />
+              {byCat.get(cat).map((p, i) => (
+                <CompactProductCard
+                  key={p.id}
+                  product={p}
+                  tracking={{
+                    section: `top_picks_${cat.toLowerCase()}`,
+                    position: i,
+                    campaign: `top_picks_${cat.toLowerCase()}`,
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -716,8 +741,16 @@ const App = () => {
 
           {processedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {processedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {processedProducts.map((product, i) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  tracking={{
+                    section: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
+                    position: i,
+                    campaign: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
+                  }}
+                />
               ))}
             </div>
           ) : (
