@@ -246,19 +246,23 @@ const Hero = ({ apiStatus, products }) => {
           <p className="text-blue-100 text-lg mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
             Curated picks across categories. Click through to see live pricing on Amazon.
           </p>
+        </div>
 
+        <div className="md:w-1/2 flex justify-center relative">
           {deal ? (
-            <div className="mt-6 bg-white/10 border border-white/15 rounded-2xl p-4 md:p-5 backdrop-blur-sm" data-section="deal_of_day">
+            <div className="relative w-72 md:w-96 bg-gradient-to-tr from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-6 md:p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700" data-section="deal_of_day">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-xs font-extrabold uppercase tracking-[0.25em] text-yellow-300">Deal of the day</div>
                 <div className="text-xs text-blue-100">Resets in</div>
               </div>
-              <div className="flex items-end justify-between gap-4 mt-2">
-                <div className="text-lg md:text-2xl font-extrabold leading-tight">{deal.title}</div>
-                <div className="font-mono text-lg md:text-2xl font-extrabold text-yellow-200">{formatCountdown(msLeft)}</div>
+
+              <div className="mt-3">
+                <div className="font-mono text-2xl md:text-3xl font-extrabold text-yellow-200">{formatCountdown(msLeft)}</div>
+                <div className="text-sm text-blue-100/90 mt-1">24-hour countdown</div>
               </div>
-              <div className="flex gap-3 mt-4 items-center">
-                <div className="w-20 h-14 rounded-xl overflow-hidden border border-white/10 bg-white/5">
+
+              <div className="mt-5 flex items-center gap-4">
+                <div className="w-24 h-20 md:w-28 md:h-24 rounded-2xl overflow-hidden border border-white/10 bg-white/5">
                   <img
                     src={deal.imageUrl || getCategoryImage(deal.category)}
                     alt={deal.title}
@@ -266,41 +270,46 @@ const Hero = ({ apiStatus, products }) => {
                     loading="lazy"
                   />
                 </div>
-                <a
-                  href={deal.affiliateLink}
-                  target="_blank"
-                  rel="nofollow noopener noreferrer"
-                  onClick={() =>
-                    trackOutboundClick({
-                      url: deal.affiliateLink,
-                      label: `Deal of day: ${deal.title}`,
-                      category: deal.category || 'outbound',
-                      section: 'deal_of_day',
-                      productId: deal.id,
-                      productTitle: deal.title,
-                      position: 0,
-                      campaign: 'deal_of_day',
-                    })
-                  }
-                  className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-extrabold px-4 py-2.5 rounded-xl transition-colors shadow-sm hover:shadow-md"
-                >
-                  Check price on Amazon <ExternalLink size={16} className="ml-2" />
-                </a>
+                <div className="flex-1 min-w-0 text-left">
+                  <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-100/80">{deal.category || 'Amazon'}</div>
+                  <div className="text-lg md:text-xl font-extrabold leading-tight mt-1 line-clamp-2">{deal.title}</div>
+                  {deal.description ? <div className="text-xs text-blue-100/80 mt-2 line-clamp-2">{deal.description}</div> : null}
+                </div>
               </div>
+
+              <a
+                href={deal.affiliateLink}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                onClick={() =>
+                  trackOutboundClick({
+                    url: deal.affiliateLink,
+                    label: `Deal of day: ${deal.title}`,
+                    category: deal.category || 'outbound',
+                    section: 'deal_of_day',
+                    productId: deal.id,
+                    productTitle: deal.title,
+                    position: 0,
+                    campaign: 'deal_of_day',
+                  })
+                }
+                className="mt-6 w-full inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-extrabold px-4 py-3 rounded-2xl transition-colors shadow-sm hover:shadow-md"
+              >
+                Check price on Amazon <ExternalLink size={16} className="ml-2" />
+              </a>
+
               <div className="text-[11px] text-blue-100/80 mt-3">
-                Tip: this is a rotating featured pick. Always check live pricing and recent reviews on Amazon.
+                Rotates daily. Always check live pricing + recent reviews on Amazon.
               </div>
             </div>
-          ) : null}
-        </div>
-
-        <div className="md:w-1/2 flex justify-center relative">
-          <div className="relative w-72 h-72 md:w-96 md:h-96 bg-gradient-to-tr from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700 group cursor-pointer">
-            <ShoppingBag
-              size={140}
-              className="text-yellow-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500"
-            />
-          </div>
+          ) : (
+            <div className="relative w-72 h-72 md:w-96 md:h-96 bg-gradient-to-tr from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700 group cursor-pointer">
+              <ShoppingBag
+                size={140}
+                className="text-yellow-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
