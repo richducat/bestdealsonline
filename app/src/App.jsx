@@ -509,7 +509,7 @@ const CategoryTiles = ({ onPick }) => {
   ]
 
   return (
-    <div className="container mx-auto px-4 mt-6 md:-mt-10 relative z-20">
+    <div className="container mx-auto px-4 mt-16 md:-mt-10 relative z-20">
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse categories</h2>
@@ -764,7 +764,7 @@ const App = () => {
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
-            <div id="categories" />
+            <div id="categories" className="scroll-mt-32" />
             <CategoryTiles
               onPick={(cat) => {
                 setSelectedCategory(cat)
