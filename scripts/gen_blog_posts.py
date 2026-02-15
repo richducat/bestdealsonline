@@ -465,6 +465,72 @@ def main():
 </ul>"""),
             ],
         },
+        {
+            "title": "Cast Iron Skillets: What Reviewers Say About Weight, Seasoning, and Heat Retention",
+            "description": "A neutral, review-informed guide to cast iron skillets: what buyers like, common complaints, and what features matter most.",
+            "category": "Kitchen",
+            "amz_queries": [
+                ("Cast iron skillet", "cast iron skillet"),
+                ("Pre-seasoned cast iron skillet", "pre seasoned cast iron skillet"),
+                ("Cast iron skillet 10 inch", "cast iron skillet 10 inch"),
+            ],
+            "internal": [
+                ("/kitchen-deals.html", "Kitchen hub"),
+                ("/cast-iron-skillet-under-50.html", "Cast iron skillets under $50"),
+                ("/cast-iron-skillet-under-100.html", "Cast iron skillets under $100"),
+                ("/knife-sharpener-under-30.html", "Knife sharpeners under $30"),
+            ],
+            "sections": [
+                ("What reviewers consistently like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Heat retention and even browning for searing and baking.</li>
+<li class='mt-2 text-slate-700'>Long lifespan when properly seasoned and dried.</li>
+<li class='mt-2 text-slate-700'>Versatility: stovetop, oven, and even grill use.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Weight: some buyers find lifting or flipping foods difficult.</li>
+<li class='mt-2 text-slate-700'>Seasoning upkeep and rust if left wet.</li>
+<li class='mt-2 text-slate-700'>Inconsistent factory seasoning on budget pans.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Size: 10–12 inch is the most common all-purpose range.</li>
+<li class='mt-2 text-slate-700'>Handle length and helper handle for easier lifting.</li>
+<li class='mt-2 text-slate-700'>Pre-seasoned vs. raw (most buyers prefer pre-seasoned).</li>
+</ul>"""),
+            ],
+        },
+        {
+            "title": "Toddler Toys: What Parents Mention Most (Durability, Mess, Age Fit)",
+            "description": "A neutral, review-informed guide to toddler toys based on common buyer feedback: durability, cleanup, and age-appropriate difficulty.",
+            "category": "Kids",
+            "amz_queries": [
+                ("Toddler toys", "toddler toys"),
+                ("Toddler learning toys", "toddler learning toys"),
+                ("Montessori toys for toddlers", "montessori toys for toddlers"),
+            ],
+            "internal": [
+                ("/kids-deals.html", "Kids hub"),
+                ("/toddler-toys-under-50.html", "Toddler toys under $50"),
+                ("/toddler-toys-under-25.html", "Toddler toys under $25"),
+                ("/learning-toys-under-25.html", "Learning toys under $25"),
+            ],
+            "sections": [
+                ("What parents like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Durable builds that survive drops and rough play.</li>
+<li class='mt-2 text-slate-700'>Open-ended play value (stacking, sorting, pretend play).</li>
+<li class='mt-2 text-slate-700'>Easy cleanup with minimal tiny parts.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Pieces that are too small or easy to lose.</li>
+<li class='mt-2 text-slate-700'>Toys that are too advanced for the stated age range.</li>
+<li class='mt-2 text-slate-700'>Batteries or noise levels that parents regret.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Age range: aim for the middle of your child’s age band.</li>
+<li class='mt-2 text-slate-700'>Material: solid wood or thick plastic tends to last longer.</li>
+<li class='mt-2 text-slate-700'>Storage: bins or bags help keep parts together.</li>
+</ul>"""),
+            ],
+        },
     ]
 
     for post in posts:
