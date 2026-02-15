@@ -401,6 +401,70 @@ def main():
 </ul>"""),
             ],
         },
+        {
+            "title": "Portable SSDs vs External Hard Drives: What Buyers Say About Speed, Size, and Value",
+            "description": "A neutral, review-informed comparison of portable SSDs and external hard drives under $100: speed, durability, and where each makes sense.",
+            "category": "Electronics",
+            "amz_queries": [
+                ("Portable SSD deals", "portable ssd"),
+                ("External hard drive 1TB", "external hard drive 1tb"),
+                ("USB-C external SSD", "usb c external ssd"),
+            ],
+            "internal": [
+                ("/electronics-deals.html", "Electronics hub"),
+                ("/portable-ssd-under-100.html", "Portable SSDs under $100"),
+                ("/external-hard-drive-under-75.html", "External hard drives under $75"),
+                ("/electronics-under-100.html", "Electronics under $100"),
+            ],
+            "sections": [
+                ("What SSD buyers consistently like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Faster file transfers, especially for large photo/video libraries.</li>
+<li class='mt-2 text-slate-700'>Smaller, lighter builds that are easier to toss in a bag.</li>
+<li class='mt-2 text-slate-700'>Better drop resistance due to no moving parts.</li>
+</ul>"""),
+                ("What hard drive buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>More storage per dollar, especially at higher capacities.</li>
+<li class='mt-2 text-slate-700'>Simple plug-and-play use for backups and archives.</li>
+</ul>"""),
+                ("Quick decision guide", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Pick an SSD for speed, travel, and day-to-day active files.</li>
+<li class='mt-2 text-slate-700'>Pick an HDD for budget-friendly bulk storage and backups.</li>
+<li class='mt-2 text-slate-700'>Check cable type (USB-C vs USB-A) and included adapters.</li>
+</ul>"""),
+            ],
+        },
+        {
+            "title": "Kids Lunch Boxes and Bento Sets: What Reviewers Mention Most (Leaks, Size, Insulation)",
+            "description": "A neutral, review-informed guide to kids lunch boxes and bento sets: what parents like, common complaints, and simple feature checks.",
+            "category": "Kids",
+            "amz_queries": [
+                ("Kids lunch box", "kids lunch box"),
+                ("Insulated kids lunch box", "insulated kids lunch box"),
+                ("Bento lunch box for kids", "bento lunch box for kids"),
+            ],
+            "internal": [
+                ("/kids-deals.html", "Kids hub"),
+                ("/kids-lunch-box-under-25.html", "Kids lunch boxes under $25"),
+                ("/bento-lunch-box-under-25.html", "Bento lunch boxes under $25"),
+                ("/kids-backpack-under-30.html", "Kids backpacks under $30"),
+            ],
+            "sections": [
+                ("What buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Insulation that keeps food cool until lunchtime.</li>
+<li class='mt-2 text-slate-700'>Easy-to-clean liners and containers.</li>
+<li class='mt-2 text-slate-700'>Sizes that fit standard backpacks without being bulky.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Leaky seals on bento boxes when carried sideways.</li>
+<li class='mt-2 text-slate-700'>Zippers or handles that wear out with daily use.</li>
+</ul>"""),
+                ("Simple checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Leak resistance (especially for sauces or fruit).</li>
+<li class='mt-2 text-slate-700'>Insulation thickness vs. available bag space.</li>
+<li class='mt-2 text-slate-700'>Dishwasher-safe components where possible.</li>
+</ul>"""),
+            ],
+        },
     ]
 
     for post in posts:
