@@ -531,6 +531,72 @@ def main():
 </ul>"""),
             ],
         },
+        {
+            "title": "GaN Chargers: What Buyers Like, What Bugs Them, and How to Choose",
+            "description": "A neutral, review-informed guide to GaN chargers: common pros/cons, heat concerns, and how to match wattage to your devices.",
+            "category": "Electronics",
+            "amz_queries": [
+                ("GaN charger deals", "gan charger"),
+                ("GaN charger 65W", "gan charger 65w"),
+                ("GaN charger 100W", "gan charger 100w"),
+            ],
+            "internal": [
+                ("/electronics-deals.html", "Electronics hub"),
+                ("/gan-charger-under-50.html", "GaN chargers under $50"),
+                ("/gan-charger-under-100.html", "GaN chargers under $100"),
+                ("/usb-c-charger-under-50.html", "USB-C chargers under $50"),
+            ],
+            "sections": [
+                ("Why buyers like GaN chargers", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Smaller size for the same wattage compared to older bricks.</li>
+<li class='mt-2 text-slate-700'>Multi-port models that power a laptop + phone at once.</li>
+<li class='mt-2 text-slate-700'>Travel-friendly designs with foldable prongs.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Heat under heavy load, especially at 100W+.</li>
+<li class='mt-2 text-slate-700'>Power sharing: total wattage is split across ports.</li>
+<li class='mt-2 text-slate-700'>Cable confusion (USB-C to USB-C required for full speed).</li>
+</ul>"""),
+                ("Quick pick checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Match wattage to your laptop/phone requirements.</li>
+<li class='mt-2 text-slate-700'>Look for PD and PPS support if your devices need it.</li>
+<li class='mt-2 text-slate-700'>Check port layout so larger plugs don’t block neighbors.</li>
+</ul>"""),
+            ],
+        },
+        {
+            "title": "Digital Meat Thermometers: What Reviewers Mention Most (Speed, Accuracy, Durability)",
+            "description": "A neutral, review-informed guide to digital meat thermometers: response time, accuracy tips, and common pain points from buyers.",
+            "category": "Kitchen",
+            "amz_queries": [
+                ("Digital meat thermometer", "digital meat thermometer"),
+                ("Instant read thermometer", "instant read thermometer"),
+                ("Meat thermometer for grilling", "meat thermometer for grilling"),
+            ],
+            "internal": [
+                ("/kitchen-deals.html", "Kitchen hub"),
+                ("/digital-meat-thermometer-under-25.html", "Digital meat thermometers under $25"),
+                ("/digital-meat-thermometer-under-50.html", "Digital meat thermometers under $50"),
+                ("/cast-iron-skillet-under-50.html", "Cast iron skillets under $50"),
+            ],
+            "sections": [
+                ("What buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Fast read times that prevent overcooking.</li>
+<li class='mt-2 text-slate-700'>Backlit screens for grilling at night.</li>
+<li class='mt-2 text-slate-700'>Simple calibration guides and clear temp ranges.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Inconsistent accuracy without occasional calibration.</li>
+<li class='mt-2 text-slate-700'>Battery drain or loose battery doors.</li>
+<li class='mt-2 text-slate-700'>Water resistance claims that don’t hold up to heavy washing.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Look for 3–5 second response time if you grill often.</li>
+<li class='mt-2 text-slate-700'>Choose a model with a long probe for thicker cuts.</li>
+<li class='mt-2 text-slate-700'>Keep a spare battery on hand.</li>
+</ul>"""),
+            ],
+        },
     ]
 
     for post in posts:
