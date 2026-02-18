@@ -597,6 +597,74 @@ def main():
 </ul>"""),
             ],
         },
+        {
+            "title": "Dash Cams: What Buyers Mention Most (Video Clarity, Night Vision, Heat, App)",
+            "description": "A neutral, review-informed guide to dash cams based on common buyer feedback: video quality, night performance, heat tolerance, and app reliability.",
+            "category": "Electronics",
+            "amz_queries": [
+                ("Dash cam deals", "dash cam"),
+                ("Dual dash cam front and rear", "dual dash cam front and rear"),
+                ("Dash cam with night vision", "dash cam with night vision"),
+                ("Dash cam with wifi", "dash cam with wifi"),
+            ],
+            "internal": [
+                ("/electronics-deals.html", "Electronics hub"),
+                ("/dash-cam-under-100.html", "Dash cams under $100"),
+                ("/micro-sd-card-under-25.html", "Micro SD cards under $25"),
+                ("/electronics-under-100.html", "Electronics under $100"),
+            ],
+            "sections": [
+                ("What buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Clear daytime footage and readable license plates at close range.</li>
+<li class='mt-2 text-slate-700'>Compact designs that don’t block the windshield.</li>
+<li class='mt-2 text-slate-700'>Easy pairing for downloading clips to a phone.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Heat issues in hot climates causing shutdowns or battery swelling.</li>
+<li class='mt-2 text-slate-700'>Night footage that looks grainy without good lighting.</li>
+<li class='mt-2 text-slate-700'>Apps that are buggy or slow to transfer video.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Prefer capacitor-based models for better heat tolerance.</li>
+<li class='mt-2 text-slate-700'>Check if you want front+rear coverage and the cable length for the rear cam.</li>
+<li class='mt-2 text-slate-700'>Buy a reliable microSD card rated for continuous recording.</li>
+</ul>"""),
+            ],
+        },
+        {
+            "title": "Air Purifiers Under $100: What Reviewers Say About Noise, Filters, and Room Size",
+            "description": "A neutral summary of air purifier buyer feedback: noise levels, filter costs, and matching room size to your space.",
+            "category": "Home",
+            "amz_queries": [
+                ("Air purifier under $100", "air purifier under 100"),
+                ("HEPA air purifier", "hepa air purifier"),
+                ("Air purifier for bedroom", "air purifier for bedroom"),
+                ("Air purifier smoke", "air purifier smoke"),
+            ],
+            "internal": [
+                ("/home-deals.html", "Home hub"),
+                ("/air-purifier-under-100.html", "Air purifiers under $100"),
+                ("/air-purifier-filter-under-25.html", "Air purifier filters under $25"),
+                ("/home-air-purifier-under-100.html", "Home air purifiers under $100"),
+            ],
+            "sections": [
+                ("What buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Noticeable reduction in odors and dust in small rooms.</li>
+<li class='mt-2 text-slate-700'>Low-noise sleep modes for bedrooms.</li>
+<li class='mt-2 text-slate-700'>Simple controls and filter-change indicators.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Filter replacement costs that add up over time.</li>
+<li class='mt-2 text-slate-700'>Overstated room-size claims for larger spaces.</li>
+<li class='mt-2 text-slate-700'>Noticeable fan noise on higher speeds.</li>
+</ul>"""),
+                ("Simple checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Match coverage to your room size, not your whole home.</li>
+<li class='mt-2 text-slate-700'>Check filter prices and how often replacements are needed.</li>
+<li class='mt-2 text-slate-700'>If it’s for sleep, prioritize quiet modes under 30–35 dB.</li>
+</ul>"""),
+            ],
+        },
     ]
 
     for post in posts:

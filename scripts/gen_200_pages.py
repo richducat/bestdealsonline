@@ -276,7 +276,7 @@ def main():
         out.write_text(html_txt, encoding="utf-8")
         written += 1
         print("wrote", out.name)
-        if written >= 200:
+        if written >= 60:
             break
 
     print(f"done: wrote {written} new pages")
