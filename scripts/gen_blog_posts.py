@@ -665,6 +665,72 @@ def main():
 </ul>"""),
             ],
         },
+        {
+            "title": "Kids Tablets: What Parents Mention Most (Durability, Storage, Parental Controls)",
+            "description": "A neutral, review-informed guide to kids tablets: durability, storage limits, parental controls, and the most common pain points parents report.",
+            "category": "Kids",
+            "amz_queries": [
+                ("Kids tablet", "kids tablet"),
+                ("Kids tablet with parental controls", "kids tablet with parental controls"),
+                ("Kids tablet case", "kids tablet case"),
+            ],
+            "internal": [
+                ("/kids-deals.html", "Kids hub"),
+                ("/kids-tablet-under-100.html", "Kids tablets under $100"),
+                ("/kids-tablet-case-under-25.html", "Kids tablet cases under $25"),
+                ("/kids-headphones-under-50.html", "Kids headphones under $50"),
+            ],
+            "sections": [
+                ("What parents like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Sturdy cases that survive drops and travel.</li>
+<li class='mt-2 text-slate-700'>Simple parental controls for time limits and app access.</li>
+<li class='mt-2 text-slate-700'>Battery life that gets through school or a road trip.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Sluggish performance on cheaper models once storage fills up.</li>
+<li class='mt-2 text-slate-700'>Charging ports that wear out with heavy daily use.</li>
+<li class='mt-2 text-slate-700'>Parental control apps that are clunky or hard to customize.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Storage: 32GB is the practical minimum; microSD expansion helps.</li>
+<li class='mt-2 text-slate-700'>Case: look for thick bumpers and a stand.</li>
+<li class='mt-2 text-slate-700'>Charging: USB-C is more durable than older ports.</li>
+</ul>"""),
+            ],
+        },
+        {
+            "title": "Air Fryer Accessories: What Buyers Like (Liners, Racks, Cleanup, Fit)",
+            "description": "A neutral, review-informed guide to air fryer accessories: what buyers praise, what they warn about, and how to pick liners, racks, and baskets that fit.",
+            "category": "Kitchen",
+            "amz_queries": [
+                ("Air fryer accessories", "air fryer accessories"),
+                ("Air fryer liners", "air fryer liners"),
+                ("Air fryer rack", "air fryer rack"),
+            ],
+            "internal": [
+                ("/kitchen-deals.html", "Kitchen hub"),
+                ("/air-fryer-under-100.html", "Air fryers under $100"),
+                ("/air-fryer-accessories-under-25.html", "Air fryer accessories under $25"),
+                ("/air-fryer-accessories-under-50.html", "Air fryer accessories under $50"),
+            ],
+            "sections": [
+                ("What buyers like", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Liners that reduce cleanup and keep baskets looking new.</li>
+<li class='mt-2 text-slate-700'>Stacking racks that let you cook more food at once.</li>
+<li class='mt-2 text-slate-700'>Silicone baskets that are easy to wash and reuse.</li>
+</ul>"""),
+                ("Common complaints", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Poor fit: accessories that block airflow or sit too tall.</li>
+<li class='mt-2 text-slate-700'>Flimsy racks that bend under heavier foods.</li>
+<li class='mt-2 text-slate-700'>Linings that are too small for larger air fryers.</li>
+</ul>"""),
+                ("Quick buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Measure your basket size before ordering.</li>
+<li class='mt-2 text-slate-700'>Choose heat-resistant, food-safe materials.</li>
+<li class='mt-2 text-slate-700'>Avoid accessories that block the bottom air intake.</li>
+</ul>"""),
+            ],
+        },
     ]
 
     for post in posts:
