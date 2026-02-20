@@ -401,336 +401,68 @@ def main():
 </ul>"""),
             ],
         },
+
         {
-            "title": "Portable SSDs vs External Hard Drives: What Buyers Say About Speed, Size, and Value",
-            "description": "A neutral, review-informed comparison of portable SSDs and external hard drives under $100: speed, durability, and where each makes sense.",
-            "category": "Electronics",
-            "amz_queries": [
-                ("Portable SSD deals", "portable ssd"),
-                ("External hard drive 1TB", "external hard drive 1tb"),
-                ("USB-C external SSD", "usb c external ssd"),
-            ],
-            "internal": [
-                ("/electronics-deals.html", "Electronics hub"),
-                ("/portable-ssd-under-100.html", "Portable SSDs under $100"),
-                ("/external-hard-drive-under-75.html", "External hard drives under $75"),
-                ("/electronics-under-100.html", "Electronics under $100"),
-            ],
-            "sections": [
-                ("What SSD buyers consistently like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Faster file transfers, especially for large photo/video libraries.</li>
-<li class='mt-2 text-slate-700'>Smaller, lighter builds that are easier to toss in a bag.</li>
-<li class='mt-2 text-slate-700'>Better drop resistance due to no moving parts.</li>
-</ul>"""),
-                ("What hard drive buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>More storage per dollar, especially at higher capacities.</li>
-<li class='mt-2 text-slate-700'>Simple plug-and-play use for backups and archives.</li>
-</ul>"""),
-                ("Quick decision guide", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Pick an SSD for speed, travel, and day-to-day active files.</li>
-<li class='mt-2 text-slate-700'>Pick an HDD for budget-friendly bulk storage and backups.</li>
-<li class='mt-2 text-slate-700'>Check cable type (USB-C vs USB-A) and included adapters.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Kids Lunch Boxes and Bento Sets: What Reviewers Mention Most (Leaks, Size, Insulation)",
-            "description": "A neutral, review-informed guide to kids lunch boxes and bento sets: what parents like, common complaints, and simple feature checks.",
-            "category": "Kids",
-            "amz_queries": [
-                ("Kids lunch box", "kids lunch box"),
-                ("Insulated kids lunch box", "insulated kids lunch box"),
-                ("Bento lunch box for kids", "bento lunch box for kids"),
-            ],
-            "internal": [
-                ("/kids-deals.html", "Kids hub"),
-                ("/kids-lunch-box-under-25.html", "Kids lunch boxes under $25"),
-                ("/bento-lunch-box-under-25.html", "Bento lunch boxes under $25"),
-                ("/kids-backpack-under-30.html", "Kids backpacks under $30"),
-            ],
-            "sections": [
-                ("What buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Insulation that keeps food cool until lunchtime.</li>
-<li class='mt-2 text-slate-700'>Easy-to-clean liners and containers.</li>
-<li class='mt-2 text-slate-700'>Sizes that fit standard backpacks without being bulky.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Leaky seals on bento boxes when carried sideways.</li>
-<li class='mt-2 text-slate-700'>Zippers or handles that wear out with daily use.</li>
-</ul>"""),
-                ("Simple checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Leak resistance (especially for sauces or fruit).</li>
-<li class='mt-2 text-slate-700'>Insulation thickness vs. available bag space.</li>
-<li class='mt-2 text-slate-700'>Dishwasher-safe components where possible.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Cast Iron Skillets: What Reviewers Say About Weight, Seasoning, and Heat Retention",
-            "description": "A neutral, review-informed guide to cast iron skillets: what buyers like, common complaints, and what features matter most.",
-            "category": "Kitchen",
-            "amz_queries": [
-                ("Cast iron skillet", "cast iron skillet"),
-                ("Pre-seasoned cast iron skillet", "pre seasoned cast iron skillet"),
-                ("Cast iron skillet 10 inch", "cast iron skillet 10 inch"),
-            ],
-            "internal": [
-                ("/kitchen-deals.html", "Kitchen hub"),
-                ("/cast-iron-skillet-under-50.html", "Cast iron skillets under $50"),
-                ("/cast-iron-skillet-under-100.html", "Cast iron skillets under $100"),
-                ("/knife-sharpener-under-30.html", "Knife sharpeners under $30"),
-            ],
-            "sections": [
-                ("What reviewers consistently like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Heat retention and even browning for searing and baking.</li>
-<li class='mt-2 text-slate-700'>Long lifespan when properly seasoned and dried.</li>
-<li class='mt-2 text-slate-700'>Versatility: stovetop, oven, and even grill use.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Weight: some buyers find lifting or flipping foods difficult.</li>
-<li class='mt-2 text-slate-700'>Seasoning upkeep and rust if left wet.</li>
-<li class='mt-2 text-slate-700'>Inconsistent factory seasoning on budget pans.</li>
-</ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Size: 10–12 inch is the most common all-purpose range.</li>
-<li class='mt-2 text-slate-700'>Handle length and helper handle for easier lifting.</li>
-<li class='mt-2 text-slate-700'>Pre-seasoned vs. raw (most buyers prefer pre-seasoned).</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Toddler Toys: What Parents Mention Most (Durability, Mess, Age Fit)",
-            "description": "A neutral, review-informed guide to toddler toys based on common buyer feedback: durability, cleanup, and age-appropriate difficulty.",
-            "category": "Kids",
-            "amz_queries": [
-                ("Toddler toys", "toddler toys"),
-                ("Toddler learning toys", "toddler learning toys"),
-                ("Montessori toys for toddlers", "montessori toys for toddlers"),
-            ],
-            "internal": [
-                ("/kids-deals.html", "Kids hub"),
-                ("/toddler-toys-under-50.html", "Toddler toys under $50"),
-                ("/toddler-toys-under-25.html", "Toddler toys under $25"),
-                ("/learning-toys-under-25.html", "Learning toys under $25"),
-            ],
-            "sections": [
-                ("What parents like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Durable builds that survive drops and rough play.</li>
-<li class='mt-2 text-slate-700'>Open-ended play value (stacking, sorting, pretend play).</li>
-<li class='mt-2 text-slate-700'>Easy cleanup with minimal tiny parts.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Pieces that are too small or easy to lose.</li>
-<li class='mt-2 text-slate-700'>Toys that are too advanced for the stated age range.</li>
-<li class='mt-2 text-slate-700'>Batteries or noise levels that parents regret.</li>
-</ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Age range: aim for the middle of your child’s age band.</li>
-<li class='mt-2 text-slate-700'>Material: solid wood or thick plastic tends to last longer.</li>
-<li class='mt-2 text-slate-700'>Storage: bins or bags help keep parts together.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "GaN Chargers: What Buyers Like, What Bugs Them, and How to Choose",
-            "description": "A neutral, review-informed guide to GaN chargers: common pros/cons, heat concerns, and how to match wattage to your devices.",
-            "category": "Electronics",
-            "amz_queries": [
-                ("GaN charger deals", "gan charger"),
-                ("GaN charger 65W", "gan charger 65w"),
-                ("GaN charger 100W", "gan charger 100w"),
-            ],
-            "internal": [
-                ("/electronics-deals.html", "Electronics hub"),
-                ("/gan-charger-under-50.html", "GaN chargers under $50"),
-                ("/gan-charger-under-100.html", "GaN chargers under $100"),
-                ("/usb-c-charger-under-50.html", "USB-C chargers under $50"),
-            ],
-            "sections": [
-                ("Why buyers like GaN chargers", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Smaller size for the same wattage compared to older bricks.</li>
-<li class='mt-2 text-slate-700'>Multi-port models that power a laptop + phone at once.</li>
-<li class='mt-2 text-slate-700'>Travel-friendly designs with foldable prongs.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Heat under heavy load, especially at 100W+.</li>
-<li class='mt-2 text-slate-700'>Power sharing: total wattage is split across ports.</li>
-<li class='mt-2 text-slate-700'>Cable confusion (USB-C to USB-C required for full speed).</li>
-</ul>"""),
-                ("Quick pick checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Match wattage to your laptop/phone requirements.</li>
-<li class='mt-2 text-slate-700'>Look for PD and PPS support if your devices need it.</li>
-<li class='mt-2 text-slate-700'>Check port layout so larger plugs don’t block neighbors.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Digital Meat Thermometers: What Reviewers Mention Most (Speed, Accuracy, Durability)",
-            "description": "A neutral, review-informed guide to digital meat thermometers: response time, accuracy tips, and common pain points from buyers.",
-            "category": "Kitchen",
-            "amz_queries": [
-                ("Digital meat thermometer", "digital meat thermometer"),
-                ("Instant read thermometer", "instant read thermometer"),
-                ("Meat thermometer for grilling", "meat thermometer for grilling"),
-            ],
-            "internal": [
-                ("/kitchen-deals.html", "Kitchen hub"),
-                ("/digital-meat-thermometer-under-25.html", "Digital meat thermometers under $25"),
-                ("/digital-meat-thermometer-under-50.html", "Digital meat thermometers under $50"),
-                ("/cast-iron-skillet-under-50.html", "Cast iron skillets under $50"),
-            ],
-            "sections": [
-                ("What buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Fast read times that prevent overcooking.</li>
-<li class='mt-2 text-slate-700'>Backlit screens for grilling at night.</li>
-<li class='mt-2 text-slate-700'>Simple calibration guides and clear temp ranges.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Inconsistent accuracy without occasional calibration.</li>
-<li class='mt-2 text-slate-700'>Battery drain or loose battery doors.</li>
-<li class='mt-2 text-slate-700'>Water resistance claims that don’t hold up to heavy washing.</li>
-</ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Look for 3–5 second response time if you grill often.</li>
-<li class='mt-2 text-slate-700'>Choose a model with a long probe for thicker cuts.</li>
-<li class='mt-2 text-slate-700'>Keep a spare battery on hand.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Dash Cams: What Buyers Mention Most (Video Clarity, Night Vision, Heat, App)",
-            "description": "A neutral, review-informed guide to dash cams based on common buyer feedback: video quality, night performance, heat tolerance, and app reliability.",
-            "category": "Electronics",
-            "amz_queries": [
-                ("Dash cam deals", "dash cam"),
-                ("Dual dash cam front and rear", "dual dash cam front and rear"),
-                ("Dash cam with night vision", "dash cam with night vision"),
-                ("Dash cam with wifi", "dash cam with wifi"),
-            ],
-            "internal": [
-                ("/electronics-deals.html", "Electronics hub"),
-                ("/dash-cam-under-100.html", "Dash cams under $100"),
-                ("/micro-sd-card-under-25.html", "Micro SD cards under $25"),
-                ("/electronics-under-100.html", "Electronics under $100"),
-            ],
-            "sections": [
-                ("What buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Clear daytime footage and readable license plates at close range.</li>
-<li class='mt-2 text-slate-700'>Compact designs that don’t block the windshield.</li>
-<li class='mt-2 text-slate-700'>Easy pairing for downloading clips to a phone.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Heat issues in hot climates causing shutdowns or battery swelling.</li>
-<li class='mt-2 text-slate-700'>Night footage that looks grainy without good lighting.</li>
-<li class='mt-2 text-slate-700'>Apps that are buggy or slow to transfer video.</li>
-</ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Prefer capacitor-based models for better heat tolerance.</li>
-<li class='mt-2 text-slate-700'>Check if you want front+rear coverage and the cable length for the rear cam.</li>
-<li class='mt-2 text-slate-700'>Buy a reliable microSD card rated for continuous recording.</li>
-</ul>"""),
-            ],
-        },
-        {
-            "title": "Air Purifiers Under $100: What Reviewers Say About Noise, Filters, and Room Size",
-            "description": "A neutral summary of air purifier buyer feedback: noise levels, filter costs, and matching room size to your space.",
+            "title": "Robot Vacuums: What Reviewers Actually Mention (Navigation, Pet Hair, Maintenance)",
+            "description": "A neutral summary of robot vacuum buyer feedback: navigation, pet hair pickup, and ongoing maintenance.",
             "category": "Home",
             "amz_queries": [
-                ("Air purifier under $100", "air purifier under 100"),
-                ("HEPA air purifier", "hepa air purifier"),
-                ("Air purifier for bedroom", "air purifier for bedroom"),
-                ("Air purifier smoke", "air purifier smoke"),
+                ("Robot vacuum deals", "robot vacuum"),
+                ("Robot vacuum for pet hair", "robot vacuum pet hair"),
+                ("Self-emptying robot vacuum", "self emptying robot vacuum"),
             ],
             "internal": [
                 ("/home-deals.html", "Home hub"),
-                ("/air-purifier-under-100.html", "Air purifiers under $100"),
-                ("/air-purifier-filter-under-25.html", "Air purifier filters under $25"),
-                ("/home-air-purifier-under-100.html", "Home air purifiers under $100"),
+                ("/robot-vacuum-under-150.html", "Robot vacuums under $150"),
+                ("/stick-vacuum-under-100.html", "Stick vacuums under $100"),
             ],
             "sections": [
-                ("What buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Noticeable reduction in odors and dust in small rooms.</li>
-<li class='mt-2 text-slate-700'>Low-noise sleep modes for bedrooms.</li>
-<li class='mt-2 text-slate-700'>Simple controls and filter-change indicators.</li>
+                ("Why people still like robot vacuums", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Daily resets: crumbs and pet hair disappear without hauling out a full-size vacuum.</li>
+<li class='mt-2 text-slate-700'>App zones and schedules keep high-traffic areas cleaner than weekly deep cleans alone.</li>
+<li class='mt-2 text-slate-700'>Self-empty docks reduce how often you touch the dust bin.</li>
 </ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Filter replacement costs that add up over time.</li>
-<li class='mt-2 text-slate-700'>Overstated room-size claims for larger spaces.</li>
-<li class='mt-2 text-slate-700'>Noticeable fan noise on higher speeds.</li>
+                ("Frustrations buyers mention", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Navigation still gets tripped up by cords, socks, and threshold lips.</li>
+<li class='mt-2 text-slate-700'>Pet hair can clog brushes unless you clean rollers weekly.</li>
+<li class='mt-2 text-slate-700'>Replacement filters and side brushes add to the real cost of ownership.</li>
 </ul>"""),
-                ("Simple checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Match coverage to your room size, not your whole home.</li>
-<li class='mt-2 text-slate-700'>Check filter prices and how often replacements are needed.</li>
-<li class='mt-2 text-slate-700'>If it’s for sleep, prioritize quiet modes under 30–35 dB.</li>
-</ul>"""),
+                ("Maintenance takeaways", """<p class='text-slate-700 leading-relaxed mt-3'>Reviewers who stay happy treat robot vacuums like dishwashers: empty bins, wipe sensors, and run brush-clean cycles on a schedule. Skipping upkeep leads to failed navigation and weak suction.</p>"""),
             ],
         },
         {
-            "title": "Kids Tablets: What Parents Mention Most (Durability, Storage, Parental Controls)",
-            "description": "A neutral, review-informed guide to kids tablets: durability, storage limits, parental controls, and the most common pain points parents report.",
+            "title": "Kids Smartwatches: What Parents Care About (Safety, Battery, Controls)",
+            "description": "A review-informed look at kids smartwatch feedback: GPS accuracy, call controls, battery life, and durability.",
             "category": "Kids",
             "amz_queries": [
-                ("Kids tablet", "kids tablet"),
-                ("Kids tablet with parental controls", "kids tablet with parental controls"),
-                ("Kids tablet case", "kids tablet case"),
+                ("Kids smartwatch deals", "kids smartwatch"),
+                ("Kids smartwatch GPS", "kids smartwatch gps"),
+                ("Waterproof kids smartwatch", "waterproof kids smartwatch"),
             ],
             "internal": [
                 ("/kids-deals.html", "Kids hub"),
-                ("/kids-tablet-under-100.html", "Kids tablets under $100"),
-                ("/kids-tablet-case-under-25.html", "Kids tablet cases under $25"),
+                ("/kids-smartwatch-under-80.html", "Kids smartwatches under $80"),
                 ("/kids-headphones-under-50.html", "Kids headphones under $50"),
             ],
             "sections": [
-                ("What parents like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Sturdy cases that survive drops and travel.</li>
-<li class='mt-2 text-slate-700'>Simple parental controls for time limits and app access.</li>
-<li class='mt-2 text-slate-700'>Battery life that gets through school or a road trip.</li>
+                ("Features parents actually appreciate", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>GPS + safe zones: alerts when kids leave preset areas.</li>
+<li class='mt-2 text-slate-700'>Whitelisted contacts so unknown numbers can’t reach them.</li>
+<li class='mt-2 text-slate-700'>Water-resistant cases that survive sprinklers and hand washing.</li>
 </ul>"""),
                 ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Sluggish performance on cheaper models once storage fills up.</li>
-<li class='mt-2 text-slate-700'>Charging ports that wear out with heavy daily use.</li>
-<li class='mt-2 text-slate-700'>Parental control apps that are clunky or hard to customize.</li>
+<li class='mt-2 text-slate-700'>Battery life drops fast if GPS pings are set to every few minutes.</li>
+<li class='mt-2 text-slate-700'>Some carrier-specific models require monthly plan fees that catch parents off guard.</li>
+<li class='mt-2 text-slate-700'>Apps can feel dated or buggy, especially on Android tablets.</li>
 </ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Storage: 32GB is the practical minimum; microSD expansion helps.</li>
-<li class='mt-2 text-slate-700'>Case: look for thick bumpers and a stand.</li>
-<li class='mt-2 text-slate-700'>Charging: USB-C is more durable than older ports.</li>
+                ("Simple buying checklist", """<ul class='list-disc pl-6'>
+<li class='mt-2 text-slate-700'>Decide if you need LTE or Wi-Fi-only tracking.</li>
+<li class='mt-2 text-slate-700'>Look for replaceable bands and shock protection for playground use.</li>
+<li class='mt-2 text-slate-700'>Confirm the watch supports your carrier or comes with its own SIM.</li>
 </ul>"""),
             ],
         },
-        {
-            "title": "Air Fryer Accessories: What Buyers Like (Liners, Racks, Cleanup, Fit)",
-            "description": "A neutral, review-informed guide to air fryer accessories: what buyers praise, what they warn about, and how to pick liners, racks, and baskets that fit.",
-            "category": "Kitchen",
-            "amz_queries": [
-                ("Air fryer accessories", "air fryer accessories"),
-                ("Air fryer liners", "air fryer liners"),
-                ("Air fryer rack", "air fryer rack"),
-            ],
-            "internal": [
-                ("/kitchen-deals.html", "Kitchen hub"),
-                ("/air-fryer-under-100.html", "Air fryers under $100"),
-                ("/air-fryer-accessories-under-25.html", "Air fryer accessories under $25"),
-                ("/air-fryer-accessories-under-50.html", "Air fryer accessories under $50"),
-            ],
-            "sections": [
-                ("What buyers like", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Liners that reduce cleanup and keep baskets looking new.</li>
-<li class='mt-2 text-slate-700'>Stacking racks that let you cook more food at once.</li>
-<li class='mt-2 text-slate-700'>Silicone baskets that are easy to wash and reuse.</li>
-</ul>"""),
-                ("Common complaints", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Poor fit: accessories that block airflow or sit too tall.</li>
-<li class='mt-2 text-slate-700'>Flimsy racks that bend under heavier foods.</li>
-<li class='mt-2 text-slate-700'>Linings that are too small for larger air fryers.</li>
-</ul>"""),
-                ("Quick buying checklist", """<ul class='list-disc pl-6'>
-<li class='mt-2 text-slate-700'>Measure your basket size before ordering.</li>
-<li class='mt-2 text-slate-700'>Choose heat-resistant, food-safe materials.</li>
-<li class='mt-2 text-slate-700'>Avoid accessories that block the bottom air intake.</li>
-</ul>"""),
-            ],
-        },
+
     ]
 
     for post in posts:
