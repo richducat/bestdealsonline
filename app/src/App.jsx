@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { scoreProductList } from './dealtruth'
 
 function pickDailyProduct(products) {
   const items = Array.isArray(products) ? products.filter((p) => p && p.affiliateLink) : []
@@ -65,6 +66,14 @@ const AMAZON_TAG = 'bestdeals0ad2-20'
 // For now (no PA-API keys), we use a static JSON file committed with the site.
 // Later, we can swap this to a Worker-backed PA-API endpoint for live prices.
 const PRODUCTS_JSON_URL = './data/products.json'
+const DEALS_API_BASE = (import.meta.env.VITE_DEALS_API_BASE || '').replace(/\/+$/, '')
+
+function resolveDealsUrl(limit = 300) {
+  if (DEALS_API_BASE) {
+    return `${DEALS_API_BASE}/v1/deals?limit=${encodeURIComponent(limit)}`
+  }
+  return PRODUCTS_JSON_URL
+}
 
 function trackOutboundClick({ url, label, category, section, productId, productTitle, position, campaign }) {
   try {
@@ -135,6 +144,7 @@ const CATEGORY_IMAGE_MAP = {
 const getCategoryImage = (category) => CATEGORY_IMAGE_MAP[category] || '/images/categories/home.webp'
 
 const SORT_OPTIONS = [
+  { label: 'DealTruth Score', value: 'dealtruth_desc' },
   { label: 'Recommended', value: 'recommended' },
   { label: 'Top Rated', value: 'rating_desc' },
   { label: 'Most Reviews', value: 'reviews_desc' },
@@ -388,6 +398,7 @@ const DealLens = () => {
 const ProductCard = ({ product, tracking }) => {
   const [copied, setCopied] = useState(false)
   const Icon = getIcon(product.iconName)
+  const dealTruth = product.dealTruth
 
   const handleCopyCode = (e) => {
     e.preventDefault()
@@ -435,6 +446,11 @@ const ProductCard = ({ product, tracking }) => {
           <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">
             {product.category}
           </div>
+          {dealTruth?.score != null ? (
+            <div className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded">
+              DealTruth {dealTruth.score}/100
+            </div>
+          ) : null}
         </div>
 
         <h3 className="font-bold text-slate-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer text-lg line-clamp-2">
@@ -455,6 +471,29 @@ const ProductCard = ({ product, tracking }) => {
         </div>
 
         {product.description && <p className="text-sm text-slate-600 mb-4 line-clamp-2">{product.description}</p>}
+
+        <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <div className="text-sm font-extrabold text-slate-900">
+            {dealTruth?.explanations?.scoreLine || 'DealTruth Score: pending data'}
+          </div>
+          <div className="mt-1 text-xs text-slate-700">
+            {dealTruth?.explanations?.discountLine || 'Real discount: unavailable (building 90-day baseline)'}
+          </div>
+          <div className="mt-1 text-xs text-slate-700">
+            {dealTruth?.explanations?.rarityLine || 'Rarity: not enough history yet'}
+          </div>
+          <div className="mt-1 text-xs text-slate-700">
+            {dealTruth?.explanations?.confidenceLine || 'Confidence: Low (missing offer metadata)'}
+          </div>
+          {dealTruth?.explanations?.decisionLine ? (
+            <div className="mt-1 text-xs font-semibold text-emerald-700">{dealTruth.explanations.decisionLine}</div>
+          ) : null}
+          {dealTruth?.notMeaningfulDeal ? (
+            <div className="mt-2 text-[11px] font-semibold text-amber-700">
+              Not a deal: not meaningfully below typical price.
+            </div>
+          ) : null}
+        </div>
 
         <div className="mt-auto">
           {price ? (
@@ -511,7 +550,7 @@ const ProductCard = ({ product, tracking }) => {
 }
 
 const CompactProductCard = ({ product, tracking }) => {
-  const Icon = getIcon(product.iconName)
+  const dealTruth = product.dealTruth
   return (
     <a
       href={product.affiliateLink}
@@ -550,7 +589,10 @@ const CompactProductCard = ({ product, tracking }) => {
         )}
       </div>
       <div className="font-bold text-slate-800 text-sm line-clamp-2">{product.title}</div>
-      <div className="text-xs text-slate-500">Check price on Amazon</div>
+      <div className="text-[11px] font-bold text-indigo-700">
+        {dealTruth?.score != null ? `DealTruth ${dealTruth.score}/100` : 'DealTruth pending'}
+      </div>
+      <div className="text-xs text-slate-500">{dealTruth?.decision?.label ? dealTruth.decision.label : 'Check price on Amazon'}</div>
     </a>
   )
 }
@@ -668,12 +710,15 @@ const UnderBudgetRow = () => (
 
 const TopPicks = ({ products }) => {
   const cats = ['Electronics', 'Home', 'Kitchen', 'Tools', 'Kids', 'Beauty', 'Fitness', 'Pets']
-  const byCat = new Map(cats.map((c) => [c, []]))
-  for (const p of products) {
-    if (byCat.has(p.category) && byCat.get(p.category).length < 10) {
-      byCat.get(p.category).push(p)
-    }
-  }
+  const byCat = new Map(
+    cats.map((cat) => [
+      cat,
+      products
+        .filter((product) => product.category === cat)
+        .sort((a, b) => (b?.dealTruth?.score ?? 0) - (a?.dealTruth?.score ?? 0))
+        .slice(0, 10),
+    ])
+  )
 
   return (
     <div className="container mx-auto px-4 pt-10">
@@ -753,6 +798,9 @@ const Footer = () => (
           This site may earn a commission when you buy through links (at no extra cost to you).{' '}
           <a className="underline hover:text-yellow-400" href="/affiliate-disclosure.html">Details</a>
         </p>
+        <p className="leading-relaxed mt-4 mb-0 text-xs">
+          Prices and availability are subject to change.
+        </p>
       </div>
     </div>
 
@@ -762,8 +810,8 @@ const Footer = () => (
   </footer>
 )
 
-async function fetchProductsJson() {
-  const res = await fetch(PRODUCTS_JSON_URL, { headers: { Accept: 'application/json' } })
+async function fetchProductsJson(limit = 300) {
+  const res = await fetch(resolveDealsUrl(limit), { headers: { Accept: 'application/json' } })
   if (!res.ok) throw new Error(`products.json fetch failed: ${res.status}`)
   return await res.json()
 }
@@ -774,18 +822,18 @@ const App = () => {
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortOption, setSortOption] = useState('recommended')
+  const [sortOption, setSortOption] = useState('dealtruth_desc')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     ;(async () => {
       try {
-        const data = await fetchProductsJson()
+        const data = await fetchProductsJson(300)
         if (data?.items?.length) {
           setProducts(data.items)
-          setApiStatus('static catalog (300)')
+          setApiStatus(DEALS_API_BASE ? `worker api (${data.items.length})` : `static catalog (${data.items.length})`)
         } else {
-          setApiStatus('static catalog (empty)')
+          setApiStatus(DEALS_API_BASE ? 'worker api (empty)' : 'static catalog (empty)')
         }
       } catch (e) {
         setApiStatus('offline (using seed items)')
@@ -793,8 +841,10 @@ const App = () => {
     })()
   }, [])
 
+  const scoredProducts = useMemo(() => scoreProductList(products), [products])
+
   const processedProducts = useMemo(() => {
-    let result = products.filter((product) => {
+    let result = scoredProducts.filter((product) => {
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
       const matchesSearch =
         (product.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -803,6 +853,14 @@ const App = () => {
     })
 
     switch (sortOption) {
+      case 'dealtruth_desc':
+      case 'recommended':
+        result.sort((a, b) => {
+          const scoreDelta = (b?.dealTruth?.score ?? 0) - (a?.dealTruth?.score ?? 0)
+          if (scoreDelta !== 0) return scoreDelta
+          return (b.reviews || 0) - (a.reviews || 0)
+        })
+        break
       case 'price_asc':
         result.sort((a, b) => (a.price ?? Number.POSITIVE_INFINITY) - (b.price ?? Number.POSITIVE_INFINITY))
         break
@@ -820,7 +878,7 @@ const App = () => {
     }
 
     return result
-  }, [selectedCategory, searchQuery, sortOption, products])
+  }, [selectedCategory, searchQuery, sortOption, scoredProducts])
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
@@ -828,7 +886,7 @@ const App = () => {
       <Navbar onSearch={setSearchQuery} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
       <main className="flex-grow">
-        <Hero apiStatus={apiStatus} products={products} />
+        <Hero apiStatus={apiStatus} products={scoredProducts} />
 
         <JumpBar />
 
@@ -848,7 +906,7 @@ const App = () => {
             <div id="budget" />
             <UnderBudgetRow />
             <div id="top-picks" />
-            <TopPicks products={products} />
+            <TopPicks products={scoredProducts} />
           </>
         )}
 
@@ -897,12 +955,15 @@ const App = () => {
               <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
                 {selectedCategory === 'All' ? 'Trending Picks' : `${selectedCategory} Picks`}
               </h2>
-              <p className="text-slate-500 text-sm mt-1">300-item feed across your chosen categories (via API).</p>
+              <p className="text-slate-500 text-sm mt-1">Ranked with DealTruth scoring across savings, rarity, quality, and seller trust.</p>
             </div>
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-white px-3 py-1 rounded-full border border-slate-200 self-start md:self-auto">
               {processedProducts.length} items
             </span>
           </div>
+          <p className="text-xs text-slate-500 mb-6">
+            Prices and availability subject to change. Real discount and rarity are based on observed price history when available.
+          </p>
 
           {processedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

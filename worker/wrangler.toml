@@ -1,0 +1,18 @@
+name = "bestdealsonline-worker"
+main = "index.js"
+compatibility_date = "2026-03-01"
+
+[vars]
+# Comma-separated categories to ingest on schedule.
+TRACKED_CATEGORIES = "Electronics,Home,Kitchen,Tools,Kids,Beauty,Fitness,Pets"
+# Maximum items requested from upstream approved feed each run.
+INGEST_LIMIT = "300"
+
+[triggers]
+# Every 4 hours.
+crons = ["0 */4 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bestdealsonline"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"

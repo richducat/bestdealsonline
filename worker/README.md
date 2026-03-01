@@ -1,29 +1,64 @@
-# BestDealsOnline Amazon PA-API Worker (Cloudflare)
+# BestDealsOnline Worker (PA-API Feed + DealTruth)
 
-This worker provides live-ish product data (title/image/price) using Amazon Product Advertising API (PA-API).
+Cloudflare Worker that ingests approved Amazon offer feeds into D1, computes DealTruth snapshots, and serves ranked deals.
 
-## Why a Worker?
-GitHub Pages can't safely store API secrets. A Worker lets us keep secrets in environment variables.
+## What it now does
+- Scheduled ingest (cron) from an approved feed URL (`PAAPI_PROXY_URL` or `DEALS_FEED_URL`)
+- Writes normalized `offers` + `price_snapshots`
+- Computes and stores `score_snapshots`
+- Serves latest scored deals from `GET /v1/deals`
+- Supports per-category weight overrides for tuning
 
-## Prereqs
-- Amazon Associates account with tag: `bestdeals0ad2-20`
-- Amazon PA-API credentials (Access Key + Secret). Note: PA-API access usually requires qualifying sales to maintain access.
-- A Cloudflare account (free is fine)
+## Files
+- Worker code: `worker/index.js`
+- D1 schema: `worker/schema.sql`
+- Wrangler config (cron + D1 binding): `worker/wrangler.toml`
 
-## Env vars (set in Cloudflare dashboard)
-- `PAAPI_ACCESS_KEY`
-- `PAAPI_SECRET_KEY`
-- `PAAPI_PARTNER_TAG` (set to `bestdeals0ad2-20`)
-- `PAAPI_HOST` (e.g. `webservices.amazon.com`)
-- `PAAPI_REGION` (e.g. `us-east-1`)
+## Required setup
+1. Create D1 DB and apply schema:
+```bash
+cd worker
+npx wrangler d1 execute bestdealsonline --file=./schema.sql
+```
+2. Set Worker secrets/vars:
+- `PAAPI_PROXY_URL` or `DEALS_FEED_URL` (approved source endpoint)
+- `DEALS_FEED_BEARER_TOKEN` (optional)
+- `ADMIN_API_KEY` (recommended)
+- `TRACKED_CATEGORIES` (optional, comma-separated)
+- `INGEST_LIMIT` (optional, default 300)
+- `CATEGORY_WEIGHT_OVERRIDES_JSON` (optional)
 
 ## Endpoints
-- `GET /v1/deals?categories=Electronics,Home,Kitchen,Tools,Kids,Beauty,Fitness,Pets&limit=300`
+- `GET /health`
+- `GET /v1/deals?categories=Electronics,Home&limit=300`
+- `GET /v1/weights`
+- `POST /v1/admin/weights` (requires `x-admin-key` when `ADMIN_API_KEY` is set)
+- `POST /v1/admin/ingest` (manual ingest trigger)
 
-Returns JSON:
+### Admin ingest payload options
+- Trigger feed ingest:
 ```json
-{ "items": [ { "id": "...", "title": "...", "category": "Kitchen", "price": 39.99, "currency": "USD", "imageUrl": "...", "affiliateLink": "..." } ] }
+{ "categories": ["Electronics", "Home"], "limit": 300 }
+```
+- Direct ingest with explicit items:
+```json
+{ "items": [ { "asin": "B000000000", "title": "...", "offer": { "price": 19.99 } } ] }
 ```
 
-## Frontend
-Update `DEALS_API_BASE` in `app/src/App.jsx` to your Worker URL before building.
+## Cron
+Configured in `worker/wrangler.toml`:
+- `0 */4 * * *` (every 4 hours)
+
+Adjust this schedule as needed.
+
+## Frontend wiring
+Set in `app/.env` (or build env):
+```bash
+VITE_DEALS_API_BASE=https://<your-worker-domain>
+```
+App will then fetch `GET /v1/deals` instead of local `data/products.json`.
+
+## Compliance notes
+- Use only approved APIs/feeds for Amazon pricing/reviews.
+- Do not scrape Amazon pages for prohibited data extraction.
+- Keep user-facing disclaimer: `Prices and availability are subject to change.`
