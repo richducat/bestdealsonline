@@ -7,6 +7,7 @@ const BASE_URL = 'https://bestdealsonline.us'
 function shouldSkip(filePath) {
   const rel = path.relative(ROOT, filePath)
   if (rel.startsWith('app/')) return true
+  if (rel.startsWith('images/categories/')) return true
   if (rel.startsWith('node_modules/')) return true
   if (rel.includes('/node_modules/')) return true
   if (rel.startsWith('.git/')) return true

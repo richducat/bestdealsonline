@@ -34,6 +34,7 @@ def main():
         else:
             urls.append((path, "monthly", "0.5"))
 
+
     out = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">"]
     for path, freq, prio in urls:
         out.append("  <url>")
