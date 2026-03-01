@@ -31,8 +31,6 @@ SITE = "https://bestdealsonline.us"
 
 EXCLUDE_NAMES = {
     "index.html",
-    "privacy.html",
-    "affiliate-disclosure.html",
 }
 
 EXCLUDE_PREFIXES = (
@@ -46,7 +44,7 @@ EXCLUDE_SUFFIXES = (
 
 # Basic extraction regexes
 TITLE_RE = re.compile(r"<title>(.*?)</title>", re.I | re.S)
-DESC_RE = re.compile(r"<meta\s+name=\"description\"\s+content=\"([^\"]*)\"\s*/?>", re.I)
+DESC_RE = re.compile(r"<meta\s+name=\"description\"\s+content=\"([\s\S]*?)\"\s*/?>", re.I)
 CANON_RE = re.compile(r"<link\s+rel=\"canonical\"\s+href=\"([^\"]*)\"\s*/?>", re.I)
 MAIN_RE = re.compile(r"<main[^>]*>(.*)</main>", re.I | re.S)
 H1_RE = re.compile(r"<h1[^>]*>(.*?)</h1>", re.I | re.S)

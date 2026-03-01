@@ -12,8 +12,8 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Detect hero sections and insert an <img> after the H1+intro block.
-HERO_MARK = 'bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900'
+# Detect hero sections and inject a reusable image card.
+HERO_CLASS = 'bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900'
 
 IMG_SNIPPET = (
     "\n        <div class=\"hidden lg:block lg:col-span-4\">\n"
@@ -50,39 +50,50 @@ def pick_svg(name: str) -> str:
 
 def inject(p: Path) -> bool:
     s = p.read_text(errors='ignore')
-    if HERO_MARK not in s:
+    if HERO_CLASS not in s:
         return False
     if '/assets/hero/' in s:
         return False
 
-    # Find the grid container inside hero for legacy pages and add a right column.
-    # Pattern: <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end"> ... </div>
-    m = re.search(r'(<div class=\"grid grid-cols-1 lg:grid-cols-12 gap-8 items-end\">)([\s\S]*?)(</div>\s*</div>\s*</section>)', s)
-    if not m:
+    hero_m = re.search(
+        r'(<section class=\"' + re.escape(HERO_CLASS) + r'\">)([\s\S]*?)(</section>)',
+        s,
+    )
+    if not hero_m:
         return False
 
-    head, body, tail = m.group(1), m.group(2), m.group(3)
+    hero_open, hero_body, hero_close = hero_m.group(1), hero_m.group(2), hero_m.group(3)
+    if '<img ' in hero_body:
+        return False
 
     src = pick_svg(p.name)
+    floating_block = (
+        "\n      <div class=\"hidden lg:block mt-6\">\n"
+        "        <div class=\"max-w-lg ml-auto bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm\">\n"
+        f"          <img src=\"{src}\" width=\"720\" height=\"480\" loading=\"lazy\" decoding=\"async\" alt=\"\" class=\"w-full h-auto opacity-95\" />\n"
+        "        </div>\n"
+        "      </div>\n"
+    )
 
-    # If the page already has a right column, inject the image card *inside* it (after the tips box).
-    if 'lg:col-span-4' in body:
-        if '/assets/hero/' in body:
-            return False
-        # insert after the first closing </div> of the tips box (the inner card)
-        body2 = re.sub(
+    # If page already uses two-column hero grid, append image in right column.
+    if 'lg:col-span-4' in hero_body and '<ul' in hero_body:
+        hero_body2 = re.sub(
             r'(</ul>\s*</div>)',
             r"\1\n\n            <div class=\"hidden md:block bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm mt-4\">\n              <img src=\"" + src + r"\" width=\"720\" height=\"480\" loading=\"lazy\" decoding=\"async\" alt=\"\" class=\"w-full h-auto opacity-95\" />\n            </div>",
-            body,
+            hero_body,
             count=1,
             flags=re.S,
         )
-        if body2 == body:
+        if hero_body2 == hero_body:
             return False
     else:
-        body2 = body + IMG_SNIPPET.format(src=src)
+        # Common single-column hero: append a floating image card before closing section.
+        container_close = re.search(r'(</div>\s*)$', hero_body)
+        if not container_close:
+            return False
+        hero_body2 = hero_body[:container_close.start()] + floating_block + hero_body[container_close.start():]
 
-    s2 = s[:m.start(1)] + head + body2 + tail + s[m.end(3):]
+    s2 = s[:hero_m.start(1)] + hero_open + hero_body2 + hero_close + s[hero_m.end(3):]
     p.write_text(s2, encoding='utf-8')
     return True
 
