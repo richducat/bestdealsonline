@@ -1,0 +1,550 @@
+{
+  "usb c charger::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51rRo55PUwL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "gan charger best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61oMHNXb3vL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "portable power bank best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71K65j4IrHL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "wireless earbuds best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61cZiYfWlAL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "noise cancelling headphones best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51V1bf76cML._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "bluetooth speaker::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71iLSn9bBML._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "4k tv best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71dEzZA0lJL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "streaming stick best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61091oEKg5L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "wifi router best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61h2ynOWhaL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "mesh wifi best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/41N-6Fkm+nL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "webcam::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61Z8eKKUIcL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "mechanical keyboard best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61FZnf-5n1L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "wireless mouse best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51WN5aXZWIL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "monitor 27 inch best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/7161NvPxE-L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "laptop stand best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71DQp57-ltL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "usb c hub::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71khUQvGlzL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "external ssd best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61zuR3UMnWL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "micro sd card best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/719ZXZP+5LL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "smartwatch best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51FwI508HZL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "fitness tracker best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61Fe+1-71-L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "air purifier::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61OKjqjD5zL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "robot vacuum best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/619xjRMbkSL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "smart plugs best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61SGmpIIDTL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "led light strips best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/717ydjHDMqL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "security camera best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71bU2XlALeL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "iphone case::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71HZpdC56IL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "android charger best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71slGPTBJ9S._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "car phone mount best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81Q62aaTOpL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "usb c charger best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/5164giE9fFL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "portable power bank::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51u9xnM9YYL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "bluetooth speaker best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71XPqtugdsL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "streaming stick::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51WtNy0OxLL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "webcam best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/617Rgdq4BoL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "wireless mouse::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61nRnf8NMnL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "usb c hub best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61RK-9CpgBL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "micro sd card::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61MHVeEPw3L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "air purifier best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71eM07+OB6L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "smart plugs::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61b-iG0eIQL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "iphone case best::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71Go+X-xMOL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "car phone mount::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71hvFJCJtxL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "noise cancelling headphones::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51QSktkLy1L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "mesh wifi::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/614CaSPw+BS._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "laptop stand::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51KyaTB1EKL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "fitness tracker::electronics": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61ZtqtvoD2L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "bedding set::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81AcetDHWhL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "sheet set best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81L2xb5ly6L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "mattress topper best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81m0kS4UdIL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "memory foam pillow best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61XIBU66dGL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "blackout curtains best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61Xsz1yLEML._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "storage bins::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61K8mc0FHrL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "closet organizer best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71b5YosDyVL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "laundry hamper best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/918tRD-uKhL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "humidifier best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71YxUFC4ZlL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dehumidifier best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51ZuON+CRGL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "vacuum cleaner::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/719SSiLhUfL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "steam mop best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71CbRYRP-FL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dish drying rack best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81+ZYwK0lzL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "bath towels best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/91ivZLrHkuL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "shower curtain best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71fDdrnVl3L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "home office chair::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71PcqF5ljdL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "standing desk converter best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71IbcT-h9IL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "desk lamp best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71mnUIofC3L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "picture frames best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61cIcr1jmYL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "door mat best::home": {
+    "imageUrl": "https://m.media-amazon.com/images/I/91T0pqtEs2L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "air fryer::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81lTKYX5LNL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dual basket air fryer best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/713QqWaXZ6L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "blender best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/714AwxiuijL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "coffee maker best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61C81PHAPgL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "espresso machine best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61D9GtphxuL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "electric kettle::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81hvKNPIHKL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "cast iron skillet best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71t9BaMgTqL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "nonstick cookware set best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81qUcRQr--L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "knife set best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71aAasT7CuL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "cutting board best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61GxgmUo2EL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "food storage containers::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71oB3+94jBL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "bento lunch box best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81crRXE64OL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "slow cooker best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71kvTVtnrRL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "instant pot best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71MsrFE1-bL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "toaster oven best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51we+MvypHL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "rice cooker::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/41qJ8qzFstL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "stand mixer best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71BUtiP7hOL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "water filter pitcher best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71HZoXuRG1L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "sous vide best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81m6uCW0AyL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "meat thermometer best::kitchen": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61is4F1PDOL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "cordless drill::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/711E-1W75iL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "tool set best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71MKSHbnTQL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "socket set best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71gMpwiHwWL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "screwdriver set best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71hCYfUAQgL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "impact driver best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/817WrflosJL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "work gloves::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/814yTY0X97L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "tape measure best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71kKEeNZe+L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "level best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61TQhrAzLhL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "utility knife best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51eaE5joECL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "flashlight best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/716HWw8ZVzL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "headlamp::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71lq+nt0f3L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "extension cord best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61q9hmplGFL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "shop vac best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61RD+oCTi+L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "ladder best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61+L3-NrwQL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "tool bag best::tools": {
+    "imageUrl": "https://m.media-amazon.com/images/I/5159sqVgNxL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "kids backpack::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61F7GTX0EiL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "toddler toys best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71DKbcOeHcL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "board games best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71LPO4Ud+NL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "lego set best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71AV0wHyDUL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "kids water bottle best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51Ue9T5Iw0L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "baby monitor::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61PzyDeMA-L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "diaper bag best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/812BVzux1IL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "stroller fan best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71t5f+JdOpL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "kids headphones best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61JlnpRT0kL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "art supplies best::kids": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71s7asrIJSL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "hair dryer::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61ZGnuf4jYS._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "flat iron best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71nP3Q6SczL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "curling iron best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51tnuc410ZL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "electric toothbrush best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71gyPMGAytL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "face moisturizer best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51x78epntaL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "sunscreen::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/718YALMz0GL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "makeup organizer best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61cVCxMax5L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "skin care set best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71pu0nR4CGL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "shampoo conditioner set best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51WHZwmLr1L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "body lotion best::beauty": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51lP01--ejL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "adjustable dumbbells::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/7107HV7DSNL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "resistance bands best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51b+439FdSL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "yoga mat best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71RL7mfYsrL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "foam roller best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71WUESEiowL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "pull up bar best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/51dAbVrTxYL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "kettlebell::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71M5FupQ0kL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "treadmill best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/716hawZ4sWL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "exercise bike best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71Zr-T5+NYL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "adjustable dumbbells best::fitness": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81Dn-ZeoVJL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dog bed::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71cgXdW0WqL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "cat litter best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/713T6tThdRL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "pet grooming brush best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81mhHA8K4vL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "pet water fountain best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/61PZSbYyhQL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dog leash best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/81xU-Wwil0L._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "cat toys::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/615Ccf+wziL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "pet carrier best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71KLUcxRWML._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dog treats best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71qD6DWmZgL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  },
+  "dog bed best::pets": {
+    "imageUrl": "https://m.media-amazon.com/images/I/71sTvzJAPzL._AC_SL1200_.jpg",
+    "imageSource": "amazon-search"
+  }
+}
