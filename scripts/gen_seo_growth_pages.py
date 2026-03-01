@@ -29,16 +29,16 @@ FOOTER = """
     <div class='flex flex-col gap-3'>
       <div>
         <strong>Affiliate disclosure:</strong> We may earn a commission when you buy through links on this site, at no extra cost to you.
-        <span class='ml-2'><a class='underline hover:text-slate-900' href='/affiliate-disclosure.html'>Details</a></span>
+        <span class='ml-2'><a class='underline inline-flex items-center min-h-10 px-1 hover:text-slate-900' href='/affiliate-disclosure.html'>Details</a></span>
       </div>
       <div class='flex flex-wrap gap-x-4 gap-y-2'>
-        <a class='hover:text-slate-900' href='/best-deals-online-today.html'>Today</a>
-        <a class='hover:text-slate-900' href='/online-deals-methodology.html'>Methodology</a>
-        <a class='hover:text-slate-900' href='/best-deals-legit-or-scam.html'>Buyer beware</a>
-        <a class='hover:text-slate-900' href='/review-aggregation-guidelines.html'>Review policy</a>
-        <a class='hover:text-slate-900' href='/about-best-online-deals.html'>About</a>
-        <a class='hover:text-slate-900' href='/contact-best-online-deals.html'>Contact</a>
-        <a class='hover:text-slate-900' href='/privacy.html'>Privacy</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/best-deals-online-today.html'>Today</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/online-deals-methodology.html'>Methodology</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/best-deals-legit-or-scam.html'>Buyer beware</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/review-aggregation-guidelines.html'>Review policy</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/about-best-online-deals.html'>About</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/contact-best-online-deals.html'>Contact</a>
+        <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/privacy.html'>Privacy</a>
       </div>
     </div>
   </div>

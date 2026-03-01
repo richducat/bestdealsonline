@@ -178,18 +178,18 @@ def build_page(*, title: str, description: str, canonical: str, h1: str, intro: 
         <div class='flex flex-col gap-3'>
           <div>
             <strong>Affiliate disclosure:</strong> We may earn a commission when you buy through links on this site, at no extra cost to you.
-            <span class='ml-2'><a class='underline hover:text-slate-900' href='/affiliate-disclosure.html'>Details</a></span>
+            <span class='ml-2'><a class='underline inline-flex items-center min-h-10 px-1 hover:text-slate-900' href='/affiliate-disclosure.html'>Details</a></span>
             <div class='text-xs text-slate-400 mt-1'>As an Amazon Associate, we earn from qualifying purchases.</div>
           </div>
           <div class='flex flex-wrap gap-x-4 gap-y-2'>
-            <a class='hover:text-slate-900' href='/best-deals-online-today.html'>Today</a>
-            <a class='hover:text-slate-900' href='/best-deals-online.html'>Best deals online</a>
-            <a class='hover:text-slate-900' href='/electronics-deals.html'>Electronics hub</a>
-            <a class='hover:text-slate-900' href='/home-deals.html'>Home hub</a>
-            <a class='hover:text-slate-900' href='/kitchen-deals.html'>Kitchen hub</a>
-            <a class='hover:text-slate-900' href='/tools-deals.html'>Tools hub</a>
-            <a class='hover:text-slate-900' href='/blog/index.html'>Blog</a>
-            <a class='hover:text-slate-900' href='/privacy.html'>Privacy</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/best-deals-online-today.html'>Today</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/best-deals-online.html'>Best deals online</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/electronics-deals.html'>Electronics hub</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/home-deals.html'>Home hub</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/kitchen-deals.html'>Kitchen hub</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/tools-deals.html'>Tools hub</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/blog/index.html'>Blog</a>
+            <a class='inline-flex items-center min-h-10 px-2 rounded-md hover:text-slate-900 hover:bg-slate-100' href='/privacy.html'>Privacy</a>
           </div>
         </div>
       </div>

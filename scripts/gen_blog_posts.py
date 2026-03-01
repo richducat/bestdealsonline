@@ -494,7 +494,7 @@ def main():
     for p in sorted(items, key=lambda x: x.stat().st_mtime, reverse=True)[:50]:
         title = p.stem.replace("-", " ").title()
         links.append(
-            f"<li class='mt-2'><a class='underline hover:text-slate-900' href='/{p.relative_to(ROOT).as_posix()}'>{html.escape(title)}</a></li>"
+            f"<li class='mt-2'><a class='underline inline-flex items-center min-h-10 px-1 hover:text-slate-900' href='/{p.relative_to(ROOT).as_posix()}'>{html.escape(title)}</a></li>"
         )
 
     index_html = f"""<!doctype html>

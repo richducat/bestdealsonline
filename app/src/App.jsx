@@ -23,8 +23,7 @@ function formatCountdown(ms) {
   const total = Math.max(0, Math.floor(ms / 1000))
   const h = Math.floor(total / 3600)
   const m = Math.floor((total % 3600) / 60)
-  const s = total % 60
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 import {
   Search,
@@ -176,9 +175,14 @@ const DisclosureBanner = () => {
     <div className="bg-slate-100 border-b border-slate-200 text-xs text-slate-600 py-2 px-4 flex justify-between items-center">
       <span>
         <strong>Affiliate Disclosure:</strong> BestDealsOnline.us is reader-supported. When you buy through links on our
-        site, we may earn an affiliate commission at no extra cost to you. <a className="underline" href="/affiliate-disclosure.html">Details</a>
+        site, we may earn an affiliate commission at no extra cost to you.{' '}
+        <a className="underline inline-flex items-center min-h-10 px-1" href="/affiliate-disclosure.html">Details</a>
       </span>
-      <button onClick={() => setVisible(false)} className="text-slate-400 hover:text-slate-800" aria-label="Dismiss">
+      <button
+        onClick={() => setVisible(false)}
+        className="text-slate-400 hover:text-slate-800 inline-flex items-center justify-center h-10 w-10"
+        aria-label="Dismiss"
+      >
         <X size={14} />
       </button>
     </div>
@@ -199,7 +203,11 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
               <span className="text-xs text-yellow-400 uppercase tracking-widest">Amazon Picks</span>
             </div>
           </div>
-          <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+          <button
+            className="md:hidden text-white inline-flex items-center justify-center h-10 w-10"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Menu"
+          >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -212,7 +220,7 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
               className="w-full py-2.5 px-4 pr-12 rounded-full text-slate-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all shadow-inner bg-slate-100 focus:bg-white"
               onChange={(e) => onSearch(e.target.value)}
             />
-            <button className="absolute right-1 top-1 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded-full p-1.5 w-8 h-8 flex items-center justify-center transition-colors" aria-label="Search">
+            <button className="absolute right-1 top-1 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded-full p-1.5 w-10 h-10 flex items-center justify-center transition-colors" aria-label="Search">
               <Search size={16} />
             </button>
           </div>
@@ -232,12 +240,7 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
 
 const Hero = ({ apiStatus, products }) => {
   const deal = useMemo(() => pickDailyProduct(products), [products])
-  const [msLeft, setMsLeft] = useState(msUntilNextMidnight())
-
-  useEffect(() => {
-    const t = setInterval(() => setMsLeft(msUntilNextMidnight()), 1000)
-    return () => clearInterval(t)
-  }, [])
+  const countdown = useMemo(() => formatCountdown(msUntilNextMidnight()), [])
 
   return (
     <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 text-white py-10 md:py-16 relative overflow-hidden">
@@ -266,17 +269,19 @@ const Hero = ({ apiStatus, products }) => {
               </div>
 
               <div className="mt-3">
-                <div className="font-mono text-2xl md:text-3xl font-extrabold text-yellow-200">{formatCountdown(msLeft)}</div>
+                <div className="font-mono text-2xl md:text-3xl font-extrabold text-yellow-200">{countdown}</div>
                 <div className="text-sm text-blue-100/90 mt-1">24-hour countdown</div>
               </div>
 
               <div className="mt-5 flex items-center gap-4">
                 <div className="w-24 h-20 md:w-28 md:h-24 rounded-2xl overflow-hidden border border-white/10 bg-white/5">
                   <img
-                    src={deal.imageUrl || getCategoryImage(deal.category)}
+                    src={getCategoryImage(deal.category)}
                     alt={deal.title}
                     className="w-full h-full object-cover"
-                    loading="lazy"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                   />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
@@ -600,11 +605,11 @@ const CompactProductCard = ({ product, tracking }) => {
 const JumpBar = () => (
   <div className="bg-white/80 backdrop-blur border-b border-slate-200 sticky top-[60px] md:top-[74px] z-30">
     <div className="container mx-auto px-4 py-2 flex gap-2 overflow-x-auto hide-scrollbar">
-      <a href="#categories" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Categories</a>
-      <a href="#budget" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
-      <a href="#top-picks" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
-      <a href="#trending" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
-      <a href="/blog/index.html" className="px-3 py-1.5 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Blog</a>
+      <a href="#categories" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Categories</a>
+      <a href="#budget" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
+      <a href="#top-picks" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
+      <a href="#trending" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
+      <a href="/blog/index.html" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Blog</a>
     </div>
   </div>
 )
@@ -771,22 +776,22 @@ const Footer = () => (
       <div>
         <h4 className="text-white font-bold mb-6 text-base">Hubs</h4>
         <ul className="space-y-3">
-          <li><a href="/electronics-deals.html" className="hover:text-yellow-400 transition-colors">Electronics</a></li>
-          <li><a href="/kitchen-deals.html" className="hover:text-yellow-400 transition-colors">Kitchen</a></li>
-          <li><a href="/home-deals.html" className="hover:text-yellow-400 transition-colors">Home</a></li>
-          <li><a href="/fitness-deals.html" className="hover:text-yellow-400 transition-colors">Fitness</a></li>
-          <li><a href="/kids-deals.html" className="hover:text-yellow-400 transition-colors">Kids</a></li>
-          <li><a href="/pets-deals.html" className="hover:text-yellow-400 transition-colors">Pets</a></li>
-          <li><a href="/tools-deals.html" className="hover:text-yellow-400 transition-colors">Tools</a></li>
-          <li><a href="/beauty-deals.html" className="hover:text-yellow-400 transition-colors">Beauty</a></li>
+          <li><a href="/electronics-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Electronics</a></li>
+          <li><a href="/kitchen-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Kitchen</a></li>
+          <li><a href="/home-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Home</a></li>
+          <li><a href="/fitness-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Fitness</a></li>
+          <li><a href="/kids-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Kids</a></li>
+          <li><a href="/pets-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Pets</a></li>
+          <li><a href="/tools-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Tools</a></li>
+          <li><a href="/beauty-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Beauty</a></li>
         </ul>
       </div>
       <div>
         <h4 className="text-white font-bold mb-6 text-base">Links</h4>
         <ul className="space-y-3">
-          <li><a href="/affiliate-disclosure.html" className="hover:text-yellow-400 transition-colors">Affiliate disclosure</a></li>
-          <li><a href="/privacy.html" className="hover:text-yellow-400 transition-colors">Privacy</a></li>
-          <li><a href="/drummer-deals.html" className="hover:text-yellow-400 transition-colors">Drummer Deals</a></li>
+          <li><a href="/affiliate-disclosure.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Affiliate disclosure</a></li>
+          <li><a href="/privacy.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Privacy</a></li>
+          <li><a href="/drummer-deals.html" className="inline-flex items-center min-h-10 px-2 rounded-md hover:text-yellow-400 hover:bg-slate-900 transition-colors">Drummer Deals</a></li>
         </ul>
       </div>
       <div>
@@ -796,7 +801,7 @@ const Footer = () => (
         </p>
         <p className="leading-relaxed mb-0 text-xs">
           This site may earn a commission when you buy through links (at no extra cost to you).{' '}
-          <a className="underline hover:text-yellow-400" href="/affiliate-disclosure.html">Details</a>
+          <a className="underline inline-flex items-center min-h-10 px-1 hover:text-yellow-400" href="/affiliate-disclosure.html">Details</a>
         </p>
         <p className="leading-relaxed mt-4 mb-0 text-xs">
           Prices and availability are subject to change.
@@ -917,7 +922,7 @@ const App = () => {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap border ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap border ${
                     selectedCategory === category
                       ? 'bg-slate-900 text-white border-slate-900 shadow-md'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
