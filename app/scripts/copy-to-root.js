@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Copy build output into repo root so GitHub Pages (configured to /) serves it.
@@ -10,10 +10,8 @@ if (!existsSync(distDir)) {
   process.exit(1)
 }
 
-// Remove old assets folder and index.html in root (but keep other static pages like drummer-deals.html)
+// Keep existing root assets (used by many static pages) and merge build assets into it.
 const oldAssets = join(repoRoot, 'assets')
-if (existsSync(oldAssets)) rmSync(oldAssets, { recursive: true, force: true })
-
 const newAssets = join(distDir, 'assets')
 if (existsSync(newAssets)) {
   mkdirSync(oldAssets, { recursive: true })

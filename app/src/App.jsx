@@ -684,12 +684,12 @@ const TopPicks = ({ products }) => {
 
       <div className="grid gap-6">
         {cats.map((cat) => (
-          <div key={cat}>
-            <div className="flex items-baseline justify-between mb-2">
+          <div key={cat} className="min-w-0">
+            <div className="flex items-baseline justify-between mb-2 w-full min-w-0">
               <div className="font-bold text-slate-800">{cat}</div>
               <div className="text-xs text-slate-500">Top {byCat.get(cat).length}</div>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
+            <div className="flex w-full min-w-0 max-w-full gap-4 overflow-x-auto pb-2 hide-scrollbar">
               {byCat.get(cat).map((p, i) => (
                 <CompactProductCard
                   key={p.id}
