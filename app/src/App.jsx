@@ -150,6 +150,7 @@ const SORT_OPTIONS = [
   { label: 'Price: Low → High', value: 'price_asc' },
   { label: 'Price: High → Low', value: 'price_desc' },
 ]
+const DEALS_PAGE_SIZE = 40
 
 const IconMap = {
   Headphones,
@@ -927,6 +928,7 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortOption, setSortOption] = useState('dealtruth_desc')
+  const [visibleCount, setVisibleCount] = useState(DEALS_PAGE_SIZE)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -944,6 +946,10 @@ const App = () => {
       }
     })()
   }, [])
+
+  useEffect(() => {
+    setVisibleCount(DEALS_PAGE_SIZE)
+  }, [selectedCategory, searchQuery, sortOption])
 
   const scoredProducts = useMemo(() => scoreProductList(products), [products])
 
@@ -983,6 +989,9 @@ const App = () => {
 
     return result
   }, [selectedCategory, searchQuery, sortOption, scoredProducts])
+
+  const visibleProducts = useMemo(() => processedProducts.slice(0, visibleCount), [processedProducts, visibleCount])
+  const hasMoreProducts = visibleProducts.length < processedProducts.length
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
@@ -1067,7 +1076,7 @@ const App = () => {
               <p className="text-slate-500 text-sm mt-1">Ranked with DealTruth scoring across savings, rarity, quality, and seller trust.</p>
             </div>
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-white px-3 py-1 rounded-full border border-slate-200 self-start md:self-auto">
-              {processedProducts.length} items
+              {visibleProducts.length} of {processedProducts.length} items
             </span>
           </div>
           <p className="text-xs text-slate-500 mb-6">
@@ -1075,19 +1084,34 @@ const App = () => {
           </p>
 
           {processedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {processedProducts.map((product, i) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  tracking={{
-                    section: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
-                    position: i,
-                    campaign: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
-                  }}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {visibleProducts.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    tracking={{
+                      section: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
+                      position: i,
+                      campaign: selectedCategory === 'All' ? 'trending_all' : `trending_${String(selectedCategory).toLowerCase()}`,
+                    }}
+                  />
+                ))}
+              </div>
+              {hasMoreProducts && (
+                <div className="mt-8 flex flex-col items-center gap-3">
+                  <p className="text-sm text-slate-500">
+                    {processedProducts.length - visibleProducts.length} more deals available
+                  </p>
+                  <button
+                    onClick={() => setVisibleCount((count) => count + DEALS_PAGE_SIZE)}
+                    className="inline-flex items-center justify-center min-h-10 px-6 py-3 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors shadow-sm"
+                  >
+                    Show more deals
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-24 bg-white rounded-2xl border border-dashed border-slate-200 shadow-sm">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-6">
