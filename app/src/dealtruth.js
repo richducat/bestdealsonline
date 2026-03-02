@@ -8,6 +8,17 @@ const WEIGHTS = {
   urgency: 0.1,
 }
 
+const CATEGORY_PRIORS = {
+  Electronics: { opportunity: 0.62, safety: 0.55 },
+  Home: { opportunity: 0.57, safety: 0.63 },
+  Kitchen: { opportunity: 0.59, safety: 0.6 },
+  Tools: { opportunity: 0.54, safety: 0.64 },
+  Kids: { opportunity: 0.56, safety: 0.5 },
+  Beauty: { opportunity: 0.58, safety: 0.44 },
+  Fitness: { opportunity: 0.55, safety: 0.58 },
+  Pets: { opportunity: 0.53, safety: 0.57 },
+}
+
 function clamp(value, min = 0, max = 1) {
   if (!Number.isFinite(value)) return min
   return Math.min(max, Math.max(min, value))
@@ -54,6 +65,59 @@ function parseTimestamp(value) {
   }
 
   return null
+}
+
+function stableHash(input) {
+  const text = String(input || '')
+  let hash = 2166136261
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i)
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
+  }
+  return Math.abs(hash >>> 0)
+}
+
+function categoryPriors(category) {
+  return CATEGORY_PRIORS[String(category || '').trim()] || { opportunity: 0.56, safety: 0.56 }
+}
+
+function titleSpecificityScore(title) {
+  const text = String(title || '').trim()
+  if (!text) return 0.4
+
+  const tokens = text
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length > 1)
+
+  const unique = new Set(tokens)
+  const tokenCountNorm = clamp((tokens.length - 2) / 8, 0, 1)
+  const uniqueRatio = tokens.length ? unique.size / tokens.length : 0
+  const hasNumber = /\d/.test(text) ? 1 : 0
+  const hasModelHint = /(pack|set|inch|oz|count|mah|gb|tb|w|v|ft|mm)\b/i.test(text) ? 1 : 0
+  const vaguePenalty = /(best|cheap|deal|great)\b/i.test(text) ? 0.12 : 0
+
+  return clamp(0.35 + 0.3 * tokenCountNorm + 0.2 * uniqueRatio + 0.1 * hasNumber + 0.15 * hasModelHint - vaguePenalty)
+}
+
+function provisionalValueSignal(product, quality) {
+  const title = String(product?.title || '')
+  const category = String(product?.category || '')
+  const priors = categoryPriors(category)
+  const specificity = titleSpecificityScore(title)
+  const hashed = stableHash(`${title}|${category}`) % 1000
+  const novelty = hashed / 1000
+
+  // Metadata-only bootstrap signal while price history is still forming.
+  const signal = 0.3 * priors.opportunity + 0.3 * specificity + 0.25 * clamp(quality, 0, 1) + 0.15 * novelty
+  return clamp(signal)
+}
+
+function provisionalTrustSignal(product, trust) {
+  if (trust > 0.01) return trust
+  const priors = categoryPriors(product?.category)
+  const specificity = titleSpecificityScore(product?.title)
+  return clamp(0.55 * priors.safety + 0.45 * specificity)
 }
 
 function median(values) {
@@ -207,6 +271,110 @@ function priceValues(entries) {
   return (entries || []).map((entry) => entry.price).filter((value) => Number.isFinite(value) && value > 0)
 }
 
+function chooseBaseline({ historyEntries, effectivePriceNow, listPrice }) {
+  const windows = [
+    { days: 90, minPoints: 8, mode: '90d' },
+    { days: 45, minPoints: 6, mode: '45d' },
+    { days: 30, minPoints: 5, mode: '30d' },
+    { days: 14, minPoints: 3, mode: '14d' },
+  ]
+
+  for (const win of windows) {
+    const values = priceValues(lastDays(historyEntries, win.days))
+    if (values.length >= win.minPoints) {
+      return {
+        baseline: trimmedMedian(values, 0.05),
+        mode: win.mode,
+        windowDays: win.days,
+        points: values.length,
+      }
+    }
+  }
+
+  const valuesAll = priceValues(historyEntries)
+  if (valuesAll.length >= 2) {
+    return {
+      baseline: median(valuesAll),
+      mode: 'all-history',
+      windowDays: null,
+      points: valuesAll.length,
+    }
+  }
+
+  if (Number.isFinite(listPrice) && listPrice > 0 && Number.isFinite(effectivePriceNow) && effectivePriceNow > 0) {
+    return {
+      baseline: Math.max(listPrice, effectivePriceNow),
+      mode: 'list-anchor',
+      windowDays: null,
+      points: 1,
+    }
+  }
+
+  if (Number.isFinite(listPrice) && listPrice > 0) {
+    return {
+      baseline: listPrice,
+      mode: 'list-anchor',
+      windowDays: null,
+      points: 1,
+    }
+  }
+
+  return {
+    baseline: null,
+    mode: 'none',
+    windowDays: null,
+    points: 0,
+  }
+}
+
+function chooseRarityWindow({ historyEntries, effectivePriceNow }) {
+  if (!Number.isFinite(effectivePriceNow)) {
+    return { percentile: null, rarity: null, windowDays: null, points: 0, mode: 'none' }
+  }
+
+  const windows = [
+    { days: 180, minPoints: 12, mode: '180d' },
+    { days: 90, minPoints: 8, mode: '90d' },
+    { days: 45, minPoints: 6, mode: '45d' },
+    { days: 30, minPoints: 4, mode: '30d' },
+    { days: 14, minPoints: 3, mode: '14d' },
+  ]
+
+  for (const win of windows) {
+    const values = priceValues(lastDays(historyEntries, win.days))
+    if (values.length >= win.minPoints) {
+      const percentile = percentileRank(values, effectivePriceNow)
+      return {
+        percentile,
+        rarity: percentile == null ? null : clamp(1 - percentile),
+        windowDays: win.days,
+        points: values.length,
+        mode: win.mode,
+      }
+    }
+  }
+
+  const valuesAll = priceValues(historyEntries)
+  if (valuesAll.length >= 2) {
+    const percentile = percentileRank(valuesAll, effectivePriceNow)
+    return {
+      percentile,
+      rarity: percentile == null ? null : clamp(1 - percentile),
+      windowDays: null,
+      points: valuesAll.length,
+      mode: 'all-history',
+    }
+  }
+
+  return {
+    percentile: null,
+    rarity: null,
+    windowDays: null,
+    points: 0,
+    mode: 'none',
+  }
+}
+
 function qualityScore(ratingValue, reviewCountValue) {
   const rating = toNumber(ratingValue) ?? 0
   const reviews = toNumber(reviewCountValue) ?? 0
@@ -276,11 +444,27 @@ function urgencyScore({ rarity, volatility, timeAtCurrentPriceHours }) {
   return clamp(0.5 * rarity + 0.3 * (1 - volatilityNorm) + 0.2 * priceJustChanged)
 }
 
-function confidenceLabel({ historyCount, hasNinetyDay, hasOneEightyDay, volatility, trust, isPrime, priceKnown }) {
+function confidenceLabel({
+  historyCount,
+  baselineMode,
+  rarityMode,
+  volatility,
+  trust,
+  isPrime,
+  priceKnown,
+  provisionalOnly,
+}) {
   const reasons = []
   let level = 'Low'
 
   if (!priceKnown) {
+    if (provisionalOnly) {
+      return {
+        level,
+        reason: 'metadata-only provisional scoring',
+        text: `${level} (metadata-only provisional scoring)`,
+      }
+    }
     return {
       level,
       reason: 'missing current price data',
@@ -288,13 +472,17 @@ function confidenceLabel({ historyCount, hasNinetyDay, hasOneEightyDay, volatili
     }
   }
 
-  if (hasOneEightyDay && historyCount >= 45 && volatility <= 0.12 && trust >= 0.55) {
+  if (baselineMode === '90d' && rarityMode === '180d' && historyCount >= 45 && volatility <= 0.12 && trust >= 0.55) {
     level = 'High'
     reasons.push('stable price history')
     if (isPrime) reasons.push('Prime offer')
-  } else if (hasNinetyDay && historyCount >= 20 && trust >= 0.4) {
+  } else if (baselineMode !== 'none' && baselineMode !== 'list-anchor' && historyCount >= 12 && trust >= 0.38) {
     level = 'Medium'
-    reasons.push('usable price history')
+    reasons.push('short-window baseline')
+    if (isPrime) reasons.push('Prime offer')
+  } else if (baselineMode === 'list-anchor') {
+    level = 'Low'
+    reasons.push('reference-price anchor only')
     if (isPrime) reasons.push('Prime offer')
   } else {
     if (historyCount < 20) reasons.push('limited price history')
@@ -315,27 +503,41 @@ function roundPercent(value) {
   return Math.round((value || 0) * 100)
 }
 
-function rarityText(percentile180, hasHistory) {
-  if (!hasHistory || percentile180 == null) return 'Rarity: not enough history yet'
+function rarityText(percentile, mode, windowDays) {
+  if (percentile == null) return 'Rarity: provisional (insufficient price history)'
 
-  if (percentile180 <= 0.03) return 'Rarity: lowest price in 180 days'
-  if (percentile180 <= 0.1) return 'Rarity: near 180-day low'
-  if (percentile180 <= 0.25) return `Rarity: lower than ~${Math.round((1 - percentile180) * 100)}% of 180-day prices`
+  if (mode === '180d') {
+    if (percentile <= 0.03) return 'Rarity: lowest price in 180 days'
+    if (percentile <= 0.1) return 'Rarity: near 180-day low'
+    if (percentile <= 0.25) return `Rarity: lower than ~${Math.round((1 - percentile) * 100)}% of 180-day prices`
+    return `Rarity: not rare (~${Math.round(percentile * 100)}th percentile in 180 days)`
+  }
 
-  return `Rarity: not rare (~${Math.round(percentile180 * 100)}th percentile in 180 days)`
+  const windowLabel = windowDays ? `${windowDays}-day` : 'available-history'
+  if (percentile <= 0.1) return `Rarity: near ${windowLabel} low (provisional)`
+  return `Rarity: ~${Math.round(percentile * 100)}th percentile (${windowLabel}, provisional)`
 }
 
-function realDiscountText(realDiscountPct, baselineKnown) {
-  if (!baselineKnown || realDiscountPct == null) {
-    return 'Real discount: unavailable (building 90-day baseline)'
+function realDiscountText(realDiscountPct, baselineMode, baselineWindowDays) {
+  if (realDiscountPct == null || baselineMode === 'none') {
+    return 'Real discount: provisional only (awaiting live price baseline)'
   }
 
   const pct = Math.round(Math.abs(realDiscountPct) * 100)
+  const comparator =
+    baselineMode === '90d'
+      ? '90-day median'
+      : baselineMode === 'list-anchor'
+        ? 'reference price (provisional)'
+        : baselineWindowDays
+          ? `${baselineWindowDays}-day median (provisional)`
+          : 'available-history median (provisional)'
+
   if (realDiscountPct >= 0) {
-    return `Real discount: ${pct}% below 90-day median`
+    return `Real discount: ${pct}% below ${comparator}`
   }
 
-  return `Real discount: ${pct}% above 90-day median`
+  return `Real discount: ${pct}% above ${comparator}`
 }
 
 function lastPriceRunHours(entries, currentPrice) {
@@ -448,77 +650,105 @@ export function dealTruthScore(product) {
   const fallbackCurrent = toNumber(product?.price)
   const effectivePriceNow = Number.isFinite(priceNow) ? priceNow : Number.isFinite(fallbackCurrent) ? fallbackCurrent : null
 
-  const ninetyDayEntries = lastDays(historyEntries, 90)
-  const oneEightyEntries = lastDays(historyEntries, 180)
-
-  const history90Values = priceValues(ninetyDayEntries)
-  const history180Values = priceValues(oneEightyEntries)
-
-  const baseline90 = trimmedMedian(history90Values, 0.05)
-  const hasBaseline = Number.isFinite(baseline90) && baseline90 > 0
-  const has180History = history180Values.length > 0
-
-  const realDiscountPct =
-    hasBaseline && Number.isFinite(effectivePriceNow)
-      ? (baseline90 - effectivePriceNow) / baseline90
-      : null
-
-  const percentile180 =
-    has180History && Number.isFinite(effectivePriceNow)
-      ? percentileRank(history180Values, effectivePriceNow)
-      : null
-
-  const rarity = percentile180 == null ? 0 : clamp(1 - percentile180)
-  const volatility = stdDevLog(history180Values)
-
   const quality = qualityScore(offer.rating ?? product?.rating, offer.reviews ?? product?.reviews)
-  const trust = sellerTrustScore(offer)
+  const provisionalValue = provisionalValueSignal(product, quality)
+  const trustFromSeller = sellerTrustScore(offer)
+  const trust = provisionalTrustSignal(product, trustFromSeller)
 
   const reviewCount = toNumber(offer.reviews ?? product?.reviews) ?? 0
   const listPrice =
     toNumber(offer.listPrice) ?? toNumber(offer.msrp) ?? toNumber(offer.wasPrice) ?? toNumber(product?.listPrice)
 
+  const baselineChoice = chooseBaseline({
+    historyEntries,
+    effectivePriceNow,
+    listPrice,
+  })
+  const baseline = baselineChoice.baseline
+  const hasBaseline = Number.isFinite(baseline) && baseline > 0
+
+  const realDiscountPct =
+    hasBaseline && Number.isFinite(effectivePriceNow)
+      ? (baseline - effectivePriceNow) / baseline
+      : null
+
+  const rarityChoice = chooseRarityWindow({ historyEntries, effectivePriceNow })
+  const rarityFromHistory = rarityChoice.rarity
+
+  const history180Values = priceValues(lastDays(historyEntries, 180))
+  const volatility = stdDevLog(history180Values)
   const ageDays = listingAgeDays(product)
+
+  const discountSignal =
+    realDiscountPct == null
+      ? clamp(provisionalValue * 0.55, 0.1, 0.55)
+      : clamp(realDiscountPct, 0, 1)
+
+  const rarity =
+    rarityFromHistory == null
+      ? clamp(0.75 * provisionalValue + 0.15 * (1 - trust), 0.08, 0.8)
+      : clamp(rarityFromHistory, 0, 1)
+
+  const timeAtCurrentPriceHours = lastPriceRunHours(historyEntries, effectivePriceNow)
+  const urgency =
+    Number.isFinite(effectivePriceNow)
+      ? urgencyScore({ rarity, volatility, timeAtCurrentPriceHours })
+      : clamp(0.65 * provisionalValue + 0.35 * rarity)
+
+  const specificity = titleSpecificityScore(product?.title)
 
   const scamPenalty = scamRisk({
     realDiscount: Math.max(0, realDiscountPct ?? 0),
     reviewCount,
     listPrice,
-    baseline90,
+    baseline90: hasBaseline ? baseline : effectivePriceNow,
     volatility,
     ageDays,
   })
 
-  const timeAtCurrentPriceHours = lastPriceRunHours(historyEntries, effectivePriceNow)
-  const urgency = urgencyScore({ rarity, volatility, timeAtCurrentPriceHours })
-
-  const boundedDiscount = clamp(realDiscountPct ?? 0)
+  const metadataPenalty =
+    Number.isFinite(effectivePriceNow)
+      ? 0
+      : clamp((1 - specificity) * 0.2 + (1 - trust) * 0.15, 0, 0.35)
+  const combinedPenalty = clamp(scamPenalty + metadataPenalty, 0, 0.6)
 
   const rawScore =
     100 *
-      (WEIGHTS.realDiscount * boundedDiscount +
+      (WEIGHTS.realDiscount * discountSignal +
         WEIGHTS.rarity * rarity +
         WEIGHTS.quality * quality +
         WEIGHTS.trust * trust +
         WEIGHTS.urgency * urgency) -
-    100 * clamp(scamPenalty)
+    100 * combinedPenalty
 
-  const score = Math.round(clamp(rawScore, 0, 100))
+  const hasPriceSignal = Number.isFinite(effectivePriceNow)
+  const fullHistoryMode = baselineChoice.mode === '90d' && rarityChoice.mode === '180d'
+  let score
+  if (hasPriceSignal) {
+    const scoreCap = fullHistoryMode ? 100 : 90
+    score = Math.round(clamp(rawScore, 0, scoreCap))
+  } else {
+    // Provisional mode lifts score into a useful ranking range while price data is missing.
+    const provisionalRaw =
+      100 * (0.45 * provisionalValue + 0.2 * quality + 0.2 * trust + 0.15 * rarity) - 100 * combinedPenalty
+    score = Math.round(clamp(32 + provisionalRaw * 0.62, 35, 74))
+  }
 
   const isPrime = toBoolean(offer.isPrime ?? offer.prime)
   const confidence = confidenceLabel({
     historyCount: historyEntries.length,
-    hasNinetyDay: hasBaseline,
-    hasOneEightyDay: has180History,
+    baselineMode: baselineChoice.mode,
+    rarityMode: rarityChoice.mode,
     volatility,
     trust,
     isPrime,
-    priceKnown: Number.isFinite(effectivePriceNow),
+    priceKnown: hasPriceSignal,
+    provisionalOnly: !hasPriceSignal && baselineChoice.mode === 'none',
   })
 
   const { drops, avgDropSize } = dropStats(historyEntries, 60)
   const decision = buyOrWait({
-    percentile180,
+    percentile180: rarityChoice.percentile,
     volatility,
     dropsLast60d: drops,
     avgDropSize,
@@ -527,28 +757,31 @@ export function dealTruthScore(product) {
   })
 
   const notMeaningfulDeal =
-    realDiscountPct == null ? false : realDiscountPct < 0.05 || (percentile180 != null && percentile180 > 0.35)
+    realDiscountPct == null ? false : realDiscountPct < 0.05 || (rarityChoice.percentile != null && rarityChoice.percentile > 0.35)
+
+  const provisionalMode = !hasPriceSignal || baselineChoice.mode !== '90d'
 
   return {
     score,
     effectivePriceNow,
-    baseline90,
+    baseline90: baseline,
+    baselineMode: baselineChoice.mode,
     realDiscountPct,
-    percentile180,
+    percentile180: rarityChoice.percentile,
     rarity,
     volatility,
     quality,
     trust,
     urgency,
-    scamPenalty,
+    scamPenalty: combinedPenalty,
     historyCount: historyEntries.length,
     confidence,
     notMeaningfulDeal,
     decision,
     explanations: {
-      scoreLine: `DealTruth Score: ${score}/100`,
-      discountLine: realDiscountText(realDiscountPct, hasBaseline),
-      rarityLine: rarityText(percentile180, has180History),
+      scoreLine: provisionalMode ? `DealTruth Score: ${score}/100 (Provisional)` : `DealTruth Score: ${score}/100`,
+      discountLine: realDiscountText(realDiscountPct, baselineChoice.mode, baselineChoice.windowDays),
+      rarityLine: rarityText(rarityChoice.percentile, rarityChoice.mode, rarityChoice.windowDays),
       confidenceLine: `Confidence: ${confidence.text}`,
       decisionLine: decision.text,
     },
@@ -558,10 +791,15 @@ export function dealTruthScore(product) {
       qualityScore: roundPercent(quality),
       sellerTrustScore: roundPercent(trust),
       urgencyScore: roundPercent(urgency),
-      scamPenalty: roundPercent(scamPenalty),
+      scamPenalty: roundPercent(combinedPenalty),
       dropChance7dPct: decision.dropChance7dPct,
       dropsLast60d: drops,
       avgDropSizePct: roundPercent(avgDropSize),
+      baselineMode: baselineChoice.mode,
+      baselinePoints: baselineChoice.points,
+      rarityMode: rarityChoice.mode,
+      rarityPoints: rarityChoice.points,
+      provisionalValueSignal: roundPercent(provisionalValue),
     },
   }
 }
