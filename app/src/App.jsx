@@ -609,6 +609,7 @@ const JumpBar = () => (
       <a href="#budget" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
       <a href="#top-picks" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
       <a href="#trending" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
+      <a href="#dealtruth" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">How DealTruth Works</a>
       <a href="/blog/index.html" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Blog</a>
     </div>
   </div>
@@ -756,6 +757,104 @@ const TopPicks = ({ products }) => {
         ))}
       </div>
     </div>
+  )
+}
+
+const DealTruthGuide = ({ products }) => {
+  const stats = useMemo(() => {
+    const total = products.length
+    let full = 0
+    let shortWindow = 0
+    let provisional = 0
+
+    for (const product of products) {
+      const mode = product?.dealTruth?.baselineMode
+      if (mode === '90d') {
+        full += 1
+      } else if (mode && mode !== 'none') {
+        shortWindow += 1
+      } else {
+        provisional += 1
+      }
+    }
+
+    return {
+      total,
+      full,
+      shortWindow,
+      provisional,
+      fullPct: total ? Math.round((full / total) * 100) : 0,
+    }
+  }, [products])
+
+  return (
+    <section className="mt-14 rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 md:p-10 shadow-sm">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div className="max-w-3xl">
+          <div className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold tracking-[0.2em] uppercase rounded-full px-3 py-1">
+            <Tag size={12} /> DealTruth Explainer
+          </div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-4">How we rank deals (and why it’s different)</h2>
+          <p className="text-slate-700 mt-3 leading-relaxed">
+            Most deal sites sort by promo percentage. We rank by actual value and buyer safety: effective price,
+            rarity, quality, seller trust, and whether the signal is full-history or provisional.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+          <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Full 90-day baseline</div>
+            <div className="text-slate-900 font-extrabold text-lg">{stats.full}</div>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Short-window baseline</div>
+            <div className="text-slate-900 font-extrabold text-lg">{stats.shortWindow}</div>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Provisional</div>
+            <div className="text-slate-900 font-extrabold text-lg">{stats.provisional}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-4 mt-8">
+        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+          <div className="font-extrabold text-slate-900 text-lg">1) Real discount, not fake anchor price</div>
+          <p className="text-slate-600 text-sm mt-2">
+            We compare effective price (item + shipping - coupon - promos) against observed baseline prices, not just MSRP.
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+          <div className="font-extrabold text-slate-900 text-lg">2) Rarity + confidence on every card</div>
+          <p className="text-slate-600 text-sm mt-2">
+            You see whether a price is near a recent low and how reliable that call is based on history depth + offer quality.
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-slate-200 p-5">
+          <div className="font-extrabold text-slate-900 text-lg">3) Buy now vs wait signal</div>
+          <p className="text-slate-600 text-sm mt-2">
+            We estimate short-term drop odds so users can decide quickly instead of guessing from a red discount badge.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-7 bg-slate-900 text-white rounded-2xl p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div className="font-extrabold text-lg">Score guide</div>
+          <p className="text-slate-200 text-sm mt-1">
+            80+ exceptional, 65-79 strong buy, 50-64 worth tracking, below 50 usually pass. Provisional labels show early-stage scoring.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a href="/best-deals-with-price-history.html" className="inline-flex items-center min-h-10 px-4 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors">
+            Why price history matters <ArrowUpRight size={16} className="ml-1.5" />
+          </a>
+          <a href="/best-deals-legit-or-scam.html" className="inline-flex items-center min-h-10 px-4 rounded-xl border border-white/20 text-white font-bold hover:bg-white/10 transition-colors">
+            Deal safety checks <ArrowUpRight size={16} className="ml-1.5" />
+          </a>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -1002,6 +1101,9 @@ const App = () => {
               </button>
             </div>
           )}
+
+          <div id="dealtruth" className="scroll-mt-32" />
+          <DealTruthGuide products={processedProducts} />
 
           <div className="mt-16 bg-indigo-900 text-white py-14 rounded-3xl relative overflow-hidden">
             <div className="container mx-auto px-6 text-center relative z-10">
