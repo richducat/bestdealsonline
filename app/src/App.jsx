@@ -760,7 +760,7 @@ const TopPicks = ({ products }) => {
   )
 }
 
-const DealTruthGuide = ({ products }) => {
+const DealTruthGuide = ({ products, className = 'mt-14' }) => {
   const stats = useMemo(() => {
     const total = products.length
     let full = 0
@@ -788,7 +788,7 @@ const DealTruthGuide = ({ products }) => {
   }, [products])
 
   return (
-    <section className="mt-14 rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 md:p-10 shadow-sm">
+    <section className={`${className} rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 md:p-10 shadow-sm`}>
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold tracking-[0.2em] uppercase rounded-full px-3 py-1">
@@ -992,6 +992,11 @@ const App = () => {
       <main className="flex-grow">
         <Hero apiStatus={apiStatus} products={scoredProducts} />
 
+        <div id="dealtruth" className="scroll-mt-32" />
+        <div className="container mx-auto px-4 pt-8">
+          <DealTruthGuide products={scoredProducts} className="mt-0" />
+        </div>
+
         <JumpBar />
 
         <div className="mt-10">
@@ -1101,9 +1106,6 @@ const App = () => {
               </button>
             </div>
           )}
-
-          <div id="dealtruth" className="scroll-mt-32" />
-          <DealTruthGuide products={processedProducts} />
 
           <div className="mt-16 bg-indigo-900 text-white py-14 rounded-3xl relative overflow-hidden">
             <div className="container mx-auto px-6 text-center relative z-10">
