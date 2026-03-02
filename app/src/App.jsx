@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { scoreProductList } from './dealtruth'
+import { dealTruthScore, scoreProductList } from './dealtruth'
 
 function pickDailyProduct(products) {
   const items = Array.isArray(products) ? products.filter((p) => p && p.affiliateLink) : []
@@ -97,6 +97,189 @@ function amazonSearchLink(query, campaign = 'bdo_storefront') {
   return `https://www.amazon.com/s?k=${q}&tag=${AMAZON_TAG}&utm_source=bestdealsonline&utm_medium=site&utm_campaign=${encodeURIComponent(
     campaign
   )}`
+}
+
+const AMAZON_ASIN_PATTERN = /^[A-Z0-9]{10}$/
+const ANALYZER_STOP_WORDS = new Set([
+  'amazon',
+  'with',
+  'from',
+  'that',
+  'this',
+  'your',
+  'their',
+  'best',
+  'pack',
+  'set',
+  'the',
+  'and',
+  'for',
+  'you',
+  'are',
+  'but',
+  'its',
+  'new',
+])
+
+const CATEGORY_KEYWORDS = {
+  Electronics: ['charger', 'cable', 'monitor', 'headphones', 'earbuds', 'usb', 'power', 'wifi', 'router', 'speaker', 'camera'],
+  Home: ['storage', 'blanket', 'curtain', 'lamp', 'organizer', 'cleaning', 'bedding', 'bathroom', 'furniture'],
+  Kitchen: ['air fryer', 'blender', 'toaster', 'coffee', 'cookware', 'pan', 'knife', 'kitchen', 'grinder'],
+  Tools: ['drill', 'wrench', 'tool', 'screwdriver', 'socket', 'measuring', 'workshop', 'hardware'],
+  Kids: ['kids', 'toddler', 'baby', 'toy', 'school', 'stroller', 'nursery'],
+  Beauty: ['skincare', 'serum', 'beauty', 'makeup', 'hair', 'grooming', 'shampoo'],
+  Fitness: ['fitness', 'workout', 'dumbbell', 'yoga', 'exercise', 'gym', 'resistance'],
+  Pets: ['pet', 'dog', 'cat', 'litter', 'leash', 'animal', 'food bowl'],
+}
+
+function normalizeAmazonInputUrl(value) {
+  const raw = String(value || '').trim()
+  if (!raw) return null
+
+  const upper = raw.toUpperCase()
+  if (AMAZON_ASIN_PATTERN.test(upper)) {
+    return new URL(`https://www.amazon.com/dp/${upper}`)
+  }
+
+  const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`
+  let parsed
+  try {
+    parsed = new URL(withProtocol)
+  } catch (_) {
+    return null
+  }
+
+  if (!/(^|\.)amazon\./i.test(parsed.hostname)) return null
+  return parsed
+}
+
+function extractAsinFromAmazonUrl(url) {
+  if (!url) return null
+
+  const explicitAsin = (url.searchParams.get('asin') || '').trim().toUpperCase()
+  if (AMAZON_ASIN_PATTERN.test(explicitAsin)) return explicitAsin
+
+  const patterns = [
+    /\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/gp\/product\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/exec\/obidos\/ASIN\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/o\/ASIN\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/product\/([A-Z0-9]{10})(?:[/?]|$)/i,
+  ]
+
+  for (const pattern of patterns) {
+    const match = url.pathname.match(pattern)
+    if (match?.[1]) return match[1].toUpperCase()
+  }
+
+  const segments = url.pathname.split('/').filter(Boolean)
+  for (const segment of segments) {
+    const cleaned = segment.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+    if (AMAZON_ASIN_PATTERN.test(cleaned)) return cleaned
+  }
+
+  return null
+}
+
+function prettifyTitle(text) {
+  return String(text || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      if (word.length <= 2) return word.toUpperCase()
+      return `${word.charAt(0).toUpperCase()}${word.slice(1)}`
+    })
+    .join(' ')
+}
+
+function inferTitleFromAmazonUrl(url, asin) {
+  if (!url) return asin ? `Amazon Product ${asin}` : 'Amazon Product'
+
+  const segments = url.pathname.split('/').filter(Boolean)
+  let sourceText = ''
+
+  const dpIndex = segments.findIndex((segment) => segment.toLowerCase() === 'dp')
+  if (dpIndex > 0) {
+    sourceText = segments[dpIndex - 1]
+  }
+
+  if (!sourceText) {
+    sourceText = url.searchParams.get('k') || url.searchParams.get('keywords') || ''
+  }
+
+  const cleaned = decodeURIComponent(sourceText)
+    .replace(/[-_+]+/g, ' ')
+    .replace(/[^a-zA-Z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!cleaned) return asin ? `Amazon Product ${asin}` : 'Amazon Product'
+  return prettifyTitle(cleaned)
+}
+
+function withAffiliateTracking(urlOrString, campaign) {
+  let url
+  try {
+    url = urlOrString instanceof URL ? new URL(urlOrString.toString()) : new URL(String(urlOrString))
+  } catch (_) {
+    return String(urlOrString || '')
+  }
+
+  if (!/(^|\.)amazon\./i.test(url.hostname)) return url.toString()
+
+  url.searchParams.set('tag', AMAZON_TAG)
+  url.searchParams.set('utm_source', 'bestdealsonline')
+  url.searchParams.set('utm_medium', 'site')
+  url.searchParams.set('utm_campaign', campaign || 'bdo_link_analyzer')
+  return url.toString()
+}
+
+function tokenizeText(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 3 && !ANALYZER_STOP_WORDS.has(token))
+}
+
+function inferCategoryFromTitle(title) {
+  const normalized = String(title || '').toLowerCase()
+  if (!normalized) return 'Home'
+
+  let bestCategory = 'Home'
+  let bestScore = 0
+
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    const score = keywords.reduce((count, keyword) => (normalized.includes(keyword) ? count + 1 : count), 0)
+    if (score > bestScore) {
+      bestScore = score
+      bestCategory = category
+    }
+  }
+
+  return bestCategory
+}
+
+function relatedDealsForTitle(products, title, preferredCategory, limit = 4) {
+  const queryTokens = tokenizeText(title)
+  const querySet = new Set(queryTokens)
+
+  return (products || [])
+    .map((product) => {
+      const titleTokens = tokenizeText(product?.title)
+      const overlap = titleTokens.filter((token) => querySet.has(token)).length
+      const sameCategory = preferredCategory && product?.category === preferredCategory ? 1 : 0
+      const scoreBoost = (product?.dealTruth?.score ?? 0) / 100
+      const rankScore = overlap * 3 + sameCategory * 1.5 + scoreBoost * 0.75
+
+      return { product, rankScore, overlap, sameCategory }
+    })
+    .filter((entry) => entry.rankScore > 0)
+    .sort((a, b) => b.rankScore - a.rankScore || (b.product?.dealTruth?.score ?? 0) - (a.product?.dealTruth?.score ?? 0))
+    .slice(0, limit)
+    .map((entry) => entry.product)
 }
 
 // Seed content (works even before API is wired)
@@ -401,6 +584,233 @@ const DealLens = () => {
   )
 }
 
+const AmazonLinkAnalyzer = ({ products }) => {
+  const [input, setInput] = useState('')
+  const [submittedInput, setSubmittedInput] = useState('')
+
+  const analysis = useMemo(() => {
+    const raw = String(submittedInput || '').trim()
+    if (!raw) return null
+
+    const normalizedUrl = normalizeAmazonInputUrl(raw)
+    if (!normalizedUrl) {
+      return {
+        error: 'Paste a valid Amazon product URL or ASIN (example: amazon.com/dp/B0...).',
+      }
+    }
+
+    const asin = extractAsinFromAmazonUrl(normalizedUrl)
+    const title = inferTitleFromAmazonUrl(normalizedUrl, asin)
+    const category = inferCategoryFromTitle(title)
+    const productLink = asin
+      ? withAffiliateTracking(new URL(`https://www.amazon.com/dp/${asin}`), 'bdo_link_analyzer_product')
+      : withAffiliateTracking(normalizedUrl, 'bdo_link_analyzer_product')
+    const compareLink = amazonSearchLink(`${title} ${category} deals`, 'bdo_link_analyzer_compare')
+    const relatedDeals = relatedDealsForTitle(products, title, category, 4)
+
+    const provisionalProduct = {
+      id: asin ? `analyzed-${asin}` : `analyzed-${title.toLowerCase().replace(/\s+/g, '-')}`,
+      asin: asin || null,
+      title,
+      category,
+      merchant: 'Amazon',
+      affiliateLink: productLink,
+      type: 'deal',
+    }
+    const score = dealTruthScore(provisionalProduct)
+
+    return {
+      asin,
+      title,
+      category,
+      productLink,
+      compareLink,
+      relatedDeals,
+      score,
+    }
+  }, [submittedInput, products])
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    setSubmittedInput(input)
+  }
+
+  return (
+    <section className="container mx-auto px-4 mt-10" data-section="link_analyzer">
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold tracking-[0.2em] uppercase rounded-full px-3 py-1">
+              <Search size={12} /> Amazon Link Analyzer
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-4">
+              Paste any Amazon product link. Get an instant DealTruth read.
+            </h2>
+            <p className="text-slate-600 mt-2 max-w-3xl">
+              We extract the product signal from the URL, score it with available data, then show better-ranked alternatives and direct affiliate-routed links.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-col md:flex-row gap-3">
+          <input
+            type="text"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Paste Amazon URL or ASIN (example: https://www.amazon.com/dp/B0...)"
+            className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center min-h-11 px-6 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
+          >
+            Analyze link
+          </button>
+        </form>
+        <p className="text-xs text-slate-500 mt-2">
+          Supports full links (`/dp/...`, `/gp/product/...`) and raw ASIN input.
+        </p>
+
+        {analysis ? (
+          analysis.error ? (
+            <div className="mt-5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3">
+              {analysis.error}
+            </div>
+          ) : (
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">
+                    {analysis.category}
+                  </span>
+                  {analysis.asin ? (
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest bg-slate-200 px-2 py-0.5 rounded">
+                      ASIN {analysis.asin}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest bg-amber-100 px-2 py-0.5 rounded">
+                      No ASIN in URL
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="text-xl font-extrabold text-slate-900 mt-3">{analysis.title}</h3>
+
+                <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+                  <div className="text-sm font-extrabold text-slate-900">{analysis.score.explanations.scoreLine}</div>
+                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.discountLine}</div>
+                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.rarityLine}</div>
+                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.confidenceLine}</div>
+                  {analysis.score.explanations.decisionLine ? (
+                    <div className="mt-1 text-xs font-semibold text-emerald-700">{analysis.score.explanations.decisionLine}</div>
+                  ) : (
+                    <div className="mt-1 text-xs text-slate-500">Buy/Wait signal appears as more price history accumulates.</div>
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <a
+                    href={analysis.productLink}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    onClick={() =>
+                      trackOutboundClick({
+                        url: analysis.productLink,
+                        label: `Analyzer product: ${analysis.title}`,
+                        category: 'link_analyzer',
+                        section: 'link_analyzer',
+                        productTitle: analysis.title,
+                        campaign: 'bdo_link_analyzer_product',
+                      })
+                    }
+                    className="inline-flex items-center justify-center min-h-10 px-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors"
+                  >
+                    Open analyzed product <ExternalLink size={14} className="ml-2" />
+                  </a>
+                  <a
+                    href={analysis.compareLink}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    onClick={() =>
+                      trackOutboundClick({
+                        url: analysis.compareLink,
+                        label: `Analyzer compare: ${analysis.title}`,
+                        category: 'link_analyzer',
+                        section: 'link_analyzer',
+                        productTitle: analysis.title,
+                        campaign: 'bdo_link_analyzer_compare',
+                      })
+                    }
+                    className="inline-flex items-center justify-center min-h-10 px-4 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
+                  >
+                    Find better deals <ArrowUpRight size={14} className="ml-2" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="text-sm font-extrabold text-slate-900">Best alternatives on site</div>
+                <p className="text-xs text-slate-500 mt-1">Top matching deals ranked by DealTruth.</p>
+
+                <div className="mt-3 grid gap-3">
+                  {analysis.relatedDeals.length ? (
+                    analysis.relatedDeals.map((deal, index) => {
+                      const href = withAffiliateTracking(
+                        deal?.affiliateLink || amazonSearchLink(deal?.title || analysis.title, 'bdo_link_analyzer_related'),
+                        'bdo_link_analyzer_related'
+                      )
+                      const priceText = deal?.price ? `$${Number(deal.price).toFixed(2)}` : 'Live on Amazon'
+
+                      return (
+                        <a
+                          key={`${deal.id}-${index}`}
+                          href={href}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          onClick={() =>
+                            trackOutboundClick({
+                              url: href,
+                              label: `Analyzer related: ${deal.title}`,
+                              category: deal.category || 'link_analyzer',
+                              section: 'link_analyzer_related',
+                              productId: deal.id,
+                              productTitle: deal.title,
+                              position: index,
+                              campaign: 'bdo_link_analyzer_related',
+                            })
+                          }
+                          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 hover:border-slate-300 hover:shadow-sm transition-all"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{deal.category}</div>
+                              <div className="text-sm font-bold text-slate-900 line-clamp-2">{deal.title}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                          </div>
+                          <div className="mt-2 text-xs text-slate-600">
+                            DealTruth {deal?.dealTruth?.score ?? 0}/100
+                            <span className="mx-1.5 text-slate-300">|</span>
+                            {priceText}
+                          </div>
+                        </a>
+                      )
+                    })
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-xs text-slate-500">
+                      No close matches in the current local catalog yet. Use "Find better deals" to open tagged Amazon comparisons.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
 const ProductCard = ({ product, tracking }) => {
   const [copied, setCopied] = useState(false)
   const Icon = getIcon(product.iconName)
@@ -610,6 +1020,7 @@ const JumpBar = () => (
       <a href="#budget" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Budget</a>
       <a href="#top-picks" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Top Picks</a>
       <a href="#trending" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Trending</a>
+      <a href="#link-analyzer" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Link Analyzer</a>
       <a href="#dealtruth" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">How DealTruth Works</a>
       <a href="/blog/index.html" className="px-3 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 whitespace-nowrap">Blog</a>
     </div>
@@ -1011,6 +1422,8 @@ const App = () => {
         <div className="mt-10">
           <DealLens />
         </div>
+        <div id="link-analyzer" className="scroll-mt-32" />
+        <AmazonLinkAnalyzer products={scoredProducts} />
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
