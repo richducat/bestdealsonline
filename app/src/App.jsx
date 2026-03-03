@@ -633,57 +633,44 @@ const OnboardingModal = ({ open, onClose }) => {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[130] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-900 text-white shadow-2xl">
-        <div className="p-5 md:p-6 border-b border-white/10">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-xs uppercase tracking-widest text-yellow-300 font-bold">Onboarding Menu</div>
-              <h3 className="text-2xl font-extrabold mt-1">Quick product tour</h3>
-              <p className="text-slate-300 text-sm mt-1">
-                Use Start, Pause, Resume, and Stop to control the walkthrough.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-white/15 text-slate-200 hover:bg-white/10"
-              aria-label="Close onboarding"
-            >
-              <X size={16} />
-            </button>
+    <div className="fixed z-[110] left-4 right-4 bottom-4 sm:right-auto sm:w-[380px]">
+      <div className="rounded-2xl border border-white/10 bg-slate-900/98 text-white shadow-2xl backdrop-blur-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-white/10 flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] uppercase tracking-widest text-yellow-300 font-bold">Quick tour</div>
+            <div className="text-sm text-slate-300 mt-0.5">Step {stepIndex + 1} of {GLOBAL_ONBOARDING_STEPS.length}</div>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-white/15 text-slate-200 hover:bg-white/10"
+            aria-label="Close onboarding"
+          >
+            <X size={14} />
+          </button>
         </div>
 
-        <div className="p-5 md:p-6">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="text-xs uppercase tracking-widest text-slate-300">Current step</div>
-            <div className="text-xl font-extrabold mt-1">{currentStep.title}</div>
-            <p className="text-sm text-slate-300 mt-2">{currentStep.body}</p>
-          </div>
+        <div className="px-4 py-3">
+          <div className="font-extrabold text-base">{currentStep.title}</div>
+          <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">{currentStep.body}</p>
 
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="mt-3 flex gap-1.5">
             {GLOBAL_ONBOARDING_STEPS.map((step, index) => (
               <div
                 key={step.title}
-                className={`rounded-lg border px-3 py-3 ${
-                  index === stepIndex ? 'border-yellow-300 bg-yellow-300/10' : 'border-white/10 bg-white/5'
-                }`}
-              >
-                <div className="text-[11px] uppercase tracking-widest text-slate-300">Step {index + 1}</div>
-                <div className="text-sm font-bold mt-1">{step.title}</div>
-              </div>
+                className={`h-1.5 rounded-full flex-1 ${index === stepIndex ? 'bg-yellow-300' : 'bg-white/20'}`}
+              />
             ))}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {status === 'running' ? (
               <button
                 type="button"
                 onClick={() => setStatus('paused')}
-                className="inline-flex items-center min-h-10 px-4 rounded-lg bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300"
+                className="inline-flex items-center min-h-9 px-3 rounded-lg bg-yellow-400 text-slate-900 text-sm font-extrabold hover:bg-yellow-300"
               >
-                <Pause size={14} className="mr-1.5" /> Pause
+                <Pause size={13} className="mr-1.5" /> Pause
               </button>
             ) : (
               <button
@@ -692,9 +679,9 @@ const OnboardingModal = ({ open, onClose }) => {
                   if (status === 'stopped') setStepIndex(0)
                   setStatus('running')
                 }}
-                className="inline-flex items-center min-h-10 px-4 rounded-lg bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300"
+                className="inline-flex items-center min-h-9 px-3 rounded-lg bg-yellow-400 text-slate-900 text-sm font-extrabold hover:bg-yellow-300"
               >
-                <Play size={14} className="mr-1.5" /> {status === 'paused' ? 'Resume' : 'Start'}
+                <Play size={13} className="mr-1.5" /> {status === 'paused' ? 'Resume' : 'Start'}
               </button>
             )}
 
@@ -704,15 +691,15 @@ const OnboardingModal = ({ open, onClose }) => {
                 setStatus('stopped')
                 setStepIndex(0)
               }}
-              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+              className="inline-flex items-center min-h-9 px-3 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10"
             >
-              <Square size={14} className="mr-1.5" /> Stop
+              <Square size={13} className="mr-1.5" /> Stop
             </button>
 
             <button
               type="button"
               onClick={() => setStepIndex((current) => Math.max(0, current - 1))}
-              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+              className="inline-flex items-center min-h-9 px-3 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10"
             >
               Back
             </button>
@@ -720,20 +707,9 @@ const OnboardingModal = ({ open, onClose }) => {
             <button
               type="button"
               onClick={() => setStepIndex((current) => Math.min(GLOBAL_ONBOARDING_STEPS.length - 1, current + 1))}
-              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+              className="inline-flex items-center min-h-9 px-3 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10"
             >
               Next
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onClose()
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-              className="inline-flex items-center min-h-10 px-4 rounded-lg bg-white text-slate-900 font-extrabold hover:bg-slate-100"
-            >
-              Main Menu
             </button>
           </div>
         </div>
@@ -1809,7 +1785,6 @@ const App = () => {
         }
         setLoadingProgress(100)
         setIsInitialLoading(false)
-        setOnboardingOpen(true)
       }
     })()
   }, [])
@@ -2043,9 +2018,9 @@ const App = () => {
         <button
           type="button"
           onClick={() => setOnboardingOpen(true)}
-          className="fixed bottom-4 right-4 z-[110] inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-slate-900 text-white font-bold shadow-lg hover:bg-slate-800 transition-colors"
+          className="fixed bottom-4 left-4 z-[110] inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-slate-900 text-white font-bold shadow-lg hover:bg-slate-800 transition-colors"
         >
-          Open onboarding
+          Quick tour
         </button>
       ) : null}
     </div>
