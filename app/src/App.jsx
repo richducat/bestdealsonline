@@ -1536,56 +1536,70 @@ const DealTruthGuide = ({ products, className = 'mt-14' }) => {
           <div className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold tracking-[0.2em] uppercase rounded-full px-3 py-1">
             <Tag size={12} /> DealTruth Explainer
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-4">How we rank deals (and why it’s different)</h2>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-4">Real Value, No Marketing Fluff.</h2>
           <p className="text-slate-700 mt-3 leading-relaxed">
-            Most deal sites sort by promo percentage. We rank by actual value and buyer safety: effective price,
-            rarity, quality, seller trust, and whether the signal is full-history or provisional.
+            Most deal sites just chase the biggest "off MSRP" sticker. We ignore the stickers and look at the math.
+            We rank every deal based on what actually matters: your final price, seller reputation, and whether that
+            "discount" is actually just a Tuesday price hike in disguise.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
           <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
-            <div className="text-slate-500 uppercase tracking-wider font-bold">Full 90-day baseline</div>
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Full 90-day history</div>
             <div className="text-slate-900 font-extrabold text-lg">{stats.full}</div>
+            <div className="text-slate-500 mt-0.5">Verified price trends.</div>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
-            <div className="text-slate-500 uppercase tracking-wider font-bold">Short-window baseline</div>
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Short-window alerts</div>
             <div className="text-slate-900 font-extrabold text-lg">{stats.shortWindow}</div>
+            <div className="text-slate-500 mt-0.5">Recent volatility tracked.</div>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl px-3 py-2">
-            <div className="text-slate-500 uppercase tracking-wider font-bold">Provisional</div>
+            <div className="text-slate-500 uppercase tracking-wider font-bold">Provisional scores</div>
             <div className="text-slate-900 font-extrabold text-lg">{stats.provisional}</div>
+            <div className="text-slate-500 mt-0.5">New deals under active audit.</div>
           </div>
         </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4 mt-8">
         <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="font-extrabold text-slate-900 text-lg">1) Real discount, not fake anchor price</div>
+          <div className="font-extrabold text-slate-900 text-lg">1) We Kill the "Fake" Discount</div>
           <p className="text-slate-600 text-sm mt-2">
-            We compare effective price (item + shipping - coupon - promos) against observed baseline prices, not just MSRP.
+            Retailers love "anchor prices" - that fake MSRP no one actually pays. We calculate True Cost
+            (price + shipping - coupons) and compare it against observed prices from the last 90 days.
+            If the "discount" is not real, we flag it.
           </p>
         </div>
         <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="font-extrabold text-slate-900 text-lg">2) Rarity + confidence on every card</div>
+          <div className="font-extrabold text-slate-900 text-lg">2) Rarity Meets Reliability</div>
           <p className="text-slate-600 text-sm mt-2">
-            You see whether a price is near a recent low and how reliable that call is based on history depth + offer quality.
+            Is this price a once-a-year event or just a once-a-week cycle? Every deal card shows how rare the
+            price is and how much we trust the underlying data.
           </p>
         </div>
         <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="font-extrabold text-slate-900 text-lg">3) Buy now vs wait signal</div>
+          <div className="font-extrabold text-slate-900 text-lg">3) Stop Guessing, Start Knowing</div>
           <p className="text-slate-600 text-sm mt-2">
-            We estimate short-term drop odds so users can decide quickly instead of guessing from a red discount badge.
+            Do not get FOMO from a red "Sale" badge. Our model estimates the odds of a near-term price drop and
+            tells you whether it is a Buy Now moment or a smarter Wait and Save setup.
           </p>
         </div>
       </div>
 
       <div className="mt-7 bg-slate-900 text-white rounded-2xl p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="font-extrabold text-lg">Score guide</div>
-          <p className="text-slate-200 text-sm mt-1">
-            80+ exceptional, 65-79 strong buy, 50-64 worth tracking, below 50 usually pass. Provisional labels show early-stage scoring.
-          </p>
+          <div className="font-extrabold text-lg">The Score Guide</div>
+          <div className="text-slate-200 text-sm mt-2 space-y-1">
+            <p><span className="font-bold text-white">80+</span> (The Unicorn): Exceptional value. Buy it before it is gone.</p>
+            <p><span className="font-bold text-white">65-79</span> (Strong Buy): A solid win. Better than 90% of typical sales.</p>
+            <p><span className="font-bold text-white">50-64</span> (Watchlist): Decent, but we have seen better. Maybe wait for a coupon.</p>
+            <p><span className="font-bold text-white">Below 50</span> (The Pass): Marketing noise. You are not actually saving money.</p>
+            <p className="pt-1 text-yellow-200">
+              Pro Tip: Look for the "Provisional" tag on brand-new listings - we are still gathering data to increase confidence.
+            </p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <a href="/best-deals-with-price-history.html" className="inline-flex items-center min-h-10 px-4 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors">
