@@ -50,6 +50,9 @@ import {
   ExternalLink,
   Copy,
   Clock,
+  Pause,
+  Play,
+  Square,
   Settings,
   PlusCircle,
   Edit2,
@@ -334,6 +337,20 @@ const SORT_OPTIONS = [
   { label: 'Price: High → Low', value: 'price_desc' },
 ]
 const DEALS_PAGE_SIZE = 40
+const ANALYZER_TOUR_STEPS = [
+  {
+    title: 'Paste link or ASIN',
+    body: 'Drop any Amazon product URL (or ASIN) into the analyzer input.',
+  },
+  {
+    title: 'Run instant score',
+    body: 'We parse the product signal and create a DealTruth score from available data.',
+  },
+  {
+    title: 'Compare alternatives',
+    body: 'Open the best related deals and Amazon comparisons using your affiliate tag.',
+  },
+]
 
 const IconMap = {
   Headphones,
@@ -372,6 +389,29 @@ const DisclosureBanner = () => {
     </div>
   )
 }
+
+const LoadingScreen = ({ message = 'Loading live deals...' }) => (
+  <div className="fixed inset-0 z-[120] bg-slate-950/92 backdrop-blur-sm flex items-center justify-center px-4">
+    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/95 p-6 shadow-2xl">
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-10 rounded-xl bg-yellow-400 text-slate-900 flex items-center justify-center">
+          <Tag size={18} />
+        </div>
+        <div>
+          <div className="text-white font-extrabold">BestDealsOnline</div>
+          <div className="text-xs text-slate-300">DealTruth engine</div>
+        </div>
+      </div>
+      <div className="mt-6 text-slate-100 font-semibold">{message}</div>
+      <div className="mt-4 h-2 w-full rounded-full bg-white/10 overflow-hidden">
+        <div className="h-full w-1/2 bg-yellow-400 rounded-full animate-pulse" />
+      </div>
+      <div className="mt-3 text-xs text-slate-400">
+        Pulling latest catalog, scoring deals, and preparing rankings.
+      </div>
+    </div>
+  </div>
+)
 
 const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
   <nav className="bg-slate-900 text-white sticky top-0 z-40 shadow-lg">
@@ -587,6 +627,20 @@ const DealLens = () => {
 const AmazonLinkAnalyzer = ({ products }) => {
   const [input, setInput] = useState('')
   const [submittedInput, setSubmittedInput] = useState('')
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [onboardingOpen, setOnboardingOpen] = useState(true)
+  const [tourState, setTourState] = useState('stopped')
+  const [tourStep, setTourStep] = useState(0)
+
+  useEffect(() => {
+    if (!onboardingOpen || tourState !== 'running') return undefined
+
+    const timer = window.setInterval(() => {
+      setTourStep((current) => (current + 1) % ANALYZER_TOUR_STEPS.length)
+    }, 2400)
+
+    return () => window.clearInterval(timer)
+  }, [onboardingOpen, tourState])
 
   const analysis = useMemo(() => {
     const raw = String(submittedInput || '').trim()
@@ -630,9 +684,15 @@ const AmazonLinkAnalyzer = ({ products }) => {
     }
   }, [submittedInput, products])
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setSubmittedInput(input)
+    const candidate = String(input || '').trim()
+    if (!candidate || isAnalyzing) return
+
+    setIsAnalyzing(true)
+    await new Promise((resolve) => window.setTimeout(resolve, 900))
+    setSubmittedInput(candidate)
+    setIsAnalyzing(false)
   }
 
   return (
@@ -652,6 +712,84 @@ const AmazonLinkAnalyzer = ({ products }) => {
           </div>
         </div>
 
+        {onboardingOpen ? (
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:p-5">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Onboarding</div>
+                <div className="text-lg font-extrabold text-slate-900 mt-1">How to use this tool</div>
+                <p className="text-sm text-slate-600 mt-1">Use Start, Pause, Resume, and Stop to run through the quick walkthrough.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {tourState === 'running' ? (
+                  <button
+                    type="button"
+                    onClick={() => setTourState('paused')}
+                    className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
+                  >
+                    <Pause size={14} className="mr-1.5" /> Pause
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setTourState('running')}
+                    className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
+                  >
+                    <Play size={14} className="mr-1.5" /> {tourState === 'paused' ? 'Resume' : 'Start'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTourState('stopped')
+                    setTourStep(0)
+                  }}
+                  className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-white transition-colors"
+                >
+                  <Square size={14} className="mr-1.5" /> Stop
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOnboardingOpen(false)}
+                  className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-white transition-colors"
+                >
+                  Hide
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+              {ANALYZER_TOUR_STEPS.map((step, index) => {
+                const isActive = index === tourStep
+                return (
+                  <div
+                    key={step.title}
+                    className={`rounded-xl border px-3 py-3 transition-all ${
+                      isActive ? 'border-yellow-300 bg-yellow-50' : 'border-slate-200 bg-white'
+                    }`}
+                  >
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                      Step {index + 1}
+                    </div>
+                    <div className="text-sm font-extrabold text-slate-900 mt-1">{step.title}</div>
+                    <div className="text-xs text-slate-600 mt-1">{step.body}</div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setOnboardingOpen(true)}
+              className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-slate-50 transition-colors"
+            >
+              Open onboarding
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col md:flex-row gap-3">
           <input
             type="text"
@@ -662,16 +800,27 @@ const AmazonLinkAnalyzer = ({ products }) => {
           />
           <button
             type="submit"
+            disabled={isAnalyzing}
             className="inline-flex items-center justify-center min-h-11 px-6 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
           >
-            Analyze link
+            {isAnalyzing ? 'Analyzing...' : 'Analyze link'}
           </button>
         </form>
         <p className="text-xs text-slate-500 mt-2">
           Supports full links (`/dp/...`, `/gp/product/...`) and raw ASIN input.
         </p>
 
-        {analysis ? (
+        {isAnalyzing ? (
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <div className="text-sm font-extrabold text-slate-900">Analyzing product link...</div>
+            <div className="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+              <div className="h-full w-1/2 bg-yellow-400 rounded-full animate-pulse" />
+            </div>
+            <div className="mt-2 text-xs text-slate-500">
+              Extracting ASIN, building provisional score, and matching alternatives.
+            </div>
+          </div>
+        ) : analysis ? (
           analysis.error ? (
             <div className="mt-5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3">
               {analysis.error}
@@ -1335,6 +1484,7 @@ async function fetchProductsJson(limit = 300) {
 const App = () => {
   const [products, setProducts] = useState(SEED_PRODUCTS)
   const [apiStatus, setApiStatus] = useState('not configured')
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -1344,6 +1494,7 @@ const App = () => {
 
   useEffect(() => {
     ;(async () => {
+      const startedAt = Date.now()
       try {
         const data = await fetchProductsJson(300)
         if (data?.items?.length) {
@@ -1354,6 +1505,13 @@ const App = () => {
         }
       } catch (e) {
         setApiStatus('offline (using seed items)')
+      } finally {
+        const elapsed = Date.now() - startedAt
+        const minLoadingMs = 800
+        if (elapsed < minLoadingMs) {
+          await new Promise((resolve) => window.setTimeout(resolve, minLoadingMs - elapsed))
+        }
+        setIsInitialLoading(false)
       }
     })()
   }, [])
@@ -1406,6 +1564,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
+      {isInitialLoading ? <LoadingScreen message="Loading deals, scores, and onboarding..." /> : null}
       <DisclosureBanner />
       <Navbar onSearch={setSearchQuery} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
