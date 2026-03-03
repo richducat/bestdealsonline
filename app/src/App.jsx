@@ -103,6 +103,7 @@ function amazonSearchLink(query, campaign = 'bdo_storefront') {
 }
 
 const AMAZON_ASIN_PATTERN = /^[A-Z0-9]{10}$/
+const ANALYZER_PLACEHOLDER_TITLE = 'Amazon Product'
 const ANALYZER_STOP_WORDS = new Set([
   'amazon',
   'with',
@@ -135,8 +136,21 @@ const CATEGORY_KEYWORDS = {
   Pets: ['pet', 'dog', 'cat', 'litter', 'leash', 'animal', 'food bowl'],
 }
 
-function normalizeAmazonInputUrl(value) {
-  const raw = String(value || '').trim()
+function cleanPastedUrl(value) {
+  return String(value || '')
+    .trim()
+    .replace(/^[\s<>"'([{]+/, '')
+    .replace(/[\s>)"'\]},.!?;:]+$/, '')
+}
+
+function normalizeAmazonInputUrl(value, depth = 0) {
+  if (depth > 2) return null
+  const rawInput = String(value || '').trim()
+  if (!rawInput) return null
+
+  // Handle pasted share text like: "Check this out https://a.co/d/abc123".
+  const embeddedUrlMatch = rawInput.match(/https?:\/\/[^\s<>"']+/i)
+  const raw = cleanPastedUrl(embeddedUrlMatch?.[0] || rawInput)
   if (!raw) return null
 
   const upper = raw.toUpperCase()
@@ -152,7 +166,19 @@ function normalizeAmazonInputUrl(value) {
     return null
   }
 
-  if (!/(^|\.)amazon\./i.test(parsed.hostname)) return null
+  const hostname = parsed.hostname.toLowerCase()
+  const isAmazonDomain = /(^|\.)amazon\./i.test(hostname)
+  const isShortAmazonDomain = hostname === 'a.co' || hostname === 'amzn.to'
+
+  if (!isAmazonDomain && !isShortAmazonDomain) return null
+
+  // Some Amazon links wrap the real destination in a query param.
+  const nestedRaw = parsed.searchParams.get('url') || parsed.searchParams.get('u')
+  if (nestedRaw) {
+    const nested = normalizeAmazonInputUrl(nestedRaw, depth + 1)
+    if (nested) return nested
+  }
+
   return parsed
 }
 
@@ -161,10 +187,15 @@ function extractAsinFromAmazonUrl(url) {
 
   const explicitAsin = (url.searchParams.get('asin') || '').trim().toUpperCase()
   if (AMAZON_ASIN_PATTERN.test(explicitAsin)) return explicitAsin
+  const pdAsin = (url.searchParams.get('pd_rd_i') || '').trim().toUpperCase()
+  if (AMAZON_ASIN_PATTERN.test(pdAsin)) return pdAsin
 
   const patterns = [
     /\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i,
     /\/gp\/product\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/gp\/aw\/d\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/gp\/aw\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i,
+    /\/gp\/video\/detail\/([A-Z0-9]{10})(?:[/?]|$)/i,
     /\/exec\/obidos\/ASIN\/([A-Z0-9]{10})(?:[/?]|$)/i,
     /\/o\/ASIN\/([A-Z0-9]{10})(?:[/?]|$)/i,
     /\/product\/([A-Z0-9]{10})(?:[/?]|$)/i,
@@ -197,7 +228,7 @@ function prettifyTitle(text) {
 }
 
 function inferTitleFromAmazonUrl(url, asin) {
-  if (!url) return asin ? `Amazon Product ${asin}` : 'Amazon Product'
+  if (!url) return asin ? `${ANALYZER_PLACEHOLDER_TITLE} ${asin}` : ANALYZER_PLACEHOLDER_TITLE
 
   const segments = url.pathname.split('/').filter(Boolean)
   let sourceText = ''
@@ -208,16 +239,34 @@ function inferTitleFromAmazonUrl(url, asin) {
   }
 
   if (!sourceText) {
-    sourceText = url.searchParams.get('k') || url.searchParams.get('keywords') || ''
+    const preferredSegment = segments.find((segment) => {
+      const normalized = segment.trim().toLowerCase()
+      if (!normalized) return false
+      if (['gp', 'aw', 'dp', 'd', 'product', 's', 'a', 'hz', 'stores', 'store'].includes(normalized)) return false
+      if (AMAZON_ASIN_PATTERN.test(segment.toUpperCase())) return false
+      return /[a-z]/i.test(segment)
+    })
+    sourceText = preferredSegment || ''
   }
 
-  const cleaned = decodeURIComponent(sourceText)
+  if (!sourceText) {
+    sourceText = url.searchParams.get('k') || url.searchParams.get('keywords') || url.searchParams.get('q') || ''
+  }
+
+  let decodedSource = sourceText
+  try {
+    decodedSource = decodeURIComponent(sourceText)
+  } catch (_) {
+    decodedSource = sourceText
+  }
+
+  const cleaned = decodedSource
     .replace(/[-_+]+/g, ' ')
     .replace(/[^a-zA-Z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 
-  if (!cleaned) return asin ? `Amazon Product ${asin}` : 'Amazon Product'
+  if (!cleaned) return asin ? `${ANALYZER_PLACEHOLDER_TITLE} ${asin}` : ANALYZER_PLACEHOLDER_TITLE
   return prettifyTitle(cleaned)
 }
 
@@ -268,8 +317,8 @@ function inferCategoryFromTitle(title) {
 function relatedDealsForTitle(products, title, preferredCategory, limit = 4) {
   const queryTokens = tokenizeText(title)
   const querySet = new Set(queryTokens)
-
-  return (products || [])
+  const seen = new Set()
+  const ranked = (products || [])
     .map((product) => {
       const titleTokens = tokenizeText(product?.title)
       const overlap = titleTokens.filter((token) => querySet.has(token)).length
@@ -281,8 +330,53 @@ function relatedDealsForTitle(products, title, preferredCategory, limit = 4) {
     })
     .filter((entry) => entry.rankScore > 0)
     .sort((a, b) => b.rankScore - a.rankScore || (b.product?.dealTruth?.score ?? 0) - (a.product?.dealTruth?.score ?? 0))
-    .slice(0, limit)
-    .map((entry) => entry.product)
+
+  const deduped = []
+  for (const entry of ranked) {
+    const titleKey = String(entry.product?.title || '').trim().toLowerCase()
+    const categoryKey = String(entry.product?.category || '').trim().toLowerCase()
+    const key = `${titleKey}|${categoryKey}`
+    if (!titleKey || seen.has(key)) continue
+    seen.add(key)
+    deduped.push(entry.product)
+    if (deduped.length >= limit) break
+  }
+  return deduped
+}
+
+function topDealsFallback(products, preferredCategory, limit = 4) {
+  const seen = new Set()
+  const ranked = [...(products || [])].sort((a, b) => (b?.dealTruth?.score ?? 0) - (a?.dealTruth?.score ?? 0))
+  const categoryFirst = preferredCategory
+    ? [...ranked.filter((p) => p?.category === preferredCategory), ...ranked.filter((p) => p?.category !== preferredCategory)]
+    : ranked
+
+  const deduped = []
+  for (const product of categoryFirst) {
+    const titleKey = String(product?.title || '').trim().toLowerCase()
+    const categoryKey = String(product?.category || '').trim().toLowerCase()
+    const key = `${titleKey}|${categoryKey}`
+    if (!titleKey || seen.has(key)) continue
+    seen.add(key)
+    deduped.push(product)
+    if (deduped.length >= limit) break
+  }
+  return deduped
+}
+
+function isPlaceholderAnalyzerTitle(title, asin) {
+  const normalized = String(title || '').trim().toLowerCase()
+  if (!normalized) return true
+  if (normalized === ANALYZER_PLACEHOLDER_TITLE.toLowerCase()) return true
+  if (asin && normalized === `${ANALYZER_PLACEHOLDER_TITLE} ${String(asin).toLowerCase()}`) return true
+  return false
+}
+
+function findCatalogProductByAsin(products, asin) {
+  if (!asin) return null
+  const normalizedAsin = String(asin).trim().toUpperCase()
+  if (!normalizedAsin) return null
+  return (products || []).find((product) => String(product?.asin || '').trim().toUpperCase() === normalizedAsin) || null
 }
 
 // Seed content (works even before API is wired)
@@ -788,41 +882,59 @@ const AmazonLinkAnalyzer = ({ products }) => {
     const raw = String(submittedInput || '').trim()
     if (!raw) return null
 
-    const normalizedUrl = normalizeAmazonInputUrl(raw)
-    if (!normalizedUrl) {
-      return {
-        error: 'Paste a valid Amazon product URL or ASIN (example: amazon.com/dp/B0...).',
+    try {
+      const normalizedUrl = normalizeAmazonInputUrl(raw)
+      if (!normalizedUrl) {
+        return {
+          error: 'Paste a valid Amazon product URL or ASIN (example: amazon.com/dp/B0...).',
+        }
       }
-    }
 
-    const asin = extractAsinFromAmazonUrl(normalizedUrl)
-    const title = inferTitleFromAmazonUrl(normalizedUrl, asin)
-    const category = inferCategoryFromTitle(title)
-    const productLink = asin
-      ? withAffiliateTracking(new URL(`https://www.amazon.com/dp/${asin}`), 'bdo_link_analyzer_product')
-      : withAffiliateTracking(normalizedUrl, 'bdo_link_analyzer_product')
-    const compareLink = amazonSearchLink(`${title} ${category} deals`, 'bdo_link_analyzer_compare')
-    const relatedDeals = relatedDealsForTitle(products, title, category, 4)
+      const asin = extractAsinFromAmazonUrl(normalizedUrl)
+      const matchedProduct = findCatalogProductByAsin(products, asin)
+      const inferredTitle = inferTitleFromAmazonUrl(normalizedUrl, asin)
+      const title = matchedProduct?.title || inferredTitle
+      const placeholderTitle = isPlaceholderAnalyzerTitle(title, asin)
+      const category = matchedProduct?.category || inferCategoryFromTitle(title)
+      const productLink = asin
+        ? withAffiliateTracking(new URL(`https://www.amazon.com/dp/${asin}`), 'bdo_link_analyzer_product')
+        : withAffiliateTracking(normalizedUrl, 'bdo_link_analyzer_product')
 
-    const provisionalProduct = {
-      id: asin ? `analyzed-${asin}` : `analyzed-${title.toLowerCase().replace(/\s+/g, '-')}`,
-      asin: asin || null,
-      title,
-      category,
-      merchant: 'Amazon',
-      affiliateLink: productLink,
-      type: 'deal',
-    }
-    const score = dealTruthScore(provisionalProduct)
+      const compareQuery = placeholderTitle
+        ? asin
+          ? asin
+          : `${category} deals`
+        : `${title} ${category} deals`
+      const compareLink = amazonSearchLink(compareQuery, 'bdo_link_analyzer_compare')
+      const relatedDeals = placeholderTitle
+        ? topDealsFallback(products, category, 4)
+        : relatedDealsForTitle(products, title, category, 4)
 
-    return {
-      asin,
-      title,
-      category,
-      productLink,
-      compareLink,
-      relatedDeals,
-      score,
+      const provisionalProduct = {
+        id: asin ? `analyzed-${asin}` : `analyzed-${title.toLowerCase().replace(/\s+/g, '-')}`,
+        asin: asin || null,
+        title,
+        category,
+        merchant: 'Amazon',
+        affiliateLink: productLink,
+        type: 'deal',
+      }
+      const score = dealTruthScore(provisionalProduct)
+
+      return {
+        asin,
+        title,
+        category,
+        placeholderTitle,
+        productLink,
+        compareLink,
+        relatedDeals,
+        score,
+      }
+    } catch (_) {
+      return {
+        error: 'We could not analyze that link. Try a full Amazon URL or raw ASIN.',
+      }
     }
   }, [submittedInput, products])
 
@@ -838,7 +950,7 @@ const AmazonLinkAnalyzer = ({ products }) => {
   }
 
   return (
-    <section className="container mx-auto px-4 mt-10" data-section="link_analyzer">
+    <section id="link-analyzer" className="container mx-auto px-4 mt-10" data-section="link_analyzer">
       <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
@@ -871,7 +983,7 @@ const AmazonLinkAnalyzer = ({ products }) => {
           </button>
         </form>
         <p className="text-xs text-slate-500 mt-2">
-          Supports full links (`/dp/...`, `/gp/product/...`) and raw ASIN input.
+          Supports full links (`/dp/...`, `/gp/product/...`), short links (`a.co`), and raw ASIN input.
         </p>
 
         {isAnalyzing ? (
@@ -908,6 +1020,11 @@ const AmazonLinkAnalyzer = ({ products }) => {
                 </div>
 
                 <h3 className="text-xl font-extrabold text-slate-900 mt-3">{analysis.title}</h3>
+                {analysis.placeholderTitle ? (
+                  <p className="mt-1 text-xs text-amber-700">
+                    This URL does not include a product title. We used ASIN-based fallback matching for comparisons.
+                  </p>
+                ) : null}
 
                 <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
                   <div className="text-sm font-extrabold text-slate-900">{analysis.score.explanations.scoreLine}</div>
