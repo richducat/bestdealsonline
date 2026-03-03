@@ -939,269 +939,38 @@ const DealLens = () => {
   )
 }
 
-const AmazonLinkAnalyzer = ({ products }) => {
-  const [input, setInput] = useState('')
-  const [submittedInput, setSubmittedInput] = useState('')
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-
-  const analysis = useMemo(() => {
-    const raw = String(submittedInput || '').trim()
-    if (!raw) return null
-
-    try {
-      const normalizedUrl = normalizeAmazonInputUrl(raw)
-      if (!normalizedUrl) {
-        return {
-          error: 'Paste a valid Amazon product URL or ASIN (example: amazon.com/dp/B0...).',
-        }
+const AnalyzerLauncherSection = () => {
+  const openAnalyzer = () => {
+    if (typeof window === 'undefined') return
+    window.dispatchEvent(new CustomEvent('bdo-open-link-analyzer'))
+    window.setTimeout(() => {
+      if (!document.getElementById('bdo-link-analyzer-overlay')) {
+        window.location.hash = 'link-analyzer'
       }
-
-      const asin = extractAsinFromAmazonUrl(normalizedUrl)
-      const matchedProduct = findCatalogProductByAsin(products, asin)
-      const inferredTitle = inferTitleFromAmazonUrl(normalizedUrl, asin)
-      const title = matchedProduct?.title || inferredTitle
-      const placeholderTitle = isPlaceholderAnalyzerTitle(title, asin)
-      const category = matchedProduct?.category || inferCategoryFromTitle(title)
-      const productLink = asin
-        ? withAffiliateTracking(new URL(`https://www.amazon.com/dp/${asin}`), 'bdo_link_analyzer_product')
-        : withAffiliateTracking(normalizedUrl, 'bdo_link_analyzer_product')
-
-      const compareQuery = placeholderTitle
-        ? asin
-          ? asin
-          : `${category} deals`
-        : `${title} ${category} deals`
-      const compareLink = amazonSearchLink(compareQuery, 'bdo_link_analyzer_compare')
-      const relatedDeals = placeholderTitle
-        ? topDealsFallback(products, category, 4)
-        : relatedDealsForTitle(products, title, category, 4)
-
-      const provisionalProduct = {
-        id: asin ? `analyzed-${asin}` : `analyzed-${title.toLowerCase().replace(/\s+/g, '-')}`,
-        asin: asin || null,
-        title,
-        category,
-        merchant: 'Amazon',
-        affiliateLink: productLink,
-        type: 'deal',
-      }
-      const score = dealTruthScore(provisionalProduct)
-
-      return {
-        asin,
-        title,
-        category,
-        placeholderTitle,
-        productLink,
-        compareLink,
-        relatedDeals,
-        score,
-      }
-    } catch (_) {
-      return {
-        error: 'We could not analyze that link. Try a full Amazon URL or raw ASIN.',
-      }
-    }
-  }, [submittedInput, products])
-
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    const candidate = String(input || '').trim()
-    if (!candidate || isAnalyzing) return
-
-    setIsAnalyzing(true)
-    await new Promise((resolve) => window.setTimeout(resolve, 900))
-    setSubmittedInput(candidate)
-    setIsAnalyzing(false)
+    }, 50)
   }
 
   return (
-    <section id="link-analyzer" className="container mx-auto px-4 mt-10" data-section="link_analyzer">
-      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+    <section id="link-analyzer" className="container mx-auto px-4 mt-8 scroll-mt-32" data-section="link_analyzer">
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-900 to-slate-800 text-white p-5 md:p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold tracking-[0.2em] uppercase rounded-full px-3 py-1">
+            <div className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-yellow-300">
               <Search size={12} /> Amazon Link Analyzer
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-4">
-              Paste any Amazon product link. Get an instant DealTruth read.
-            </h2>
-            <p className="text-slate-600 mt-2 max-w-3xl">
-              We extract the product signal from the URL, score it with available data, then show better-ranked alternatives and direct affiliate-routed links.
+            <h2 className="text-xl md:text-2xl font-extrabold mt-2">Use the popup from any page</h2>
+            <p className="text-slate-200 text-sm mt-1 max-w-2xl">
+              Open the floating analyzer, paste any Amazon URL or ASIN, and jump straight to the product or better-tagged comparisons.
             </p>
           </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col md:flex-row gap-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Paste Amazon URL or ASIN (example: https://www.amazon.com/dp/B0...)"
-            className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
           <button
-            type="submit"
-            disabled={isAnalyzing}
-            className="inline-flex items-center justify-center min-h-11 px-6 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
+            type="button"
+            onClick={openAnalyzer}
+            className="inline-flex items-center justify-center min-h-11 px-5 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
           >
-            {isAnalyzing ? 'Analyzing...' : 'Analyze link'}
+            Open analyzer popup <ArrowUpRight size={15} className="ml-2" />
           </button>
-        </form>
-        <p className="text-xs text-slate-500 mt-2">
-          Supports full links (`/dp/...`, `/gp/product/...`), short links (`a.co`), and raw ASIN input.
-        </p>
-
-        {isAnalyzing ? (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-extrabold text-slate-900">Analyzing product link...</div>
-            <div className="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
-              <div className="h-full w-1/2 bg-yellow-400 rounded-full animate-pulse" />
-            </div>
-            <div className="mt-2 text-xs text-slate-500">
-              Extracting ASIN, building provisional score, and matching alternatives.
-            </div>
-          </div>
-        ) : analysis ? (
-          analysis.error ? (
-            <div className="mt-5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3">
-              {analysis.error}
-            </div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">
-                    {analysis.category}
-                  </span>
-                  {analysis.asin ? (
-                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest bg-slate-200 px-2 py-0.5 rounded">
-                      ASIN {analysis.asin}
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest bg-amber-100 px-2 py-0.5 rounded">
-                      No ASIN in URL
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-xl font-extrabold text-slate-900 mt-3">{analysis.title}</h3>
-                {analysis.placeholderTitle ? (
-                  <p className="mt-1 text-xs text-amber-700">
-                    This URL does not include a product title. We used ASIN-based fallback matching for comparisons.
-                  </p>
-                ) : null}
-
-                <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-                  <div className="text-sm font-extrabold text-slate-900">{analysis.score.explanations.scoreLine}</div>
-                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.discountLine}</div>
-                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.rarityLine}</div>
-                  <div className="mt-1 text-xs text-slate-700">{analysis.score.explanations.confidenceLine}</div>
-                  {analysis.score.explanations.decisionLine ? (
-                    <div className="mt-1 text-xs font-semibold text-emerald-700">{analysis.score.explanations.decisionLine}</div>
-                  ) : (
-                    <div className="mt-1 text-xs text-slate-500">Buy/Wait signal appears as more price history accumulates.</div>
-                  )}
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <a
-                    href={analysis.productLink}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                    onClick={() =>
-                      trackOutboundClick({
-                        url: analysis.productLink,
-                        label: `Analyzer product: ${analysis.title}`,
-                        category: 'link_analyzer',
-                        section: 'link_analyzer',
-                        productTitle: analysis.title,
-                        campaign: 'bdo_link_analyzer_product',
-                      })
-                    }
-                    className="inline-flex items-center justify-center min-h-10 px-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors"
-                  >
-                    Open analyzed product <ExternalLink size={14} className="ml-2" />
-                  </a>
-                  <a
-                    href={analysis.compareLink}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                    onClick={() =>
-                      trackOutboundClick({
-                        url: analysis.compareLink,
-                        label: `Analyzer compare: ${analysis.title}`,
-                        category: 'link_analyzer',
-                        section: 'link_analyzer',
-                        productTitle: analysis.title,
-                        campaign: 'bdo_link_analyzer_compare',
-                      })
-                    }
-                    className="inline-flex items-center justify-center min-h-10 px-4 rounded-xl bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300 transition-colors"
-                  >
-                    Find better deals <ArrowUpRight size={14} className="ml-2" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <div className="text-sm font-extrabold text-slate-900">Best alternatives on site</div>
-                <p className="text-xs text-slate-500 mt-1">Top matching deals ranked by DealTruth.</p>
-
-                <div className="mt-3 grid gap-3">
-                  {analysis.relatedDeals.length ? (
-                    analysis.relatedDeals.map((deal, index) => {
-                      const href = withAffiliateTracking(
-                        deal?.affiliateLink || amazonSearchLink(deal?.title || analysis.title, 'bdo_link_analyzer_related'),
-                        'bdo_link_analyzer_related'
-                      )
-                      const priceText = deal?.price ? `$${Number(deal.price).toFixed(2)}` : 'Live on Amazon'
-
-                      return (
-                        <a
-                          key={`${deal.id}-${index}`}
-                          href={href}
-                          target="_blank"
-                          rel="nofollow noopener noreferrer"
-                          onClick={() =>
-                            trackOutboundClick({
-                              url: href,
-                              label: `Analyzer related: ${deal.title}`,
-                              category: deal.category || 'link_analyzer',
-                              section: 'link_analyzer_related',
-                              productId: deal.id,
-                              productTitle: deal.title,
-                              position: index,
-                              campaign: 'bdo_link_analyzer_related',
-                            })
-                          }
-                          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 hover:border-slate-300 hover:shadow-sm transition-all"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{deal.category}</div>
-                              <div className="text-sm font-bold text-slate-900 line-clamp-2">{deal.title}</div>
-                            </div>
-                            <ExternalLink size={14} className="text-slate-400 shrink-0 mt-0.5" />
-                          </div>
-                          <div className="mt-2 text-xs text-slate-600">
-                            DealTruth {deal?.dealTruth?.score ?? 0}/100
-                            <span className="mx-1.5 text-slate-300">|</span>
-                            {priceText}
-                          </div>
-                        </a>
-                      )
-                    })
-                  ) : (
-                    <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-xs text-slate-500">
-                      No close matches in the current local catalog yet. Use "Find better deals" to open tagged Amazon comparisons.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        ) : null}
+        </div>
       </div>
     </section>
   )
@@ -1858,18 +1627,7 @@ const App = () => {
       <main className="flex-grow">
         <Hero apiStatus={apiStatus} products={uniqueProducts} />
 
-        <div id="dealtruth" className="scroll-mt-32" />
-        <div className="container mx-auto px-4 pt-8">
-          <DealTruthGuide products={uniqueProducts} className="mt-0" />
-        </div>
-
         <JumpBar />
-
-        <div className="mt-10">
-          <DealLens />
-        </div>
-        <div id="link-analyzer" className="scroll-mt-32" />
-        <AmazonLinkAnalyzer products={uniqueProducts} />
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
@@ -1880,10 +1638,6 @@ const App = () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
             />
-            <div id="budget" />
-            <UnderBudgetRow />
-            <div id="top-picks" />
-            <TopPicks products={uniqueProducts} />
           </>
         )}
 
@@ -2009,6 +1763,26 @@ const App = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {selectedCategory === 'All' && !searchQuery && (
+          <>
+            <div id="budget" />
+            <UnderBudgetRow />
+            <div id="top-picks" />
+            <TopPicks products={uniqueProducts} />
+          </>
+        )}
+
+        <div className="mt-10">
+          <DealLens />
+        </div>
+
+        <AnalyzerLauncherSection />
+
+        <div id="dealtruth" className="scroll-mt-32" />
+        <div className="container mx-auto px-4 pt-8 pb-10">
+          <DealTruthGuide products={uniqueProducts} className="mt-0" />
         </div>
       </main>
 
