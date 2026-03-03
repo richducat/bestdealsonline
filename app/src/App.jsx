@@ -337,18 +337,22 @@ const SORT_OPTIONS = [
   { label: 'Price: High → Low', value: 'price_desc' },
 ]
 const DEALS_PAGE_SIZE = 40
-const ANALYZER_TOUR_STEPS = [
+
+const GLOBAL_ONBOARDING_STEPS = [
   {
-    title: 'Paste link or ASIN',
-    body: 'Drop any Amazon product URL (or ASIN) into the analyzer input.',
+    title: 'Paste any Amazon link',
+    body: 'Use Link Analyzer to paste a product URL or ASIN and run a DealTruth score.',
+    anchor: 'link-analyzer',
   },
   {
-    title: 'Run instant score',
-    body: 'We parse the product signal and create a DealTruth score from available data.',
+    title: 'Read score and confidence',
+    body: 'Check score, real discount context, rarity, and confidence before buying.',
+    anchor: 'dealtruth',
   },
   {
-    title: 'Compare alternatives',
-    body: 'Open the best related deals and Amazon comparisons using your affiliate tag.',
+    title: 'Compare ranked alternatives',
+    body: 'Jump to trending and top picks to find stronger options with your affiliate links.',
+    anchor: 'trending',
   },
 ]
 
@@ -390,7 +394,7 @@ const DisclosureBanner = () => {
   )
 }
 
-const LoadingScreen = ({ message = 'Loading live deals...' }) => (
+const LoadingScreen = ({ message = 'Loading live deals...', progress = 30 }) => (
   <div className="fixed inset-0 z-[120] bg-slate-950/92 backdrop-blur-sm flex items-center justify-center px-4">
     <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/95 p-6 shadow-2xl">
       <div className="flex items-center gap-3">
@@ -404,7 +408,10 @@ const LoadingScreen = ({ message = 'Loading live deals...' }) => (
       </div>
       <div className="mt-6 text-slate-100 font-semibold">{message}</div>
       <div className="mt-4 h-2 w-full rounded-full bg-white/10 overflow-hidden">
-        <div className="h-full w-1/2 bg-yellow-400 rounded-full animate-pulse" />
+        <div
+          className="h-full bg-yellow-400 rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${Math.max(5, Math.min(100, progress))}%` }}
+        />
       </div>
       <div className="mt-3 text-xs text-slate-400">
         Pulling latest catalog, scoring deals, and preparing rankings.
@@ -412,6 +419,151 @@ const LoadingScreen = ({ message = 'Loading live deals...' }) => (
     </div>
   </div>
 )
+
+const OnboardingModal = ({ open, onClose }) => {
+  const [status, setStatus] = useState('stopped')
+  const [stepIndex, setStepIndex] = useState(0)
+  const currentStep = GLOBAL_ONBOARDING_STEPS[stepIndex]
+
+  useEffect(() => {
+    if (!open) {
+      setStatus('stopped')
+      setStepIndex(0)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open || status !== 'running') return undefined
+
+    const targetId = GLOBAL_ONBOARDING_STEPS[stepIndex]?.anchor
+    if (targetId) {
+      const target = document.getElementById(targetId)
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+
+    const timer = window.setTimeout(() => {
+      setStepIndex((current) => {
+        if (current >= GLOBAL_ONBOARDING_STEPS.length - 1) {
+          setStatus('paused')
+          return current
+        }
+        return current + 1
+      })
+    }, 2600)
+
+    return () => window.clearTimeout(timer)
+  }, [open, status, stepIndex])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-[130] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-900 text-white shadow-2xl">
+        <div className="p-5 md:p-6 border-b border-white/10">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-widest text-yellow-300 font-bold">Onboarding Menu</div>
+              <h3 className="text-2xl font-extrabold mt-1">Quick product tour</h3>
+              <p className="text-slate-300 text-sm mt-1">
+                Use Start, Pause, Resume, and Stop to control the walkthrough.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-white/15 text-slate-200 hover:bg-white/10"
+              aria-label="Close onboarding"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-5 md:p-6">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="text-xs uppercase tracking-widest text-slate-300">Current step</div>
+            <div className="text-xl font-extrabold mt-1">{currentStep.title}</div>
+            <p className="text-sm text-slate-300 mt-2">{currentStep.body}</p>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+            {GLOBAL_ONBOARDING_STEPS.map((step, index) => (
+              <div
+                key={step.title}
+                className={`rounded-lg border px-3 py-3 ${
+                  index === stepIndex ? 'border-yellow-300 bg-yellow-300/10' : 'border-white/10 bg-white/5'
+                }`}
+              >
+                <div className="text-[11px] uppercase tracking-widest text-slate-300">Step {index + 1}</div>
+                <div className="text-sm font-bold mt-1">{step.title}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {status === 'running' ? (
+              <button
+                type="button"
+                onClick={() => setStatus('paused')}
+                className="inline-flex items-center min-h-10 px-4 rounded-lg bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300"
+              >
+                <Pause size={14} className="mr-1.5" /> Pause
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  if (status === 'stopped') setStepIndex(0)
+                  setStatus('running')
+                }}
+                className="inline-flex items-center min-h-10 px-4 rounded-lg bg-yellow-400 text-slate-900 font-extrabold hover:bg-yellow-300"
+              >
+                <Play size={14} className="mr-1.5" /> {status === 'paused' ? 'Resume' : 'Start'}
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setStatus('stopped')
+                setStepIndex(0)
+              }}
+              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+            >
+              <Square size={14} className="mr-1.5" /> Stop
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStepIndex((current) => Math.max(0, current - 1))}
+              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+            >
+              Back
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStepIndex((current) => Math.min(GLOBAL_ONBOARDING_STEPS.length - 1, current + 1))}
+              className="inline-flex items-center min-h-10 px-4 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10"
+            >
+              Next
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center min-h-10 px-4 rounded-lg bg-white text-slate-900 font-extrabold hover:bg-slate-100"
+            >
+              Finish
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
   <nav className="bg-slate-900 text-white sticky top-0 z-40 shadow-lg">
@@ -628,19 +780,6 @@ const AmazonLinkAnalyzer = ({ products }) => {
   const [input, setInput] = useState('')
   const [submittedInput, setSubmittedInput] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [onboardingOpen, setOnboardingOpen] = useState(true)
-  const [tourState, setTourState] = useState('stopped')
-  const [tourStep, setTourStep] = useState(0)
-
-  useEffect(() => {
-    if (!onboardingOpen || tourState !== 'running') return undefined
-
-    const timer = window.setInterval(() => {
-      setTourStep((current) => (current + 1) % ANALYZER_TOUR_STEPS.length)
-    }, 2400)
-
-    return () => window.clearInterval(timer)
-  }, [onboardingOpen, tourState])
 
   const analysis = useMemo(() => {
     const raw = String(submittedInput || '').trim()
@@ -711,84 +850,6 @@ const AmazonLinkAnalyzer = ({ products }) => {
             </p>
           </div>
         </div>
-
-        {onboardingOpen ? (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:p-5">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Onboarding</div>
-                <div className="text-lg font-extrabold text-slate-900 mt-1">How to use this tool</div>
-                <p className="text-sm text-slate-600 mt-1">Use Start, Pause, Resume, and Stop to run through the quick walkthrough.</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {tourState === 'running' ? (
-                  <button
-                    type="button"
-                    onClick={() => setTourState('paused')}
-                    className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
-                  >
-                    <Pause size={14} className="mr-1.5" /> Pause
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setTourState('running')}
-                    className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
-                  >
-                    <Play size={14} className="mr-1.5" /> {tourState === 'paused' ? 'Resume' : 'Start'}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTourState('stopped')
-                    setTourStep(0)
-                  }}
-                  className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-white transition-colors"
-                >
-                  <Square size={14} className="mr-1.5" /> Stop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOnboardingOpen(false)}
-                  className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-white transition-colors"
-                >
-                  Hide
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-              {ANALYZER_TOUR_STEPS.map((step, index) => {
-                const isActive = index === tourStep
-                return (
-                  <div
-                    key={step.title}
-                    className={`rounded-xl border px-3 py-3 transition-all ${
-                      isActive ? 'border-yellow-300 bg-yellow-50' : 'border-slate-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
-                      Step {index + 1}
-                    </div>
-                    <div className="text-sm font-extrabold text-slate-900 mt-1">{step.title}</div>
-                    <div className="text-xs text-slate-600 mt-1">{step.body}</div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => setOnboardingOpen(true)}
-              className="inline-flex items-center justify-center min-h-10 px-3 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-slate-50 transition-colors"
-            >
-              Open onboarding
-            </button>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col md:flex-row gap-3">
           <input
@@ -1485,6 +1546,9 @@ const App = () => {
   const [products, setProducts] = useState(SEED_PRODUCTS)
   const [apiStatus, setApiStatus] = useState('not configured')
   const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [loadingMessage, setLoadingMessage] = useState('Loading live deals...')
+  const [loadingProgress, setLoadingProgress] = useState(12)
+  const [onboardingOpen, setOnboardingOpen] = useState(false)
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -1496,7 +1560,11 @@ const App = () => {
     ;(async () => {
       const startedAt = Date.now()
       try {
+        setLoadingMessage('Connecting to live deals feed...')
+        setLoadingProgress(22)
         const data = await fetchProductsJson(300)
+        setLoadingMessage('Scoring deals with DealTruth...')
+        setLoadingProgress(70)
         if (data?.items?.length) {
           setProducts(data.items)
           setApiStatus(DEALS_API_BASE ? `worker api (${data.items.length})` : `static catalog (${data.items.length})`)
@@ -1505,13 +1573,19 @@ const App = () => {
         }
       } catch (e) {
         setApiStatus('offline (using seed items)')
+        setLoadingMessage('Using fallback catalog...')
+        setLoadingProgress(78)
       } finally {
+        setLoadingMessage('Preparing interface...')
+        setLoadingProgress(96)
         const elapsed = Date.now() - startedAt
         const minLoadingMs = 800
         if (elapsed < minLoadingMs) {
           await new Promise((resolve) => window.setTimeout(resolve, minLoadingMs - elapsed))
         }
+        setLoadingProgress(100)
         setIsInitialLoading(false)
+        setOnboardingOpen(true)
       }
     })()
   }, [])
@@ -1564,7 +1638,8 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
-      {isInitialLoading ? <LoadingScreen message="Loading deals, scores, and onboarding..." /> : null}
+      {isInitialLoading ? <LoadingScreen message={loadingMessage} progress={loadingProgress} /> : null}
+      {!isInitialLoading ? <OnboardingModal open={onboardingOpen} onClose={() => setOnboardingOpen(false)} /> : null}
       <DisclosureBanner />
       <Navbar onSearch={setSearchQuery} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
@@ -1726,6 +1801,16 @@ const App = () => {
       </main>
 
       <Footer />
+
+      {!isInitialLoading && !onboardingOpen ? (
+        <button
+          type="button"
+          onClick={() => setOnboardingOpen(true)}
+          className="fixed bottom-4 right-4 z-[110] inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-slate-900 text-white font-bold shadow-lg hover:bg-slate-800 transition-colors"
+        >
+          Open onboarding
+        </button>
+      ) : null}
     </div>
   )
 }
