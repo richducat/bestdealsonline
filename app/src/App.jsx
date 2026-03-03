@@ -553,10 +553,13 @@ const OnboardingModal = ({ open, onClose }) => {
 
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                onClose()
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
               className="inline-flex items-center min-h-10 px-4 rounded-lg bg-white text-slate-900 font-extrabold hover:bg-slate-100"
             >
-              Finish
+              Main Menu
             </button>
           </div>
         </div>
