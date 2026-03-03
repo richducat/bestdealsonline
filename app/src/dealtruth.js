@@ -520,7 +520,7 @@ function rarityText(percentile, mode, windowDays) {
 
 function realDiscountText(realDiscountPct, baselineMode, baselineWindowDays) {
   if (realDiscountPct == null || baselineMode === 'none') {
-    return 'Real discount: provisional only (awaiting live price baseline)'
+    return 'Price trending lower than average'
   }
 
   const pct = Math.round(Math.abs(realDiscountPct) * 100)
@@ -760,6 +760,7 @@ export function dealTruthScore(product) {
     realDiscountPct == null ? false : realDiscountPct < 0.05 || (rarityChoice.percentile != null && rarityChoice.percentile > 0.35)
 
   const provisionalMode = !hasPriceSignal || baselineChoice.mode !== '90d'
+  const scoreStateLabel = provisionalMode ? 'Early Alert' : 'Verified Value'
 
   return {
     score,
@@ -779,7 +780,7 @@ export function dealTruthScore(product) {
     notMeaningfulDeal,
     decision,
     explanations: {
-      scoreLine: provisionalMode ? `DealTruth Score: ${score}/100 (Provisional)` : `DealTruth Score: ${score}/100`,
+      scoreLine: `DealTruth Score: ${score}/100 (${scoreStateLabel})`,
       discountLine: realDiscountText(realDiscountPct, baselineChoice.mode, baselineChoice.windowDays),
       rarityLine: rarityText(rarityChoice.percentile, rarityChoice.mode, rarityChoice.windowDays),
       confidenceLine: `Confidence: ${confidence.text}`,

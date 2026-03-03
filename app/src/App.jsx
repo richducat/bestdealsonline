@@ -574,6 +574,62 @@ function dealHighlightText(product, score) {
   return 'Rare price drop with healthy demand signals and a stronger-than-average value profile.'
 }
 
+function valueStatusChip(dealTruth) {
+  const verified = String(dealTruth?.baselineMode || '') === '90d'
+  if (verified) {
+    return {
+      label: 'Verified Value',
+      classes: 'border-emerald-200 bg-emerald-100 text-emerald-800',
+    }
+  }
+  return {
+    label: 'Early Alert',
+    classes: 'border-amber-200 bg-amber-100 text-amber-800',
+  }
+}
+
+function dataFreshnessPercent(dealTruth) {
+  const mode = String(dealTruth?.baselineMode || 'none')
+  const byMode = {
+    '90d': 92,
+    '45d': 80,
+    '30d': 72,
+    '14d': 62,
+    'all-history': 68,
+    'list-anchor': 48,
+    none: 36,
+  }
+  return byMode[mode] || 44
+}
+
+function priceTrendSummary(dealTruth) {
+  const realDiscount = Number(dealTruth?.realDiscountPct)
+  if (Number.isFinite(realDiscount) && realDiscount > 0) {
+    return `Price ${Math.round(realDiscount * 100)}% below recent average`
+  }
+  if (Number.isFinite(realDiscount) && realDiscount <= 0) {
+    return 'Price staying close to recent average'
+  }
+  return 'Price trending lower than average'
+}
+
+function dealBadges(product, dealTruth, confidenceScore) {
+  const badges = []
+  if (confidenceScore >= 70) {
+    badges.push({ label: 'Best Value', icon: ShieldCheck, classes: 'border-emerald-200 bg-emerald-100 text-emerald-800' })
+  }
+  if (Number.isFinite(dealTruth?.percentile180) && dealTruth.percentile180 <= 0.12) {
+    badges.push({ label: 'Lowest Price', icon: Zap, classes: 'border-amber-200 bg-amber-100 text-amber-800' })
+  }
+  if (Number(product?.reviews || 0) >= 1200) {
+    badges.push({ label: 'High Demand', icon: Star, classes: 'border-blue-200 bg-blue-100 text-blue-800' })
+  }
+  if (!badges.length) {
+    badges.push({ label: 'High Demand', icon: Star, classes: 'border-blue-200 bg-blue-100 text-blue-800' })
+  }
+  return badges.slice(0, 3)
+}
+
 const DisclosureBanner = () => {
   const [visible, setVisible] = useState(true)
   if (!visible) return null
@@ -875,7 +931,7 @@ const Hero = ({ apiStatus, products }) => {
                 }
                 className="mt-6 w-full inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-extrabold px-4 py-3 rounded-2xl transition-colors shadow-sm hover:shadow-md"
               >
-                Check price on Amazon <ExternalLink size={16} className="ml-2" />
+                View Today's Deal <ExternalLink size={16} className="ml-2" />
               </a>
 
               <div className="text-[11px] text-blue-100/80 mt-3">
@@ -1011,11 +1067,15 @@ const ProductCard = ({ product, tracking }) => {
   const formattedReviews = formatCompactCount(product?.reviews)
   const link = product?.affiliateLink || amazonSearchLink(product?.title || 'amazon deals', 'bdo_trending_card')
   const highlight = dealHighlightText(product, confidenceScore)
-  const isTopValue = confidenceScore >= 60
-  const badgeClasses = isTopValue
-    ? 'border-emerald-200 bg-emerald-100 text-emerald-800'
-    : 'border-amber-200 bg-amber-100 text-amber-800'
-  const badgeLabel = isTopValue ? 'Top Value' : 'Price Drop'
+  const freshnessPercent = dataFreshnessPercent(dealTruth)
+  const valueChip = valueStatusChip(dealTruth)
+  const trendSummary = priceTrendSummary(dealTruth)
+  const badges = dealBadges(product, dealTruth, confidenceScore)
+  const confidenceTextColor =
+    confidenceScore >= 75 ? 'text-emerald-700' : confidenceScore >= 60 ? 'text-amber-700' : 'text-orange-700'
+  const confidenceBarColor =
+    confidenceScore >= 75 ? 'bg-emerald-500' : confidenceScore >= 60 ? 'bg-amber-500' : 'bg-orange-500'
+  const freshnessBarColor = freshnessPercent >= 80 ? 'bg-emerald-500' : freshnessPercent >= 60 ? 'bg-amber-500' : 'bg-slate-400'
 
   useEffect(() => {
     setImageFailed(false)
@@ -1030,7 +1090,7 @@ const ProductCard = ({ product, tracking }) => {
         </span>
       </div>
 
-      <div className="relative h-60 bg-slate-50 border-b border-slate-200 overflow-hidden flex items-center justify-center p-6">
+      <div className="relative h-64 bg-slate-50 border-b border-slate-200 overflow-hidden flex items-center justify-center p-8">
         <img
           src={showFallbackImage ? getCategoryImage(product.category) : product.imageUrl}
           alt={product.title}
@@ -1045,9 +1105,9 @@ const ProductCard = ({ product, tracking }) => {
           <div className="text-[11px] font-extrabold text-blue-700 uppercase tracking-[0.18em]">
             {product.category}
           </div>
-          <div className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600">
-            <Star size={13} className="text-amber-400 fill-amber-400" />
-            <span className="font-bold text-slate-700">{rating ? rating.toFixed(1) : '0.0'}</span>
+          <div className="inline-flex items-center gap-1.5 text-base font-semibold text-slate-700">
+            <Star size={16} className="text-amber-400 fill-amber-400" />
+            <span className="font-extrabold text-slate-900">{rating ? rating.toFixed(1) : '0.0'}</span>
             <span className="text-xs text-slate-400">({formattedReviews})</span>
           </div>
         </div>
@@ -1064,17 +1124,47 @@ const ProductCard = ({ product, tracking }) => {
               <ShieldCheck size={15} className="text-emerald-500" />
               Deal Confidence
             </div>
-            <div className="text-xl font-extrabold text-slate-900">{confidenceScore}/100</div>
+            <div className={`text-xl font-extrabold ${confidenceTextColor}`}>{confidenceScore}/100</div>
           </div>
           <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
-            <div className="h-full rounded-full bg-amber-500" style={{ width: `${confidenceScore}%` }} />
+            <div className={`h-full rounded-full ${confidenceBarColor}`} style={{ width: `${confidenceScore}%` }} />
           </div>
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-extrabold uppercase tracking-wide ${badgeClasses}`}>
-              {isTopValue ? <ShieldCheck size={12} /> : <Zap size={12} />}
-              {badgeLabel}
+
+          <div className="mt-3 space-y-2">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+              <Zap size={13} className="text-amber-500" />
+              {trendSummary}
             </div>
-            <div className="inline-flex items-center gap-1 text-xs text-slate-500 italic">
+            <div className="flex items-center justify-between gap-2">
+              <div className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
+                <Clock size={12} />
+                Data Freshness
+              </div>
+              <div className="text-xs font-bold text-slate-500">{freshnessPercent}%</div>
+            </div>
+            <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
+              <div className={`h-full rounded-full ${freshnessBarColor}`} style={{ width: `${freshnessPercent}%` }} />
+            </div>
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-extrabold uppercase tracking-wide ${valueChip.classes}`}>
+              <ShieldCheck size={12} />
+              {valueChip.label}
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {badges.map((badge) => {
+              const BadgeIcon = badge.icon
+              return (
+                <div
+                  key={badge.label}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-extrabold uppercase tracking-wide ${badge.classes}`}
+                >
+                  <BadgeIcon size={12} className={badge.label === 'High Demand' ? 'fill-current' : ''} />
+                  {badge.label}
+                </div>
+              )
+            })}
+            <div className="inline-flex items-center gap-1 text-xs text-slate-500 italic ml-auto">
               <Clock size={12} />
               Updated 12m ago
             </div>
@@ -1167,7 +1257,7 @@ const CompactProductCard = ({ product, tracking }) => {
       <div className="text-[11px] font-bold text-indigo-700">
         {dealTruth?.score != null ? `DealTruth ${dealTruth.score}/100` : 'DealTruth pending'}
       </div>
-      <div className="text-xs text-slate-500">{dealTruth?.decision?.label ? dealTruth.decision.label : 'Check price on Amazon'}</div>
+      <div className="text-xs text-slate-500">{dealTruth?.decision?.label ? dealTruth.decision.label : "View Today's Deal"}</div>
     </a>
   )
 }
