@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { dealTruthScore, scoreProductList } from './dealtruth'
 
-function pickDailyProduct(products) {
+function pickDailyProduct(products, nowMs = Date.now()) {
   const items = Array.isArray(products) ? products.filter((p) => p && p.affiliateLink) : []
   if (!items.length) return null
 
   // Stable per-day selection.
-  const d = new Date()
+  const d = new Date(nowMs)
   const seed = Number(String(d.getFullYear()) + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'))
   const idx = seed % items.length
   return items[idx]
 }
 
-function msUntilNextMidnight() {
-  const now = new Date()
+function msUntilNextMidnight(nowMs = Date.now()) {
+  const now = new Date(nowMs)
   const next = new Date(now)
   next.setHours(24, 0, 0, 0)
   return Math.max(0, next.getTime() - now.getTime())
@@ -21,9 +21,14 @@ function msUntilNextMidnight() {
 
 function formatCountdown(ms) {
   const total = Math.max(0, Math.floor(ms / 1000))
-  const h = Math.floor(total / 3600)
+  const d = Math.floor(total / 86400)
+  const h = Math.floor((total % 86400) / 3600)
   const m = Math.floor((total % 3600) / 60)
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+  const s = total % 60
+  if (d > 0) {
+    return `${d}d ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 import {
   Search,
@@ -379,6 +384,81 @@ function findCatalogProductByAsin(products, asin) {
   return (products || []).find((product) => String(product?.asin || '').trim().toUpperCase() === normalizedAsin) || null
 }
 
+function normalizeProductTitleKey(title) {
+  return String(title || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function dedupeProductsByTitleCategory(products) {
+  const selectedByKey = new Map()
+
+  for (const product of products || []) {
+    if (!product) continue
+    const titleKey = normalizeProductTitleKey(product.title)
+    const categoryKey = String(product.category || '').trim().toLowerCase()
+    const dedupeKey = `${categoryKey}|${titleKey}`
+    if (!titleKey) continue
+
+    const existing = selectedByKey.get(dedupeKey)
+    if (!existing) {
+      selectedByKey.set(dedupeKey, product)
+      continue
+    }
+
+    const existingScore = existing?.dealTruth?.score ?? 0
+    const currentScore = product?.dealTruth?.score ?? 0
+    const existingReviews = existing?.reviews ?? 0
+    const currentReviews = product?.reviews ?? 0
+
+    if (currentScore > existingScore || (currentScore === existingScore && currentReviews > existingReviews)) {
+      selectedByKey.set(dedupeKey, product)
+    }
+  }
+
+  return Array.from(selectedByKey.values())
+}
+
+function diversifyProductsByCategory(products, categoryOrder = []) {
+  const buckets = new Map()
+  const extras = []
+  const normalizedOrder = Array.isArray(categoryOrder) ? categoryOrder.filter(Boolean) : []
+
+  for (const product of products || []) {
+    const category = String(product?.category || '').trim()
+    if (normalizedOrder.includes(category)) {
+      if (!buckets.has(category)) buckets.set(category, [])
+      buckets.get(category).push(product)
+    } else {
+      extras.push(product)
+    }
+  }
+
+  const orderedCategories = [
+    ...normalizedOrder.filter((category) => buckets.has(category)),
+    ...Array.from(buckets.keys()).filter((category) => !normalizedOrder.includes(category)),
+  ]
+
+  const output = []
+  let rowIndex = 0
+  while (true) {
+    let added = false
+    for (const category of orderedCategories) {
+      const bucket = buckets.get(category)
+      if (bucket && rowIndex < bucket.length) {
+        output.push(bucket[rowIndex])
+        added = true
+      }
+    }
+    if (!added) break
+    rowIndex += 1
+  }
+
+  return output.concat(extras)
+}
+
 // Seed content (works even before API is wired)
 const SEED_PRODUCTS = [
   {
@@ -430,7 +510,7 @@ const SORT_OPTIONS = [
   { label: 'Price: Low → High', value: 'price_asc' },
   { label: 'Price: High → Low', value: 'price_desc' },
 ]
-const DEALS_PAGE_SIZE = 40
+const DEALS_PAGE_SIZE = 24
 
 const GLOBAL_ONBOARDING_STEPS = [
   {
@@ -712,8 +792,18 @@ const Navbar = ({ onSearch, mobileMenuOpen, setMobileMenuOpen }) => (
 )
 
 const Hero = ({ apiStatus, products }) => {
-  const deal = useMemo(() => pickDailyProduct(products), [products])
-  const countdown = useMemo(() => formatCountdown(msUntilNextMidnight()), [])
+  const [nowMs, setNowMs] = useState(() => Date.now())
+
+  useEffect(() => {
+    const tick = () => setNowMs(Date.now())
+    tick()
+    const timer = window.setInterval(tick, 1000)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const dayKey = useMemo(() => new Date(nowMs).toDateString(), [nowMs])
+  const deal = useMemo(() => pickDailyProduct(products, nowMs), [products, dayKey, nowMs])
+  const countdown = useMemo(() => formatCountdown(msUntilNextMidnight(nowMs)), [nowMs])
 
   return (
     <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 text-white py-10 md:py-16 relative overflow-hidden">
@@ -1464,7 +1554,7 @@ const TopPicks = ({ products }) => {
       products
         .filter((product) => product.category === cat)
         .sort((a, b) => (b?.dealTruth?.score ?? 0) - (a?.dealTruth?.score ?? 0))
-        .slice(0, 10),
+        .slice(0, 6),
     ])
   )
 
@@ -1729,9 +1819,10 @@ const App = () => {
   }, [selectedCategory, searchQuery, sortOption])
 
   const scoredProducts = useMemo(() => scoreProductList(products), [products])
+  const uniqueProducts = useMemo(() => dedupeProductsByTitleCategory(scoredProducts), [scoredProducts])
 
   const processedProducts = useMemo(() => {
-    let result = scoredProducts.filter((product) => {
+    let result = uniqueProducts.filter((product) => {
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
       const matchesSearch =
         (product.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1764,8 +1855,20 @@ const App = () => {
         break
     }
 
+    const shouldDiversify =
+      selectedCategory === 'All' &&
+      !String(searchQuery || '').trim() &&
+      (sortOption === 'dealtruth_desc' || sortOption === 'recommended')
+
+    if (shouldDiversify) {
+      result = diversifyProductsByCategory(
+        result,
+        CATEGORIES.filter((category) => category !== 'All')
+      )
+    }
+
     return result
-  }, [selectedCategory, searchQuery, sortOption, scoredProducts])
+  }, [selectedCategory, searchQuery, sortOption, uniqueProducts])
 
   const visibleProducts = useMemo(() => processedProducts.slice(0, visibleCount), [processedProducts, visibleCount])
   const hasMoreProducts = visibleProducts.length < processedProducts.length
@@ -1778,11 +1881,11 @@ const App = () => {
       <Navbar onSearch={setSearchQuery} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
       <main className="flex-grow">
-        <Hero apiStatus={apiStatus} products={scoredProducts} />
+        <Hero apiStatus={apiStatus} products={uniqueProducts} />
 
         <div id="dealtruth" className="scroll-mt-32" />
         <div className="container mx-auto px-4 pt-8">
-          <DealTruthGuide products={scoredProducts} className="mt-0" />
+          <DealTruthGuide products={uniqueProducts} className="mt-0" />
         </div>
 
         <JumpBar />
@@ -1791,7 +1894,7 @@ const App = () => {
           <DealLens />
         </div>
         <div id="link-analyzer" className="scroll-mt-32" />
-        <AmazonLinkAnalyzer products={scoredProducts} />
+        <AmazonLinkAnalyzer products={uniqueProducts} />
 
         {selectedCategory === 'All' && !searchQuery && (
           <>
@@ -1805,7 +1908,7 @@ const App = () => {
             <div id="budget" />
             <UnderBudgetRow />
             <div id="top-picks" />
-            <TopPicks products={scoredProducts} />
+            <TopPicks products={uniqueProducts} />
           </>
         )}
 
