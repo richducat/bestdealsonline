@@ -3,6 +3,29 @@ import path from 'node:path'
 
 const ROOT = process.cwd()
 const BASE_URL = 'https://bestdealsonline.us'
+const ALLOWED_ROOT_HTML = new Set([
+  'index.html',
+  'about-best-online-deals.html',
+  'affiliate-disclosure.html',
+  'contact-best-online-deals.html',
+  'privacy.html',
+  'online-deals-methodology.html',
+  'review-aggregation-guidelines.html',
+  'best-deals-online-today.html',
+  'best-deals-online.html',
+  'deal-roundup-today.html',
+  'evergreen-deal-guides.html',
+  'best-deals-legit-or-scam.html',
+  'best-deals-with-price-history.html',
+  'electronics-deals.html',
+  'home-deals.html',
+  'kitchen-deals.html',
+  'tools-deals.html',
+  'kids-deals.html',
+  'beauty-deals.html',
+  'fitness-deals.html',
+  'pets-deals.html',
+])
 
 function shouldSkip(filePath) {
   const rel = path.relative(ROOT, filePath)
@@ -12,6 +35,14 @@ function shouldSkip(filePath) {
   if (rel.includes('/node_modules/')) return true
   if (rel.startsWith('.git/')) return true
   return false
+}
+
+function shouldIncludeHtml(rel) {
+  if (rel.startsWith('blog/')) {
+    return path.basename(rel) !== 'example-post.html'
+  }
+
+  return ALLOWED_ROOT_HTML.has(path.basename(rel))
 }
 
 async function* walk(dir) {
@@ -41,6 +72,7 @@ for await (const filePath of walk(ROOT)) {
   const rel = path.relative(ROOT, filePath)
   // exclude app/dist if ever copied
   if (rel.startsWith('app/dist/')) continue
+  if (!shouldIncludeHtml(rel)) continue
   urls.push({
     loc: urlFor(rel),
   })

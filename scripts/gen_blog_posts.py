@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://bestdealsonline.us"
 
 NAV = """
-      <nav class=\"hidden md:flex flex-wrap gap-4 text-sm text-slate-200\">\n        <a class=\"hover:text-yellow-400\" href=\"/best-deals-online-today.html\">Today</a>\n        <a class=\"hover:text-yellow-400\" href=\"/electronics-deals.html\">Electronics</a>\n        <a class=\"hover:text-yellow-400\" href=\"/home-deals.html\">Home</a>\n        <a class=\"hover:text-yellow-400\" href=\"/kitchen-deals.html\">Kitchen</a>\n        <a class=\"hover:text-yellow-400\" href=\"/tools-deals.html\">Tools</a>\n        <a class=\"hover:text-yellow-400\" href=\"/kids-deals.html\">Kids</a>\n        <a class=\"hover:text-yellow-400\" href=\"/blog/index.html\">Blog</a>\n      </nav>
+      <nav class=\"hidden md:flex flex-wrap gap-4 text-sm text-slate-200\">\n        <a class=\"hover:text-yellow-400\" href=\"/best-deals-online-today.html\">Today</a>\n        <a class=\"hover:text-yellow-400\" href=\"/blog/index.html\">Research</a>\n        <a class=\"hover:text-yellow-400\" href=\"/online-deals-methodology.html\">Methodology</a>\n        <a class=\"hover:text-yellow-400\" href=\"/about-best-online-deals.html\">About</a>\n        <a class=\"hover:text-yellow-400\" href=\"/contact-best-online-deals.html\">Contact</a>\n      </nav>
 """.strip("\n")
 
 
@@ -108,7 +108,7 @@ def page_html(*, slug: str, title: str, description: str, category: str, section
         <span class='bg-yellow-500 text-slate-900 p-2 rounded-lg font-black'>B</span>
         <span class='leading-tight'>
           <span class='block font-extrabold tracking-tight text-lg'>BestDealsOnline</span>
-          <span class='block text-[10px] text-yellow-400 uppercase tracking-[0.25em]'>Amazon Picks</span>
+          <span class='block text-[10px] text-yellow-400 uppercase tracking-[0.25em]'>Editorial Guides</span>
         </span>
       </a>
       {NAV}
@@ -503,10 +503,10 @@ def main():
   <meta charset='utf-8' />
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' />
   <title>Blog | BestDealsOnline</title>
-  <meta name='description' content='Neutral buying guides based on common buyer feedback and product features. Amazon-only deep links.' />
+  <meta name='description' content='Neutral buying guides based on common buyer feedback, category research, and transparent editorial pages.' />
   <link rel='canonical' href='{SITE}/blog/index.html' />
   <meta property='og:title' content='Blog | BestDealsOnline' />
-  <meta property='og:description' content='Neutral buying guides based on common buyer feedback and product features. Amazon-only deep links.' />
+  <meta property='og:description' content='Neutral buying guides based on common buyer feedback, category research, and transparent editorial pages.' />
   <meta property='og:type' content='website' />
   <meta property='og:url' content='{SITE}/blog/index.html' />
   <meta property='og:image' content='https://bestdealsonline.us/assets/og-default.svg' />
@@ -532,7 +532,7 @@ def main():
         <span class='bg-yellow-500 text-slate-900 p-2 rounded-lg font-black'>B</span>
         <span class='leading-tight'>
           <span class='block font-extrabold tracking-tight text-lg'>BestDealsOnline</span>
-          <span class='block text-[10px] text-yellow-400 uppercase tracking-[0.25em]'>Amazon Picks</span>
+          <span class='block text-[10px] text-yellow-400 uppercase tracking-[0.25em]'>Editorial Guides</span>
         </span>
       </a>
       {NAV}
@@ -541,7 +541,7 @@ def main():
 
   <main class='container mx-auto px-4 py-10 max-w-4xl'>
     <h1 class='text-3xl md:text-5xl font-extrabold tracking-tight'>Blog</h1>
-    <p class='text-slate-600 mt-4 text-lg'>Neutral buying guides based on common buyer feedback and product features (Amazon-only deep links).</p>
+    <p class='text-slate-600 mt-4 text-lg'>Neutral buying guides based on common buyer feedback, category research, and practical shopping tradeoffs.</p>
 
     <div class='mt-8 bg-white rounded-2xl border border-slate-100 p-6'>
       <div class='text-xs font-bold uppercase tracking-[0.25em] text-slate-500'>Latest posts</div>

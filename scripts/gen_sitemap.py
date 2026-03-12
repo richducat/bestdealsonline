@@ -3,11 +3,34 @@ from pathlib import Path
 import datetime
 
 SITE = "https://bestdealsonline.us"
+ALLOWED_ROOT_HTML = {
+    "about-best-online-deals.html",
+    "affiliate-disclosure.html",
+    "beauty-deals.html",
+    "best-deals-legit-or-scam.html",
+    "best-deals-online-today.html",
+    "best-deals-online.html",
+    "best-deals-with-price-history.html",
+    "contact-best-online-deals.html",
+    "deal-roundup-today.html",
+    "electronics-deals.html",
+    "evergreen-deal-guides.html",
+    "fitness-deals.html",
+    "home-deals.html",
+    "index.html",
+    "kids-deals.html",
+    "kitchen-deals.html",
+    "online-deals-methodology.html",
+    "pets-deals.html",
+    "privacy.html",
+    "review-aggregation-guidelines.html",
+    "tools-deals.html",
+}
 
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    htmls = sorted([p.name for p in root.glob("*.html")])
+    htmls = sorted([p.name for p in root.glob("*.html") if p.name in ALLOWED_ROOT_HTML])
     blog_dir = root / "blog"
     blog_htmls = []
     if blog_dir.exists():
@@ -31,6 +54,8 @@ def main():
         # blog index gets higher priority
         if rel.endswith("index.html"):
             urls.append((path, "weekly", "0.6"))
+        elif rel.endswith("example-post.html"):
+            continue
         else:
             urls.append((path, "monthly", "0.5"))
 
