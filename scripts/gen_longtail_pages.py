@@ -3,7 +3,7 @@ from pathlib import Path
 import html
 
 SITE = "https://bestdealsonline.us"
-TAG = "bestdeals0ad2-20"
+TAG = "bestdeals00d9-20"
 
 NAV = """
       <nav class=\"text-sm text-slate-200 flex flex-wrap gap-4\">\n        <a class=\"hover:text-yellow-400\" href=\"/\">Home</a>\n        <a class=\"hover:text-yellow-400\" href=\"/electronics-deals.html\">Electronics</a>\n        <a class=\"hover:text-yellow-400\" href=\"/kitchen-deals.html\">Kitchen</a>\n        <a class=\"hover:text-yellow-400\" href=\"/home-deals.html\">Home Deals</a>\n        <a class=\"hover:text-yellow-400\" href=\"/fitness-deals.html\">Fitness</a>\n        <a class=\"hover:text-yellow-400\" href=\"/kids-deals.html\">Kids</a>\n        <a class=\"hover:text-yellow-400\" href=\"/pets-deals.html\">Pets</a>\n        <a class=\"hover:text-yellow-400\" href=\"/tools-deals.html\">Tools</a>\n        <a class=\"hover:text-yellow-400\" href=\"/beauty-deals.html\">Beauty</a>\n        <a class=\"hover:text-yellow-400\" href=\"/drummer-deals.html\">Drummer Deals</a>\n      </nav>

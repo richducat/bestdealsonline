@@ -99,7 +99,7 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('load', onScroll, { passive: true });
 
-  const AMAZON_TAG = 'bestdeals0ad2-20';
+  const AMAZON_TAG = 'bestdeals00d9-20';
   const AMAZON_ASIN_PATTERN = /^[A-Z0-9]{10}$/;
 
   function cleanPastedUrl(value) {

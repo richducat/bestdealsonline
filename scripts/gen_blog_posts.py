@@ -40,7 +40,7 @@ def page_html(*, slug: str, title: str, description: str, category: str, section
         from urllib.parse import quote
         href = (
             f"https://www.amazon.com/s?k={quote(query)}"
-            f"&tag=bestdeals0ad2-20&utm_source=bestdealsonline&utm_medium=blog&utm_campaign={html.escape(slug)}"
+            f"&tag=bestdeals00d9-20&utm_source=bestdealsonline&utm_medium=blog&utm_campaign={html.escape(slug)}"
         )
         amz_cards.append(
             f"<a class='bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md p-5 flex items-start justify-between gap-4' "
