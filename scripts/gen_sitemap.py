@@ -3,34 +3,17 @@ from pathlib import Path
 import datetime
 
 SITE = "https://bestdealsonline.us"
-ALLOWED_ROOT_HTML = {
-    "about-best-online-deals.html",
-    "affiliate-disclosure.html",
-    "beauty-deals.html",
-    "best-deals-legit-or-scam.html",
-    "best-deals-online-today.html",
-    "best-deals-online.html",
-    "best-deals-with-price-history.html",
-    "contact-best-online-deals.html",
-    "deal-roundup-today.html",
-    "electronics-deals.html",
-    "evergreen-deal-guides.html",
-    "fitness-deals.html",
-    "home-deals.html",
-    "index.html",
-    "kids-deals.html",
-    "kitchen-deals.html",
-    "online-deals-methodology.html",
-    "pets-deals.html",
-    "privacy.html",
-    "review-aggregation-guidelines.html",
-    "tools-deals.html",
+# Known non-content root files that should never appear in the sitemap
+# (placeholders, drafts, fixtures). Everything else at root is real
+# content and gets included.
+DENIED_ROOT_HTML = {
+    "example-post.html",
 }
 
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    htmls = sorted([p.name for p in root.glob("*.html") if p.name in ALLOWED_ROOT_HTML])
+    htmls = sorted([p.name for p in root.glob("*.html") if p.name not in DENIED_ROOT_HTML])
     blog_dir = root / "blog"
     blog_htmls = []
     if blog_dir.exists():
