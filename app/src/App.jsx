@@ -346,14 +346,14 @@ const Hero = ({ counts }) => (
       <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
         <div className="min-w-0">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-            We read the reviews.
+            We read the reviews
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
-              You skip the regret.
+              so you don't have to.
             </span>
           </h1>
           <p className="mt-5 max-w-xl text-lg text-slate-200 leading-relaxed">
-            300+ real Amazon finds across Electronics, Home, Kitchen, Tools, Kids, Beauty, Fitness &amp; Pets — each one
-            backed by our own buyer-research, not a five-star badge.
+            300+ Amazon picks across Electronics, Home, Kitchen, Tools, Kids, Beauty, Fitness &amp; Pets. We dig through
+            what real buyers say breaks, holds up, and disappoints after week one — not just the star average.
           </p>
           <p className="mt-3 text-xs text-slate-400">
             As an Amazon Associate, we earn from qualifying purchases.
@@ -448,8 +448,8 @@ const FeaturedDeals = ({ items, loading, error }) => (
   <section id="deals" className="container mx-auto px-4 py-12 md:py-16">
     <SectionHeader
       eyebrow="Today's Picks"
-      title="Deals worth a look right now."
-      body="A mix across every category. Tap through to see live pricing and availability on Amazon."
+      title="Start here."
+      body="A mix from every category. Click through to see current pricing and availability on Amazon."
     />
     {error ? (
       <p className="mt-8 text-slate-600">
@@ -491,7 +491,7 @@ const CategoryTile = ({ cat, count }) => (
 const CategoryGrid = ({ counts }) => (
   <section id="categories" className="border-y border-slate-200 bg-white">
     <div className="container mx-auto px-4 py-12 md:py-16">
-      <SectionHeader eyebrow="Shop by Category" title="Every category, one tap away." />
+      <SectionHeader eyebrow="Shop by Category" title="Go straight to what you need." />
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {CATEGORIES.map((cat) => (
           <CategoryTile key={cat.href} cat={cat} count={counts[cat.name]} />
@@ -519,8 +519,8 @@ const ResearchSection = () => (
   <section id="research" className="container mx-auto px-4 py-12 md:py-16">
     <SectionHeader
       eyebrow="Backed by the Research"
-      title="Not a star rating. Real buyer feedback."
-      body="Before you click through, here's what actual reviewers say holds up and what doesn't, by category."
+      title="Real feedback. Not a star rating."
+      body="Before you click through to Amazon, here's what actual reviewers say holds up — and what breaks after week one."
     />
     <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {RESEARCH_PAIRINGS.map((pairing) => (
@@ -555,9 +555,8 @@ const TrustSection = () => (
           <div>
             <h3 className="text-xl font-extrabold text-slate-950">Why trust this site</h3>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
-              We publish internal category guides and buyer-feedback research before any outbound Amazon link, and we
-              don't invent star ratings, review counts, or countdown timers to push a click. Full methodology, policy,
-              and contact details are always public.
+              We publish the research before the affiliate link, not after — and we don't invent star ratings, review
+              counts, or countdown timers to push a click. Check our methodology and policies yourself; they're always public.
             </p>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold">
               {TRUST_LINKS.map((link) => {
