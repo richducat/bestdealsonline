@@ -1,191 +1,259 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   ArrowUpRight,
   BookOpen,
   ExternalLink,
   FileText,
-  Info,
-  Mail,
   Menu,
-  Search,
   ShieldCheck,
   Tag,
   X,
 } from 'lucide-react'
 
-const CATEGORY_GUIDES = [
+const CATEGORIES = [
   {
-    title: 'Electronics deals',
+    name: 'Electronics',
     href: '/electronics-deals.html',
-    label: 'Category guide',
-    description: 'Chargers, audio, monitors, routers, storage, and other everyday electronics.',
     image: '/images/categories/electronics.webp',
+    description: 'Chargers, audio, monitors, routers, and everyday electronics.',
   },
   {
-    title: 'Home deals',
+    name: 'Home',
     href: '/home-deals.html',
-    label: 'Category guide',
-    description: 'Comfort, organization, cleaning, bedding, and practical apartment upgrades.',
     image: '/images/categories/home.webp',
+    description: 'Comfort, organization, cleaning, and apartment upgrades.',
   },
   {
-    title: 'Kitchen deals',
+    name: 'Kitchen',
     href: '/kitchen-deals.html',
-    label: 'Category guide',
-    description: 'Coffee gear, cookware, prep tools, storage, and weeknight cooking essentials.',
     image: '/images/categories/kitchen.webp',
+    description: 'Coffee gear, cookware, prep tools, and weeknight essentials.',
   },
   {
-    title: 'Tools deals',
+    name: 'Tools',
     href: '/tools-deals.html',
-    label: 'Category guide',
-    description: 'DIY kits, drills, measuring tools, repair basics, and workshop staples.',
     image: '/images/categories/tools.webp',
+    description: 'DIY kits, drills, measuring tools, and workshop staples.',
   },
   {
-    title: 'Kids deals',
+    name: 'Kids',
     href: '/kids-deals.html',
-    label: 'Category guide',
-    description: 'School gear, toys, headphones, lunchboxes, and everyday parent-friendly picks.',
     image: '/images/categories/kids.webp',
+    description: 'School gear, toys, headphones, and parent-friendly picks.',
   },
   {
-    title: 'Beauty deals',
+    name: 'Beauty',
     href: '/beauty-deals.html',
-    label: 'Category guide',
-    description: 'Skincare, grooming, hair tools, and routine products people actually repurchase.',
     image: '/images/categories/beauty.webp',
+    description: 'Skincare, grooming, hair tools, and routine products.',
   },
   {
-    title: 'Fitness deals',
+    name: 'Fitness',
     href: '/fitness-deals.html',
-    label: 'Category guide',
-    description: 'Home gym basics, recovery gear, trackers, and compact workout equipment.',
     image: '/images/categories/fitness.webp',
+    description: 'Home gym basics, recovery gear, and compact equipment.',
   },
   {
-    title: 'Pets deals',
+    name: 'Pets',
     href: '/pets-deals.html',
-    label: 'Category guide',
-    description: 'Bowls, litter gear, travel accessories, and comfort-focused pet essentials.',
     image: '/images/categories/pets.webp',
+    description: 'Bowls, litter gear, travel accessories, and pet comfort.',
   },
 ]
 
-const FEATURED_GUIDES = [
+// One representative, broadly-appealing research post per category with
+// enough real-data coverage to pair meaningfully. Categories without a
+// real post (Tools, Beauty, Fitness, Pets) are intentionally left out
+// rather than force-matched to an unrelated post.
+const RESEARCH_PAIRINGS = [
   {
-    title: 'Best deals online today',
-    href: '/best-deals-online-today.html',
-    label: 'Roundup',
-    description: 'A current shortlist of the most useful internal guides to start from.',
-  },
-  {
-    title: 'Evergreen deal guides',
-    href: '/evergreen-deal-guides.html',
-    label: 'Roundup',
-    description: 'Durable, year-round buyer-intent pages instead of flash-sale noise.',
-  },
-  {
-    title: 'Price history guide',
-    href: '/best-deals-with-price-history.html',
-    label: 'Method',
-    description: 'How to sanity-check discounts before clicking out to Amazon.',
-  },
-  {
-    title: 'Buyer beware checklist',
-    href: '/best-deals-legit-or-scam.html',
-    label: 'Trust',
-    description: 'Signals that separate a useful deal from a misleading one.',
-  },
-]
-
-const RESEARCH_POSTS = [
-  {
-    title: 'USB-C chargers: what buyers like and what they complain about',
-    href: '/blog/usb-c-chargers-what-buyers-like-what-they-complain-about-and-what-to-look-for.html',
     category: 'Electronics',
-    description: 'A neutral summary of the tradeoffs shoppers mention most: heat, wattage, cables, and port sharing.',
+    title: 'USB-C chargers: what buyers like and complain about',
+    href: '/blog/usb-c-chargers-what-buyers-like-what-they-complain-about-and-what-to-look-for.html',
+    takeaway: 'The tradeoffs shoppers mention most: heat, wattage, cables, and port sharing.',
+  },
+  {
+    category: 'Home',
+    title: 'Robot vacuums: navigation, pet hair, and maintenance',
+    href: '/blog/robot-vacuums-what-reviewers-actually-mention-navigation-pet-hair-maintenance.html',
+    takeaway: 'What people consistently praise, what breaks trust, and when it actually saves time.',
+  },
+  {
+    category: 'Kitchen',
+    title: 'Coffee makers under $100: taste, reliability, ease',
+    href: '/blog/coffee-makers-under-100-what-reviewers-care-about-taste-reliability-ease.html',
+    takeaway: 'The issues buyers notice after the first week of daily use.',
+  },
+  {
+    category: 'Kids',
+    title: 'Kids headphones: comfort, volume limits, durability',
+    href: '/blog/kids-headphones-what-parents-and-buyers-mention-most-comfort-volume-limits-durability.html',
+    takeaway: 'The recurring parent concerns that matter more than marketing graphics.',
+  },
+]
+
+const MORE_RESEARCH = [
+  {
+    title: 'Air fryer accessories: liners, racks, and cleanup fit',
+    href: '/blog/air-fryer-accessories-what-buyers-like-liners-racks-cleanup-fit.html',
+    category: 'Kitchen',
+  },
+  {
+    title: 'Air fryers: capacity, cleanup, and noise tradeoffs',
+    href: '/blog/air-fryers-the-most-common-pros-and-cons-buyers-mention-capacity-cleanup-noise.html',
+    category: 'Kitchen',
+  },
+  {
+    title: 'Air purifiers under $100: noise, filters, room size',
+    href: '/blog/air-purifiers-under-100-what-reviewers-say-about-noise-filters-and-room-size.html',
+    category: 'Home',
+  },
+  {
+    title: 'Blackout curtains: light blocking, sizing, fabric',
+    href: '/blog/blackout-curtains-what-reviewers-say-about-light-blocking-sizing-and-fabric.html',
+    category: 'Home',
+  },
+  {
+    title: 'Cast iron skillets: weight, seasoning, heat retention',
+    href: '/blog/cast-iron-skillets-what-reviewers-say-about-weight-seasoning-and-heat-retention.html',
+    category: 'Kitchen',
+  },
+  {
+    title: 'Dash cams: video clarity, night vision, heat, app quality',
+    href: '/blog/dash-cams-what-buyers-mention-most-video-clarity-night-vision-heat-app.html',
+    category: 'Electronics',
+  },
+  {
+    title: 'Digital meat thermometers: speed, accuracy, durability',
+    href: '/blog/digital-meat-thermometers-what-reviewers-mention-most-speed-accuracy-durability.html',
+    category: 'Kitchen',
+  },
+  {
+    title: 'GaN chargers: what buyers like, what bugs them',
+    href: '/blog/gan-chargers-what-buyers-like-what-bugs-them-and-how-to-choose.html',
+    category: 'Electronics',
+  },
+  {
+    title: 'Humidifiers under $50: upsides and maintenance warnings',
+    href: '/blog/humidifiers-under-50-what-reviewers-like-and-what-they-warn-about.html',
+    category: 'Home',
+  },
+  {
+    title: 'Kids lunch boxes and bento sets: leaks, size, insulation',
+    href: '/blog/kids-lunch-boxes-and-bento-sets-what-reviewers-mention-most-leaks-size-insulation.html',
+    category: 'Kids',
+  },
+  {
+    title: 'Kids smartwatches: safety, battery, parental controls',
+    href: '/blog/kids-smartwatches-what-parents-care-about-safety-battery-controls.html',
+    category: 'Kids',
+  },
+  {
+    title: 'Kids tablets: durability, storage, parental controls',
+    href: '/blog/kids-tablets-what-parents-mention-most-durability-storage-parental-controls.html',
+    category: 'Kids',
+  },
+  {
+    title: 'Learning toys and science kits: good vs. gimmicky',
+    href: '/blog/learning-toys-and-science-kits-how-reviewers-separate-the-good-from-the-gimmicky.html',
+    category: 'Kids',
+  },
+  {
+    title: 'Portable SSDs vs. external hard drives: speed, size, value',
+    href: '/blog/portable-ssds-vs-external-hard-drives-what-buyers-say-about-speed-size-and-value.html',
+    category: 'Electronics',
+  },
+  {
+    title: 'Power banks: capacity, speed, size, real-world use',
+    href: '/blog/power-banks-pros-cons-from-buyer-reviews-capacity-speed-size-and-real-world-use.html',
+    category: 'Electronics',
+  },
+  {
+    title: 'Toddler toys: durability, mess, and age fit',
+    href: '/blog/toddler-toys-what-parents-mention-most-durability-mess-age-fit.html',
+    category: 'Kids',
   },
   {
     title: 'Wireless chargers: speed, heat, and reliability',
     href: '/blog/wireless-chargers-what-reviewers-say-about-speed-heat-and-reliability.html',
     category: 'Electronics',
-    description: 'Practical buyer feedback about charging speed, alignment, and everyday desk use.',
-  },
-  {
-    title: 'Robot vacuums: navigation, pet hair, and maintenance',
-    href: '/blog/robot-vacuums-what-reviewers-actually-mention-navigation-pet-hair-maintenance.html',
-    category: 'Home',
-    description: 'What people consistently praise, what breaks trust, and when the category actually saves time.',
-  },
-  {
-    title: 'Coffee makers under $100: taste, reliability, and cleaning',
-    href: '/blog/coffee-makers-under-100-what-reviewers-care-about-taste-reliability-ease.html',
-    category: 'Kitchen',
-    description: 'A grounded guide to the issues buyers notice after the first week of ownership.',
-  },
-  {
-    title: 'Kids headphones: comfort, volume limits, and durability',
-    href: '/blog/kids-headphones-what-parents-and-buyers-mention-most-comfort-volume-limits-durability.html',
-    category: 'Kids',
-    description: 'The recurring parent concerns that matter more than marketing graphics.',
-  },
-  {
-    title: 'Dash cams: video clarity, night vision, heat, and app quality',
-    href: '/blog/dash-cams-what-buyers-mention-most-video-clarity-night-vision-heat-app.html',
-    category: 'Electronics',
-    description: 'A summary of the real complaints shoppers surface after installation.',
   },
 ]
 
 const TRUST_LINKS = [
-  {
-    title: 'Affiliate disclosure',
-    href: '/affiliate-disclosure.html',
-    description: 'Exactly how this site makes money and the language Amazon requires.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Online deals methodology',
-    href: '/online-deals-methodology.html',
-    description: 'How pages are selected, reviewed, and updated before they stay live.',
-    icon: FileText,
-  },
-  {
-    title: 'Review aggregation guidelines',
-    href: '/review-aggregation-guidelines.html',
-    description: 'How buyer feedback is summarized without pretending every product was hands-on tested.',
-    icon: BookOpen,
-  },
-  {
-    title: 'About Best Online Deals',
-    href: '/about-best-online-deals.html',
-    description: 'What this site publishes, what it does not claim, and why the pages exist.',
-    icon: Info,
-  },
-  {
-    title: 'Contact Best Online Deals',
-    href: '/contact-best-online-deals.html',
-    description: 'A public correction and feedback channel for readers and reviewers.',
-    icon: Mail,
-  },
-  {
-    title: 'Privacy policy',
-    href: '/privacy.html',
-    description: 'Analytics, cookies, and outbound-link expectations in plain language.',
-    icon: ShieldCheck,
-  },
+  { title: 'Affiliate disclosure', href: '/affiliate-disclosure.html', icon: ShieldCheck },
+  { title: 'How we pick deals', href: '/online-deals-methodology.html', icon: FileText },
+  { title: 'Review policy', href: '/review-aggregation-guidelines.html', icon: BookOpen },
 ]
 
-function searchText(items) {
-  return items
-    .map((item) => [item.title, item.description, item.label, item.category].filter(Boolean).join(' '))
-    .join(' ')
+// Fixes common tech acronyms that data-generation left in Title Case
+// ("Usb C Charger" -> "USB-C Charger"). Display-only; never touches
+// the underlying data file.
+const ACRONYM_FIXES = {
+  usb: 'USB',
+  tv: 'TV',
+  ssd: 'SSD',
+  sd: 'SD',
+  gan: 'GaN',
+  iphone: 'iPhone',
+  led: 'LED',
+  wifi: 'WiFi',
+  '4k': '4K',
 }
 
-function matchesQuery(item, query) {
-  if (!query) return true
-  return searchText([item]).toLowerCase().includes(query)
+function cleanTitle(title) {
+  return title
+    .split(' ')
+    .map((word) => ACRONYM_FIXES[word.toLowerCase()] ?? word)
+    .join(' ')
+    .replace(/\bUSB C\b/g, 'USB-C')
+}
+
+// Spreads picks across categories (round-robin) so the featured grid
+// reads as curated rather than dumped in whatever order the feed returns.
+function pickFeatured(items, count) {
+  const seenTitles = new Set()
+  const byCategory = new Map()
+  for (const item of items) {
+    if (seenTitles.has(item.title)) continue
+    seenTitles.add(item.title)
+    const bucket = byCategory.get(item.category) ?? []
+    bucket.push(item)
+    byCategory.set(item.category, bucket)
+  }
+  const buckets = [...byCategory.values()]
+  const picked = []
+  let i = 0
+  while (picked.length < count && buckets.some((b) => b.length > 0)) {
+    const bucket = buckets[i % buckets.length]
+    if (bucket.length > 0) picked.push(bucket.shift())
+    i += 1
+  }
+  return picked
+}
+
+function useProducts() {
+  const [state, setState] = useState({ items: [], loading: true, error: false })
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/data/products.json')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then((data) => {
+        if (!cancelled) setState({ items: data.items ?? [], loading: false, error: false })
+      })
+      .catch(() => {
+        if (!cancelled) setState({ items: [], loading: false, error: true })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return state
 }
 
 const DisclosureBanner = () => {
@@ -196,13 +264,13 @@ const DisclosureBanner = () => {
     <div className="bg-slate-100 border-b border-slate-200 text-xs text-slate-700">
       <div className="container mx-auto px-4 py-2 flex items-start justify-between gap-3">
         <p className="leading-relaxed">
-          <strong>Affiliate disclosure:</strong> BestDealsOnline may earn a commission when you buy through links on this
-          site, at no extra cost to you. <a className="underline" href="/affiliate-disclosure.html">Details</a>.
+          <strong>Affiliate disclosure:</strong> As an Amazon Associate, we earn from qualifying purchases.{' '}
+          <a className="underline" href="/affiliate-disclosure.html">Details</a>.
         </p>
         <button
           type="button"
           onClick={() => setVisible(false)}
-          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-900"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-900 shrink-0"
           aria-label="Dismiss disclosure"
         >
           <X size={14} />
@@ -212,219 +280,301 @@ const DisclosureBanner = () => {
   )
 }
 
-const NavLink = ({ href, children }) => (
-  <a href={href} className="hover:text-yellow-300 transition-colors">
-    {children}
-  </a>
-)
-
-const Navbar = ({ query, setQuery }) => {
+const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <nav className="bg-slate-950 text-white sticky top-0 z-40 border-b border-slate-900">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-3">
-            <span className="bg-yellow-400 text-slate-950 p-2 rounded-lg">
-              <Tag size={18} />
-            </span>
-            <span className="leading-tight">
-              <span className="block font-extrabold tracking-tight text-lg">BestDealsOnline</span>
-              <span className="block text-[10px] text-yellow-300 uppercase tracking-[0.28em]">Editorial Guides</span>
-            </span>
-          </a>
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
+        <a href="/" className="flex items-center gap-3">
+          <span className="bg-yellow-400 text-slate-950 p-2 rounded-lg">
+            <Tag size={18} />
+          </span>
+          <span className="leading-tight">
+            <span className="block font-extrabold tracking-tight text-lg">BestDealsOnline</span>
+            <span className="block text-[10px] text-yellow-300 uppercase tracking-[0.28em]">Amazon Deal Picks</span>
+          </span>
+        </a>
 
-          <button
-            type="button"
-            className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-lg border border-white/10"
-            onClick={() => setMobileMenuOpen((open) => !open)}
-            aria-label="Toggle navigation"
-          >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+        <button
+          type="button"
+          className="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-lg border border-white/10"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          aria-label="Toggle navigation"
+        >
+          {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
 
-          <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
-            <NavLink href="#guides">Guides</NavLink>
-            <NavLink href="#research">Research</NavLink>
-            <NavLink href="#trust">Trust</NavLink>
-            <NavLink href="/about-best-online-deals.html">About</NavLink>
-            <NavLink href="/contact-best-online-deals.html">Contact</NavLink>
-          </div>
+        <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
+          <a href="#deals" className="hover:text-yellow-300 transition-colors">Today's Picks</a>
+          <a href="#categories" className="hover:text-yellow-300 transition-colors">Categories</a>
+          <a href="#research" className="hover:text-yellow-300 transition-colors">Research</a>
+          <a href="/blog/index.html" className="hover:text-yellow-300 transition-colors">Blog</a>
         </div>
-
-        <div className="mt-4 relative">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search guides, research, and trust pages"
-            className="w-full rounded-2xl border border-white/10 bg-slate-900 px-11 py-3 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-        </div>
-
-        {mobileMenuOpen ? (
-          <div className="md:hidden mt-4 flex flex-col gap-3 text-sm font-semibold">
-            <NavLink href="#guides">Guides</NavLink>
-            <NavLink href="#research">Research</NavLink>
-            <NavLink href="#trust">Trust</NavLink>
-            <NavLink href="/about-best-online-deals.html">About</NavLink>
-            <NavLink href="/contact-best-online-deals.html">Contact</NavLink>
-          </div>
-        ) : null}
       </div>
+
+      {mobileMenuOpen ? (
+        <div className="md:hidden px-4 pb-4 flex flex-col gap-1 text-sm font-semibold">
+          <a href="#deals" className="min-h-11 flex items-center hover:text-yellow-300">Today's Picks</a>
+          <a href="#categories" className="min-h-11 flex items-center hover:text-yellow-300">Categories</a>
+          <a href="#research" className="min-h-11 flex items-center hover:text-yellow-300">Research</a>
+          <a href="/blog/index.html" className="min-h-11 flex items-center hover:text-yellow-300">Blog</a>
+        </div>
+      ) : null}
     </nav>
   )
 }
 
-const Hero = () => {
-  const reviewedAt = new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date())
+const CategoryChips = ({ counts }) => (
+  <div className="mt-6 -mx-4 px-4 md:mx-0 md:px-0 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible">
+    {CATEGORIES.map((cat) => (
+      <a
+        key={cat.href}
+        href={cat.href}
+        className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 min-h-11 rounded-full bg-white/10 hover:bg-white/20 text-sm font-semibold text-white transition-colors whitespace-nowrap"
+      >
+        {cat.name}
+        {counts[cat.name] ? <span className="text-yellow-300">· {counts[cat.name]}</span> : null}
+      </a>
+    ))}
+  </div>
+)
 
-  return (
-    <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white">
-      <div className="container mx-auto px-4 py-14 md:py-20">
-        <div className="grid lg:grid-cols-[1.3fr_0.9fr] gap-8 items-start">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-yellow-200">
-              Reviewed {reviewedAt}
-            </div>
-            <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-              Deal research first.
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
-                Amazon clicks second.
-              </span>
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg text-slate-200 leading-relaxed">
-              BestDealsOnline publishes internal deal guides, category hubs, and buyer-feedback summaries before sending
-              readers to Amazon. We do not promise universal hands-on testing, fake countdown clocks, or invented review
-              metrics. We publish clear disclosure, a public methodology, and a visible contact path instead.
-            </p>
+const Hero = ({ counts }) => (
+  <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white">
+    <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
+        <div className="min-w-0">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+            We read the reviews.
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
+              You skip the regret.
+            </span>
+          </h1>
+          <p className="mt-5 max-w-xl text-lg text-slate-200 leading-relaxed">
+            300+ real Amazon finds across Electronics, Home, Kitchen, Tools, Kids, Beauty, Fitness &amp; Pets — each one
+            backed by our own buyer-research, not a five-star badge.
+          </p>
+          <p className="mt-3 text-xs text-slate-400">
+            As an Amazon Associate, we earn from qualifying purchases.
+          </p>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a
-                href="#guides"
-                className="inline-flex items-center justify-center min-h-11 px-5 rounded-xl bg-yellow-400 text-slate-950 font-extrabold hover:bg-yellow-300 transition-colors"
-              >
-                Browse internal guides <ArrowUpRight size={15} className="ml-2" />
-              </a>
-              <a
-                href="#trust"
-                className="inline-flex items-center justify-center min-h-11 px-5 rounded-xl border border-white/15 text-white font-bold hover:bg-white/10 transition-colors"
-              >
-                Review our policies
-              </a>
-            </div>
+          <div className="mt-7 flex flex-wrap items-center gap-5">
+            <a
+              href="#deals"
+              className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-yellow-400 text-slate-950 font-extrabold hover:bg-yellow-300 transition-colors text-base"
+            >
+              See Today's Picks <ArrowUpRight size={16} className="ml-2" />
+            </a>
+            <a
+              href="/online-deals-methodology.html"
+              className="inline-flex items-center min-h-12 text-sm font-bold text-slate-200 hover:text-yellow-300 transition-colors"
+            >
+              How we pick <ArrowUpRight size={14} className="ml-1.5" />
+            </a>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-              <div className="text-xs font-bold uppercase tracking-[0.22em] text-yellow-200">What you can verify</div>
-              <ul className="mt-4 space-y-3 text-sm text-slate-200">
-                <li>Visible affiliate disclosure on every major page.</li>
-                <li>Public about, privacy, methodology, and contact pages.</li>
-                <li>Internal guides and research before affiliate outbound clicks.</li>
-              </ul>
+          <CategoryChips counts={counts} />
+        </div>
+
+        <div className="hidden lg:grid gap-4">
+          {CATEGORIES.slice(0, 3).map((cat) => (
+            <div key={cat.href} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden flex items-center gap-4 p-3">
+              <img
+                src={cat.image}
+                alt=""
+                width="88"
+                height="88"
+                className="h-20 w-20 rounded-xl object-cover shrink-0"
+                loading="eager"
+              />
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-300">{cat.name}</div>
+                <div className="text-sm text-slate-300 mt-1">{cat.description}</div>
+              </div>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-              <div className="text-xs font-bold uppercase tracking-[0.22em] text-yellow-200">Editorial stance</div>
-              <p className="mt-4 text-sm text-slate-200 leading-relaxed">
-                This site is built to help readers narrow choices, then verify live price, availability, and reviews on
-                Amazon before buying. Internal pages stay focused on practical buyer intent, not keyword-stuffed search traps.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)
+
+const ProductCard = ({ item }) => (
+  <a
+    href={item.affiliateLink}
+    target="_blank"
+    rel="nofollow noopener noreferrer"
+    className="group rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col"
+  >
+    <div className="aspect-square overflow-hidden bg-slate-100">
+      <img
+        src={item.imageUrl}
+        alt={cleanTitle(item.title)}
+        className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
+      />
+    </div>
+    <div className="p-4 flex flex-col flex-1">
+      <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{item.category}</div>
+      <h3 className="mt-1.5 font-extrabold text-slate-950 leading-snug">{cleanTitle(item.title)}</h3>
+      <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-xl bg-slate-950 text-white text-sm font-bold group-hover:bg-slate-800 transition-colors">
+        View on Amazon <ExternalLink size={13} className="ml-1.5" />
+      </div>
+    </div>
+  </a>
+)
+
+const ProductCardSkeleton = () => (
+  <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden animate-pulse">
+    <div className="aspect-square bg-slate-100" />
+    <div className="p-4 space-y-2">
+      <div className="h-2.5 w-16 bg-slate-200 rounded" />
+      <div className="h-4 w-3/4 bg-slate-200 rounded" />
+      <div className="h-9 w-full bg-slate-100 rounded-xl mt-3" />
+    </div>
+  </div>
+)
 
 const SectionHeader = ({ eyebrow, title, body }) => (
   <div className="max-w-3xl">
     <div className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">{eyebrow}</div>
     <h2 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight text-slate-950">{title}</h2>
-    <p className="mt-3 text-slate-600 text-lg leading-relaxed">{body}</p>
+    {body ? <p className="mt-3 text-slate-600 text-lg leading-relaxed">{body}</p> : null}
   </div>
 )
 
-const CategoryGuideCard = ({ guide }) => (
+const FeaturedDeals = ({ items, loading, error }) => (
+  <section id="deals" className="container mx-auto px-4 py-12 md:py-16">
+    <SectionHeader
+      eyebrow="Today's Picks"
+      title="Deals worth a look right now."
+      body="A mix across every category. Tap through to see live pricing and availability on Amazon."
+    />
+    {error ? (
+      <p className="mt-8 text-slate-600">
+        Couldn't load today's picks right now — browse by{' '}
+        <a className="underline font-bold" href="#categories">category</a> instead.
+      </p>
+    ) : (
+      <div className="mt-8 grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        {loading
+          ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          : items.map((item) => <ProductCard key={item.id} item={item} />)}
+      </div>
+    )}
+  </section>
+)
+
+const CategoryTile = ({ cat, count }) => (
   <a
-    href={guide.href}
-    className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+    href={cat.href}
+    className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-4 p-4"
   >
-    <div className="h-44 overflow-hidden bg-slate-100">
-      <img
-        src={guide.image}
-        alt={guide.title}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        loading="lazy"
-      />
+    <img
+      src={cat.image}
+      alt=""
+      width="72"
+      height="72"
+      className="h-16 w-16 rounded-xl object-cover shrink-0"
+      loading="lazy"
+    />
+    <div className="min-w-0">
+      <h3 className="font-extrabold text-slate-950">{cat.name}</h3>
+      <p className="mt-1 text-sm text-slate-600 leading-snug line-clamp-2">{cat.description}</p>
+      {count ? <div className="mt-1.5 text-xs font-bold text-slate-500">{count} picks</div> : null}
     </div>
-    <div className="p-5">
-      <div className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-        {guide.label}
-      </div>
-      <h3 className="mt-4 text-xl font-extrabold text-slate-950">{guide.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600">{guide.description}</p>
-      <div className="mt-5 inline-flex items-center text-sm font-bold text-slate-900">
-        Open guide <ArrowUpRight size={15} className="ml-1.5" />
-      </div>
-    </div>
+    <ArrowUpRight size={16} className="ml-auto shrink-0 text-slate-400 group-hover:text-slate-900" />
   </a>
 )
 
-const FeatureCard = ({ item }) => (
+const CategoryGrid = ({ counts }) => (
+  <section id="categories" className="border-y border-slate-200 bg-white">
+    <div className="container mx-auto px-4 py-12 md:py-16">
+      <SectionHeader eyebrow="Shop by Category" title="Every category, one tap away." />
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {CATEGORIES.map((cat) => (
+          <CategoryTile key={cat.href} cat={cat} count={counts[cat.name]} />
+        ))}
+      </div>
+    </div>
+  </section>
+)
+
+const ResearchPairingCard = ({ pairing }) => (
   <a
-    href={item.href}
+    href={pairing.href}
     className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
   >
-    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
-    <h3 className="mt-3 text-xl font-extrabold text-slate-950">{item.title}</h3>
-    <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
+    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-700">{pairing.category}</div>
+    <h3 className="mt-3 text-lg font-extrabold text-slate-950 leading-snug">{pairing.title}</h3>
+    <p className="mt-2 text-sm leading-relaxed text-slate-600">{pairing.takeaway}</p>
     <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
-      Read more <ArrowUpRight size={15} className="ml-1.5" />
+      Read the research <ArrowUpRight size={15} className="ml-1.5" />
     </div>
   </a>
 )
 
-const ResearchCard = ({ post }) => (
-  <a
-    href={post.href}
-    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-  >
-    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-700">{post.category}</div>
-    <h3 className="mt-3 text-xl font-extrabold text-slate-950">{post.title}</h3>
-    <p className="mt-2 text-sm leading-relaxed text-slate-600">{post.description}</p>
-    <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
-      Open research <ArrowUpRight size={15} className="ml-1.5" />
+const ResearchSection = () => (
+  <section id="research" className="container mx-auto px-4 py-12 md:py-16">
+    <SectionHeader
+      eyebrow="Backed by the Research"
+      title="Not a star rating. Real buyer feedback."
+      body="Before you click through, here's what actual reviewers say holds up and what doesn't, by category."
+    />
+    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {RESEARCH_PAIRINGS.map((pairing) => (
+        <ResearchPairingCard key={pairing.href} pairing={pairing} />
+      ))}
     </div>
-  </a>
+
+    <div className="mt-10">
+      <div className="text-sm font-bold text-slate-500 uppercase tracking-[0.18em]">More research</div>
+      <div className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
+        {MORE_RESEARCH.map((post) => (
+          <a
+            key={post.href}
+            href={post.href}
+            className="flex items-baseline gap-3 py-1 text-sm hover:text-slate-950 min-h-11"
+          >
+            <span className="text-slate-400 font-bold shrink-0">{post.category}</span>
+            <span className="underline decoration-slate-300 underline-offset-2">{post.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 )
 
-const TrustCard = ({ item }) => {
-  const Icon = item.icon
-
-  return (
-    <a
-      href={item.href}
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-    >
-      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-yellow-300">
-        <Icon size={18} />
+const TrustSection = () => (
+  <section className="border-t border-slate-200 bg-white">
+    <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+        <div className="flex items-start gap-3">
+          <ShieldCheck size={20} className="mt-1 text-slate-700 shrink-0" />
+          <div>
+            <h3 className="text-xl font-extrabold text-slate-950">Why trust this site</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
+              We publish internal category guides and buyer-feedback research before any outbound Amazon link, and we
+              don't invent star ratings, review counts, or countdown timers to push a click. Full methodology, policy,
+              and contact details are always public.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold">
+              {TRUST_LINKS.map((link) => {
+                const Icon = link.icon
+                return (
+                  <a key={link.href} href={link.href} className="inline-flex items-center gap-1.5 min-h-11 text-slate-700 hover:text-slate-950">
+                    <Icon size={14} /> {link.title}
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       </div>
-      <h3 className="mt-4 text-xl font-extrabold text-slate-950">{item.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
-      <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
-        Open page <ArrowUpRight size={15} className="ml-1.5" />
-      </div>
-    </a>
-  )
-}
+    </div>
+  </section>
+)
 
 const Footer = () => (
   <footer className="bg-slate-950 text-slate-300 border-t border-slate-900">
@@ -437,8 +587,8 @@ const Footer = () => (
           <span className="font-extrabold text-lg">BestDealsOnline</span>
         </div>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
-          Research-led deal guides, buyer-feedback summaries, and internal category hubs designed to help readers verify
-          live price and availability on Amazon before purchasing.
+          Research-led deal picks, buyer-feedback summaries, and category guides designed to help readers verify live
+          price and availability on Amazon before purchasing.
         </p>
       </div>
 
@@ -473,119 +623,29 @@ const Footer = () => (
 )
 
 const App = () => {
-  const [query, setQuery] = useState('')
-  const normalizedQuery = query.trim().toLowerCase()
+  const { items, loading, error } = useProducts()
 
-  const filteredCategoryGuides = useMemo(
-    () => CATEGORY_GUIDES.filter((item) => matchesQuery(item, normalizedQuery)),
-    [normalizedQuery]
-  )
-  const filteredFeaturedGuides = useMemo(
-    () => FEATURED_GUIDES.filter((item) => matchesQuery(item, normalizedQuery)),
-    [normalizedQuery]
-  )
-  const filteredResearchPosts = useMemo(
-    () => RESEARCH_POSTS.filter((item) => matchesQuery(item, normalizedQuery)),
-    [normalizedQuery]
-  )
-  const filteredTrustLinks = useMemo(
-    () => TRUST_LINKS.filter((item) => matchesQuery(item, normalizedQuery)),
-    [normalizedQuery]
-  )
+  const counts = useMemo(() => {
+    const map = {}
+    for (const item of items) {
+      map[item.category] = (map[item.category] ?? 0) + 1
+    }
+    return map
+  }, [items])
 
-  const hasResults =
-    filteredCategoryGuides.length > 0 ||
-    filteredFeaturedGuides.length > 0 ||
-    filteredResearchPosts.length > 0 ||
-    filteredTrustLinks.length > 0
+  const featured = useMemo(() => pickFeatured(items, 12), [items])
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <DisclosureBanner />
-      <Navbar query={query} setQuery={setQuery} />
-      <Hero />
-
+      <Navbar />
+      <Hero counts={counts} />
       <main>
-        <section id="guides" className="container mx-auto px-4 py-12 md:py-16">
-          <SectionHeader
-            eyebrow="Internal Guides"
-            title="Start with internal pages, not direct affiliate jumps."
-            body="These are the category hubs and editorial roundups that explain what each area covers before any outbound click happens."
-          />
-
-          {!hasResults ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
-              <div className="font-extrabold text-slate-950">No matching pages</div>
-              <p className="mt-2 text-sm text-slate-600">Try a broader search like “kitchen”, “policy”, or “research”.</p>
-            </div>
-          ) : null}
-
-          {filteredCategoryGuides.length > 0 ? (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-              {filteredCategoryGuides.map((guide) => (
-                <CategoryGuideCard key={guide.href} guide={guide} />
-              ))}
-            </div>
-          ) : null}
-
-          {filteredFeaturedGuides.length > 0 ? (
-            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {filteredFeaturedGuides.map((item) => (
-                <FeatureCard key={item.href} item={item} />
-              ))}
-            </div>
-          ) : null}
-        </section>
-
-        <section id="research" className="border-y border-slate-200 bg-white">
-          <div className="container mx-auto px-4 py-12 md:py-16">
-            <SectionHeader
-              eyebrow="Research"
-              title="Recent buyer-feedback summaries."
-              body="These posts are designed to surface recurring pros, complaints, and feature tradeoffs so shoppers can narrow the field before clicking to Amazon."
-            />
-
-            {filteredResearchPosts.length > 0 ? (
-              <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {filteredResearchPosts.map((post) => (
-                  <ResearchCard key={post.href} post={post} />
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </section>
-
-        <section id="trust" className="container mx-auto px-4 py-12 md:py-16">
-          <SectionHeader
-            eyebrow="Trust Pages"
-            title="Policy pages Amazon reviewers expect to find."
-            body="The site now foregrounds disclosure, methodology, contact information, privacy details, and editorial guardrails so the public-facing experience looks complete and reviewable."
-          />
-
-          {filteredTrustLinks.length > 0 ? (
-            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filteredTrustLinks.map((item) => (
-                <TrustCard key={item.href} item={item} />
-              ))}
-            </div>
-          ) : null}
-
-          <div className="mt-10 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 md:p-8 text-white">
-            <div className="flex items-start gap-3">
-              <ShieldCheck size={20} className="mt-1 text-yellow-300" />
-              <div>
-                <h3 className="text-2xl font-extrabold">Reader expectation matters.</h3>
-                <p className="mt-3 max-w-3xl text-sm md:text-base leading-relaxed text-slate-200">
-                  BestDealsOnline should look like an editorial site with clear ownership and clear documentation, not a
-                  thin layer of search-result redirects. This homepage now prioritizes internal content, public policy
-                  pages, and transparent language about what the site does and does not claim.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <FeaturedDeals items={featured} loading={loading} error={error} />
+        <CategoryGrid counts={counts} />
+        <ResearchSection />
+        <TrustSection />
       </main>
-
       <Footer />
     </div>
   )

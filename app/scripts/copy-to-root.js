@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Copy build output into repo root so GitHub Pages (configured to /) serves it.
@@ -15,6 +15,19 @@ const oldAssets = join(repoRoot, 'assets')
 const newAssets = join(distDir, 'assets')
 if (existsSync(newAssets)) {
   mkdirSync(oldAssets, { recursive: true })
+}
+
+// Every build emits a new content-hashed index-<hash>.js (and .css, if any),
+// leaving the previous build's bundle orphaned with nothing referencing it.
+// Prune those before copying the new one in so they don't accumulate forever
+// -- only this app's hashed entry files match this naming, so nothing else
+// under assets/ (favicon, hero art, track.js) is touched.
+if (existsSync(oldAssets)) {
+  for (const name of readdirSync(oldAssets)) {
+    if (/^index-.*\.(js|css)$/.test(name)) {
+      rmSync(join(oldAssets, name))
+    }
+  }
 }
 
 // Copy index.html and assets/
