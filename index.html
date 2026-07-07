@@ -20,7 +20,9 @@
     <!-- Fast path styling: Tailwind CDN. (We can build Tailwind later for performance.) -->
     <script defer src="https://cdn.tailwindcss.com"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
       :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
       body { margin: 0; }
@@ -63,5 +65,37 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <!--
+        This site's homepage is a JavaScript app. Search engines that don't
+        reliably execute JavaScript (Bing, Yahoo, DuckDuckGo) would otherwise
+        see a blank page here with no links -- this fallback gives them real,
+        crawlable navigation to every section of the site.
+      -->
+      <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; color: #0f172a;">
+        <h1>Best Deals Online</h1>
+        <p>Editorial deal guides and buyer-feedback research for finding the best prices on Amazon, organized by category. Links go to Amazon search results using our affiliate tag; we may earn a commission at no extra cost to you.</p>
+        <h2>Shop by category</h2>
+        <ul>
+          <li><a href="/electronics-deals.html">Electronics deals</a></li>
+          <li><a href="/home-deals.html">Home deals</a></li>
+          <li><a href="/kitchen-deals.html">Kitchen deals</a></li>
+          <li><a href="/tools-deals.html">Tools deals</a></li>
+          <li><a href="/kids-deals.html">Kids deals</a></li>
+          <li><a href="/beauty-deals.html">Beauty deals</a></li>
+          <li><a href="/fitness-deals.html">Fitness deals</a></li>
+          <li><a href="/pets-deals.html">Pets deals</a></li>
+        </ul>
+        <h2>More</h2>
+        <ul>
+          <li><a href="/best-deals-online-today.html">Best deals online today</a></li>
+          <li><a href="/best-deals-online.html">Best deals online</a></li>
+          <li><a href="/best-deals-with-price-history.html">Best deals with price history</a></li>
+          <li><a href="/blog/index.html">Blog: buyer-feedback research</a></li>
+          <li><a href="/about-best-online-deals.html">About</a></li>
+          <li><a href="/affiliate-disclosure.html">Affiliate disclosure</a></li>
+        </ul>
+      </div>
+    </noscript>
   </body>
 </html>
