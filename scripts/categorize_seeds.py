@@ -51,6 +51,7 @@ GROUND_TRUTH = {
         "kids headphones", "kids backpack", "science kits",
         "science kits for kids", "learning toys", "building block sets",
         "board games", "kids water bottle", "toddler balance bike",
+        "kids smartwatch", "kids step stool",
     ],
     "beauty": [
         "vitamin c serum", "retinol serum", "niacinamide serum", "sunscreen",
@@ -65,7 +66,7 @@ GROUND_TRUTH = {
     "pets": [
         "dog bed", "cat tree", "cat litter box", "pet water fountain",
         "pet grooming brush", "dog grooming kit", "interactive cat toy",
-        "pet car seat cover",
+        "pet car seat cover", "dog toys", "pet nail grinder",
     ],
 }
 
@@ -93,7 +94,7 @@ KEYWORD_RULES = [
         "webcam", "router", "wifi", "smart plug", "light bulb", "hdmi",
         "screen protector", "phone mount", "dash cam", "power bank", "ssd",
         "hard drive", "monitor", "keyboard", "mouse", "laptop stand", "tablet stand",
-        "projector", "smart watch", "smartwatch", "drone", "gaming", "console",
+        "docking station", "projector", "smart watch", "smartwatch", "drone", "gaming", "console",
         "tripod", "microphone", "ring light", "adapter", "hub", "dock",
         "bluetooth tracker", "bluetooth transmitter", "ethernet", "graphics tablet",
         "laptop cooling", "laptop sleeve", "led strip", "micro sd", "sd card",
@@ -143,9 +144,12 @@ def classify(seed_phrase: str) -> str:
     """Return the best-guess category slug for a human-readable seed phrase."""
     if seed_phrase in SEED_TO_CATEGORY:
         return SEED_TO_CATEGORY[seed_phrase]
-    lower = f" {seed_phrase.lower()} "
+    lower = seed_phrase.lower()
     for cat, keywords in KEYWORD_RULES:
         for kw in keywords:
-            if kw in lower:
+            # \b...s?\b: match the keyword as a whole word, tolerating a
+            # simple trailing plural ("earbud" -> "earbuds") without
+            # letting it match inside an unrelated word ("tool" in "stool").
+            if re.search(r"\b" + re.escape(kw) + r"s?\b", lower):
                 return cat
     return "home"  # broad catch-all; "home" hub covers general household goods
