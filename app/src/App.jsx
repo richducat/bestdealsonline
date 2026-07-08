@@ -216,10 +216,20 @@ function pickFeatured(items, count) {
   const byCategory = new Map()
   for (const item of items) {
     if (seenTitles.has(item.title)) continue
+    // Once real DealTruth data is connected, skip items that aren't
+    // actually a meaningful discount rather than featuring them anyway.
+    if (item.dealTruth?.notMeaningfulDeal) continue
     seenTitles.add(item.title)
     const bucket = byCategory.get(item.category) ?? []
     bucket.push(item)
     byCategory.set(item.category, bucket)
+  }
+  // With DealTruth scores available, feature the best deal in each
+  // category first instead of whatever order the feed happened to return.
+  for (const bucket of byCategory.values()) {
+    if (bucket.some((item) => item.dealTruth)) {
+      bucket.sort((a, b) => (b.dealTruth?.score ?? 0) - (a.dealTruth?.score ?? 0))
+    }
   }
   const buckets = [...byCategory.values()]
   const picked = []
@@ -232,22 +242,51 @@ function pickFeatured(items, count) {
   return picked
 }
 
+// Set VITE_DEALS_API_BASE (e.g. https://bestdealsonline-worker.<account>.workers.dev)
+// to switch from the static product list to live DealTruth-scored deals.
+// Unset by default -- the site works exactly as it does today until this
+// points at a deployed worker with a real price feed behind it.
+const DEALS_API_BASE = import.meta.env.VITE_DEALS_API_BASE
+
+function mapDealTruthItem(item) {
+  return {
+    id: item.id ?? item.asin,
+    title: item.title,
+    category: item.category,
+    imageUrl: item.imageUrl,
+    affiliateLink: item.affiliateLink,
+    dealTruth: item.dealTruth ?? null,
+  }
+}
+
 function useProducts() {
   const [state, setState] = useState({ items: [], loading: true, error: false })
 
   useEffect(() => {
     let cancelled = false
-    fetch('/data/products.json')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then((data) => {
-        if (!cancelled) setState({ items: data.items ?? [], loading: false, error: false })
+
+    const source = DEALS_API_BASE
+      ? fetch(`${DEALS_API_BASE.replace(/\/$/, '')}/v1/deals?limit=300`)
+          .then((res) => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            return res.json()
+          })
+          .then((data) => (data.items ?? []).map(mapDealTruthItem))
+      : fetch('/data/products.json')
+          .then((res) => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            return res.json()
+          })
+          .then((data) => (data.items ?? []).map((item) => ({ ...item, dealTruth: null })))
+
+    source
+      .then((items) => {
+        if (!cancelled) setState({ items, loading: false, error: false })
       })
       .catch(() => {
         if (!cancelled) setState({ items: [], loading: false, error: true })
       })
+
     return () => {
       cancelled = true
     }
@@ -418,6 +457,14 @@ const ProductCard = ({ item }) => (
     <div className="p-4 flex flex-col flex-1">
       <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{item.category}</div>
       <h3 className="mt-1.5 font-extrabold text-slate-950 leading-snug">{cleanTitle(item.title)}</h3>
+      {item.dealTruth && !item.dealTruth.notMeaningfulDeal ? (
+        <div className="mt-2">
+          <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+            DealTruth {item.dealTruth.score}/100
+          </div>
+          <div className="mt-1 text-xs text-slate-500 leading-snug">{item.dealTruth.explanations.discountLine}</div>
+        </div>
+      ) : null}
       <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-xl bg-slate-950 text-white text-sm font-bold group-hover:bg-slate-800 transition-colors">
         View on Amazon <ExternalLink size={13} className="ml-1.5" />
       </div>
