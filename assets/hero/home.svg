@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-label="Home">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fbbf24" stop-opacity="0.22"/>
-      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.28"/>
+      <stop offset="0" stop-color="#D98E62" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#C98A66" stop-opacity="0.28"/>
     </linearGradient>
   </defs>
   <rect x="60" y="80" width="600" height="320" rx="28" fill="url(#g)" stroke="rgba(255,255,255,0.18)"/>
   <path d="M210 250L360 140L510 250" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
   <rect x="250" y="240" width="220" height="140" rx="20" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)"/>
   <rect x="332" y="285" width="56" height="95" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)"/>
-  <circle cx="376" cy="332" r="5" fill="#fde68a"/>
-  <circle cx="520" cy="170" r="10" fill="#93c5fd" opacity="0.9"/>
-  <circle cx="200" cy="340" r="8" fill="#fde68a" opacity="0.85"/>
+  <circle cx="376" cy="332" r="5" fill="#F0DCCC"/>
+  <circle cx="520" cy="170" r="10" fill="#E8C4A8" opacity="0.9"/>
+  <circle cx="200" cy="340" r="8" fill="#F0DCCC" opacity="0.85"/>
 </svg>

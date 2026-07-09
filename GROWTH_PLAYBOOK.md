@@ -27,6 +27,7 @@ Rules:
 
 ### Article requirements
 - File: `blog/<kebab-case-slug>.html`, copy structure from `blog/gan-chargers-what-buyers-like-what-bugs-them-and-how-to-choose.html` (Tailwind CDN, canonical, OG tags, BlogPosting JSON-LD with real publish date, GA4 snippet, `/assets/track.js`).
+- Keep the warm-theme head links the template carries (Fraunces font + `/assets/warm-theme.css`) and use `https://bestdealsonline.us/assets/og-home.jpg` for `og:image`/`twitter:image` — the sitewide brand look depends on both.
 - 1,200+ words. H1 matches target query intent; H2 sections; a short FAQ section (also add FAQPage JSON-LD).
 - Every Amazon link: `https://www.amazon.com/s?k=<query>&tag=bestdeals00d9-20` (search links until PA-API access exists — never deep-link to a specific ASIN with claimed price/rating we can't verify).
 - Affiliate disclosure sentence near the top, linking to `/affiliate-disclosure.html`.

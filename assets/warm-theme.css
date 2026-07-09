@@ -1,0 +1,64 @@
+/* Warm editorial re-tint for the static pages, matching the homepage
+ * redesign (cream / sand / terracotta clay / sage / cocoa, Fraunces
+ * serif headings). Loaded after the Tailwind CDN so the overrides win
+ * via !important. Colors only — no layout changes. */
+
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, 'Times New Roman', serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Dark surfaces: navy -> deep warm brown */
+.bg-slate-950 { background-color: #382C22 !important; }
+.bg-slate-900 { background-color: #43352A !important; }
+.border-slate-900 { border-color: #554436 !important; }
+
+/* Light surfaces: cool gray -> cream and sand */
+.bg-slate-100 { background-color: #F3EADD !important; }
+.bg-slate-50 { background-color: #FAF5EE !important; }
+.hover\:bg-slate-100:hover { background-color: #EDE0CE !important; }
+.hover\:bg-slate-50:hover { background-color: #F3EADD !important; }
+.border-slate-200 { border-color: #EDE0CE !important; }
+.border-slate-100 { border-color: #F3EADD !important; }
+
+/* Text: cool grays -> warm ink and cocoa */
+.text-slate-900 { color: #382C22 !important; }
+.hover\:text-slate-900:hover { color: #B85C38 !important; }
+.text-slate-700 { color: #55463A !important; }
+.text-slate-600 { color: #6B584A !important; }
+.text-slate-500 { color: #7A685A !important; }
+.text-slate-400 { color: #A08D77 !important; }
+.text-slate-200 { color: #E8DCC8 !important; }
+.text-slate-50 { color: #FAF5EE !important; }
+
+/* Blue accents -> terracotta clay */
+.text-blue-600 { color: #B85C38 !important; }
+.text-blue-700 { color: #9A4826 !important; }
+.text-blue-100 { color: #F0DCCC !important; }
+.text-blue-200 { color: #EACDB9 !important; }
+
+/* Yellow accents -> soft peach/clay */
+.text-yellow-200 { color: #F3D2B8 !important; }
+.text-yellow-300 { color: #EFB999 !important; }
+.text-yellow-400 { color: #E8A87C !important; }
+.hover\:text-yellow-200:hover { color: #F3D2B8 !important; }
+.hover\:text-yellow-300:hover { color: #F3D2B8 !important; }
+.hover\:text-yellow-400:hover { color: #F3D2B8 !important; }
+.bg-yellow-500 { background-color: #B85C38 !important; color: #FAF5EE !important; }
+.bg-yellow-400, .bg-yellow-300 { background-color: #C96F49 !important; color: #FAF5EE !important; }
+.hover\:bg-yellow-400:hover, .hover\:bg-yellow-300:hover { background-color: #9A4826 !important; }
+.bg-yellow-500\/10 { background-color: rgba(184, 92, 56, 0.12) !important; }
+.border-yellow-500\/40 { border-color: rgba(232, 180, 141, 0.5) !important; }
+
+/* Page-hero gradient: indigo/blue night -> warm cocoa dusk */
+.from-indigo-900 {
+  --tw-gradient-from: #5A4030 !important;
+  --tw-gradient-to: rgb(90 64 48 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.via-blue-900 {
+  --tw-gradient-to: rgb(74 52 40 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #4A3428, var(--tw-gradient-to) !important;
+}
+.to-slate-900 { --tw-gradient-to: #382C22 !important; }
