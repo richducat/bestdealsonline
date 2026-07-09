@@ -54,31 +54,65 @@ for p in sorted(HERO_DIR.glob("*.jpg")):
     base = re.sub(r"-\d+$", "", p.stem)
     VARIANTS.setdefault(base, []).append(p.stem)
 
-IMG_RE = re.compile(r'(<img src="/images/hero/)([a-z]+(?:-\d+)?)(\.jpg"[^>]*? alt=")([^"]*)(")')
+# Topic-specific photos (images/topics/<slug>.jpg + .meta.json sidecars with
+# alt text). A page whose filename contains a topic slug gets that photo --
+# subject relevance beats generic lifestyle imagery. Longest slug wins so
+# "kids-headphones" beats "headphones" and "immersion-blender" beats
+# "blender".
+import json
+
+TOPIC_DIR = ROOT / "images/topics"
+TOPICS = {}
+for p in sorted(TOPIC_DIR.glob("*.jpg")):
+    meta_path = p.with_suffix(".jpg.meta.json")
+    alt = ""
+    if meta_path.exists():
+        alt = json.loads(meta_path.read_text()).get("alt", "")
+    TOPICS[p.stem] = alt
+# Pages about air fryer accessories share the air-fryer photo.
+TOPIC_ALIASES = {"air-fryer-accessories": "air-fryer"}
+MATCH_SLUGS = sorted(set(TOPICS) | set(TOPIC_ALIASES), key=len, reverse=True)
+
+IMG_RE = re.compile(
+    r'(<img src="/images/(?:hero|topics)/)([a-z-]+?(?:-\d+)?)(\.jpg"[^>]*? alt=")([^"]*)(")'
+)
+
+
+def topic_for(filename):
+    # singular slugs also match their plural forms in filenames
+    for slug in MATCH_SLUGS:
+        if slug in filename:
+            return TOPIC_ALIASES.get(slug, slug)
+    return None
 
 
 def main():
-    pages = swapped = 0
+    pages = swapped = topical = 0
     for pattern in ("*.html", "blog/*.html"):
         for path in sorted(ROOT.glob(pattern)):
             html = path.read_text(encoding="utf-8")
-            if "/images/hero/" not in html:
+            if "/images/hero/" not in html and "/images/topics/" not in html:
                 continue
+            topic = topic_for(path.name)
 
             def repl(m):
+                nonlocal topical
+                if topic:
+                    topical += 1
+                    return f'<img src="/images/topics/{topic}{m.group(3)}{TOPICS[topic]}{m.group(5)}'
                 base = re.sub(r"-\d+$", "", m.group(2))
                 variants = VARIANTS.get(base)
                 if not variants:
                     return m.group(0)
                 pick = variants[zlib.crc32(path.name.encode()) % len(variants)]
-                return f"{m.group(1)}{pick}{m.group(3)}{ALT.get(pick, m.group(4))}{m.group(5)}"
+                return f'<img src="/images/hero/{pick}{m.group(3)}{ALT.get(pick, m.group(4))}{m.group(5)}'
 
             new = IMG_RE.sub(repl, html)
             if new != html:
                 path.write_text(new, encoding="utf-8")
                 swapped += 1
             pages += 1
-    print(f"checked {pages} pages, rotated {swapped}")
+    print(f"checked {pages} pages, rewrote {swapped} ({topical} topic-matched)")
 
 
 if __name__ == "__main__":
