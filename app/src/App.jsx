@@ -186,6 +186,13 @@ const TRUST_LINKS = [
   { title: 'Review policy', href: '/review-aggregation-guidelines.html', icon: BookOpen },
 ]
 
+// Lets a product card link straight to the real research backing the
+// hero's "we read the reviews" claim for that category, instead of the
+// claim only living in a separate section disconnected from the picks.
+// Categories with no real post (Tools, Beauty, Fitness, Pets) get no
+// link rather than a fabricated one.
+const CATEGORY_RESEARCH = Object.fromEntries(RESEARCH_PAIRINGS.map((p) => [p.category, p]))
+
 // Fixes common tech acronyms that data-generation left in Title Case
 // ("Usb C Charger" -> "USB-C Charger"). Display-only; never touches
 // the underlying data file.
@@ -439,38 +446,49 @@ const Hero = ({ counts }) => (
   </section>
 )
 
-const ProductCard = ({ item }) => (
-  <a
-    href={item.affiliateLink}
-    target="_blank"
-    rel="nofollow noopener noreferrer"
-    className="group rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col"
-  >
-    <div className="aspect-square overflow-hidden bg-slate-100">
-      <img
-        src={item.imageUrl}
-        alt={cleanTitle(item.title)}
-        className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-        loading="lazy"
-      />
-    </div>
-    <div className="p-4 flex flex-col flex-1">
-      <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{item.category}</div>
-      <h3 className="mt-1.5 font-extrabold text-slate-950 leading-snug">{cleanTitle(item.title)}</h3>
-      {item.dealTruth && !item.dealTruth.notMeaningfulDeal ? (
-        <div className="mt-2">
-          <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-            DealTruth {item.dealTruth.score}/100
-          </div>
-          <div className="mt-1 text-xs text-slate-500 leading-snug">{item.dealTruth.explanations.discountLine}</div>
+const ProductCard = ({ item }) => {
+  const research = CATEGORY_RESEARCH[item.category]
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col">
+      <a
+        href={item.affiliateLink}
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+        className="group flex flex-col flex-1"
+      >
+        <div className="aspect-square overflow-hidden bg-slate-100">
+          <img
+            src={item.imageUrl}
+            alt={cleanTitle(item.title)}
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
         </div>
+        <div className="p-4 flex flex-col flex-1">
+          <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{item.category}</div>
+          <h3 className="mt-1.5 font-extrabold text-slate-950 leading-snug">{cleanTitle(item.title)}</h3>
+          {item.dealTruth && !item.dealTruth.notMeaningfulDeal ? (
+            <div className="mt-2">
+              <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                DealTruth {item.dealTruth.score}/100
+              </div>
+              <div className="mt-1 text-xs text-slate-500 leading-snug">{item.dealTruth.explanations.discountLine}</div>
+            </div>
+          ) : null}
+          <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-xl bg-slate-950 text-white text-sm font-bold group-hover:bg-slate-800 transition-colors">
+            View on Amazon <ExternalLink size={13} className="ml-1.5" />
+          </div>
+        </div>
+      </a>
+      {research ? (
+        <a href={research.href} className="block px-4 py-2.5 border-t border-slate-100 text-xs font-bold text-blue-700 hover:bg-slate-50 min-h-11 flex items-center">
+          See what buyers say about {item.category.toLowerCase()} &rarr;
+        </a>
       ) : null}
-      <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-xl bg-slate-950 text-white text-sm font-bold group-hover:bg-slate-800 transition-colors">
-        View on Amazon <ExternalLink size={13} className="ml-1.5" />
-      </div>
     </div>
-  </a>
-)
+  )
+}
 
 const ProductCardSkeleton = () => (
   <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden animate-pulse">
