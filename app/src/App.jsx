@@ -207,6 +207,7 @@ const CATEGORY_RESEARCH = Object.fromEntries(RESEARCH_PAIRINGS.map((p) => [p.cat
 
 // Lets any section reuse the category lifestyle photography by name.
 const CATEGORY_IMAGES = Object.fromEntries(CATEGORIES.map((c) => [c.name, c.image]))
+const CATEGORY_HREFS = Object.fromEntries(CATEGORIES.map((c) => [c.name, c.href]))
 
 // Ten genuinely distinct ways people actually use this site, each
 // pointing at a real page that already exists -- no invented features.
@@ -652,16 +653,26 @@ const ProductCard = ({ item }) => {
               <div className="mt-1 text-xs text-cocoa leading-snug">{item.dealTruth.explanations.discountLine}</div>
             </div>
           ) : null}
-          <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-full bg-ink text-cream text-sm font-bold group-hover:bg-clay transition-colors">
-            View on Amazon <ExternalLink size={13} className="ml-1.5" />
+          <div className="mt-auto pt-3">
+            <div className="inline-flex w-full items-center justify-center gap-1 min-h-11 px-2 rounded-full bg-ink text-cream text-xs sm:text-sm font-bold whitespace-nowrap group-hover:bg-clay transition-colors">
+              View on Amazon <ExternalLink size={12} className="shrink-0" />
+            </div>
           </div>
         </div>
       </a>
+      {/* Every card gets a footer row so CTAs line up across the grid. */}
       {research ? (
-        <a href={research.href} className="block px-4 py-2.5 border-t border-linen text-xs font-bold text-clay hover:bg-cream min-h-11 flex items-center">
+        <a href={research.href} className="px-4 py-2.5 border-t border-linen text-xs font-bold text-clay hover:bg-cream min-h-11 flex items-center">
           See what buyers say about {item.category.toLowerCase()} &rarr;
         </a>
-      ) : null}
+      ) : (
+        <a
+          href={CATEGORY_HREFS[item.category] ?? '#categories'}
+          className="px-4 py-2.5 border-t border-linen text-xs font-bold text-clay hover:bg-cream min-h-11 flex items-center"
+        >
+          Browse more {item.category.toLowerCase()} picks &rarr;
+        </a>
+      )}
     </div>
   )
 }
@@ -772,15 +783,21 @@ const DealTruthDemo = () => {
       <div className="container mx-auto px-4 py-12 md:py-16">
         <SectionHeader
           eyebrow="How It Works"
-          title="This is the real scoring algorithm. Try it."
-          body="Drag the sliders below and watch the actual DealTruth engine compute a score, live, in your browser — the same code that scores every real pick on this site. The two numbers below are an example you control, not a real product."
+          title="How we spot a real discount"
+          body={
+            'Stores love to shout "50% off!" — but off of what? Before we call anything a deal, we compare today\'s price to what the product normally costs. You can try it yourself with the example below.'
+          }
         />
 
         <div className="mt-8 grid lg:grid-cols-2 gap-8 items-start">
           <div className="rounded-3xl border border-linen bg-white p-6">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-cocoa">
-              <SlidersHorizontal size={14} /> Example price history — not a real product
+              <SlidersHorizontal size={14} /> Try it — you set both prices
             </div>
+            <p className="mt-2 text-sm text-cocoa leading-relaxed">
+              Pretend you're eyeing a product. Move the two sliders (or tap a preset) and we'll tell you whether
+              that price is actually worth jumping on. This is just an example — not a real product.
+            </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
               {DEMO_PRESETS.map((preset) => (
@@ -799,7 +816,7 @@ const DealTruthDemo = () => {
             </div>
 
             <label className="block mt-6">
-              <span className="text-sm font-bold text-ink">Typical price (last 90 days): ${typical}</span>
+              <span className="text-sm font-bold text-ink">What it usually costs: ${typical}</span>
               <input
                 type="range"
                 min="10"
@@ -811,7 +828,7 @@ const DealTruthDemo = () => {
             </label>
 
             <label className="block mt-5">
-              <span className="text-sm font-bold text-ink">Today's price: ${today}</span>
+              <span className="text-sm font-bold text-ink">What it costs today: ${today}</span>
               <input
                 type="range"
                 min="5"
@@ -824,11 +841,13 @@ const DealTruthDemo = () => {
           </div>
 
           <div className="rounded-3xl border border-linen bg-white p-6">
-            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-extrabold ${scoreColor}`}>
-              <Sparkles size={15} /> DealTruth {result.score}/100
+            <div className="text-xs font-bold uppercase tracking-[0.14em] text-cocoa">Our verdict on this price</div>
+            <div className={`mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-extrabold ${scoreColor}`}>
+              <Sparkles size={15} /> Deal score: {result.score} out of 100
             </div>
+            <p className="mt-2 text-xs text-cocoa">The higher the score, the better a time it is to buy.</p>
             {result.notMeaningfulDeal ? (
-              <p className="mt-4 text-sm font-bold text-cocoa">Not a meaningful deal at these numbers.</p>
+              <p className="mt-4 text-sm font-bold text-cocoa">At these numbers, this isn't really a deal — we'd wait.</p>
             ) : null}
             <ul className="mt-4 space-y-3 text-sm text-cocoa">
               <li>{result.explanations.discountLine}</li>
@@ -837,8 +856,8 @@ const DealTruthDemo = () => {
               <li className="font-bold text-ink">{result.explanations.decisionLine}</li>
             </ul>
             <p className="mt-6 text-xs text-cocoa/80 leading-relaxed">
-              This is the same real-discount-vs-median, rarity-over-time, and buy-or-wait logic behind every scored pick on
-              this site — see <a href="/online-deals-methodology.html" className="underline font-bold">our full methodology</a>.
+              Every scored pick on this site goes through this exact check: how big the discount really is, and how rarely
+              the price drops this low. Curious? Read <a href="/online-deals-methodology.html" className="underline font-bold">how we pick deals</a>.
             </p>
           </div>
         </div>
