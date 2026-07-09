@@ -1,14 +1,26 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   ArrowUpRight,
+  Baby,
   BookOpen,
+  CalendarClock,
   ExternalLink,
   FileText,
+  Gift,
+  GitCompare,
+  HelpCircle,
+  Home,
   Menu,
+  Newspaper,
+  Search,
   ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
   Tag,
+  Wallet,
   X,
 } from 'lucide-react'
+import { dealTruthScore } from './dealtruth.js'
 
 const CATEGORIES = [
   {
@@ -193,6 +205,81 @@ const TRUST_LINKS = [
 // link rather than a fabricated one.
 const CATEGORY_RESEARCH = Object.fromEntries(RESEARCH_PAIRINGS.map((p) => [p.category, p]))
 
+// Ten genuinely distinct ways people actually use this site, each
+// pointing at a real page that already exists -- no invented features.
+const USE_CASES = [
+  {
+    icon: Search,
+    title: 'You already know what you want',
+    body: 'Jump straight to a category hub and browse every price tier for that exact product, from budget to premium.',
+    href: '/electronics-deals.html',
+    linkLabel: 'Browse a category hub',
+  },
+  {
+    icon: HelpCircle,
+    title: "You're not sure if a price is actually good",
+    body: 'That’s the whole reason DealTruth exists — see how we score a real discount against 90 days of price history below.',
+    href: '#demo',
+    linkLabel: 'Try the scoring demo',
+  },
+  {
+    icon: Gift,
+    title: "You're buying a gift and can't afford a dud",
+    body: 'Read what actual owners complain about before you buy something you’ll never use again.',
+    href: '/blog/index.html',
+    linkLabel: 'Read buyer research',
+  },
+  {
+    icon: Home,
+    title: "You're furnishing a new place",
+    body: 'Home and Kitchen hubs cover everything from a $15 doormat to a $150 espresso machine, organized by budget.',
+    href: '/home-deals.html',
+    linkLabel: 'Browse the Home hub',
+  },
+  {
+    icon: Baby,
+    title: "You're restocking kid gear",
+    body: 'Headphones, tablets, smartwatches, lunch boxes — real parent feedback on the stuff that actually survives daily use.',
+    href: '/kids-deals.html',
+    linkLabel: 'Browse the Kids hub',
+  },
+  {
+    icon: Wallet,
+    title: "You're shopping on a hard budget cap",
+    body: 'Every category is split by exact price ceiling — under $15, $25, $50, $100 — so you never see something out of range.',
+    href: '/best-deals-with-price-history.html',
+    linkLabel: 'See price-capped picks',
+  },
+  {
+    icon: GitCompare,
+    title: "You're deciding between two similar products",
+    body: 'Our research posts break down the actual tradeoffs — like portable SSDs vs. external hard drives — not just specs.',
+    href: '/blog/portable-ssds-vs-external-hard-drives-what-buyers-say-about-speed-size-and-value.html',
+    linkLabel: 'Read a comparison',
+  },
+  {
+    icon: CalendarClock,
+    title: "You're timing a purchase around a sale",
+    body: 'Black Friday, Cyber Monday, and Christmas guides tell you when discounts are historically real vs. relabeled.',
+    href: '/best-deals-online-today.html',
+    linkLabel: "See today's timing picks",
+  },
+  {
+    icon: SlidersHorizontal,
+    title: 'You want to sanity-check a deal before you click',
+    body: 'Real discount percent, rarity over 180 days, and a buy-now-or-wait call — not a five-star badge.',
+    href: '#demo',
+    linkLabel: 'See how scoring works',
+  },
+  {
+    icon: Newspaper,
+    title: "You'd rather come back than buy on impulse",
+    body: 'The research blog is evergreen — come back anytime for the next category before you make a decision.',
+    href: '/blog/index.html',
+    linkLabel: 'Browse all research',
+  },
+]
+
 // Fixes common tech acronyms that data-generation left in Title Case
 // ("Usb C Charger" -> "USB-C Charger"). Display-only; never touches
 // the underlying data file.
@@ -247,6 +334,52 @@ function pickFeatured(items, count) {
     i += 1
   }
   return picked
+}
+
+// Deterministic seeded PRNG so the demo's "example" history is stable
+// across re-renders instead of jittering on every slider move.
+function seededRandom(seed) {
+  let s = seed % 2147483647
+  if (s <= 0) s += 2147483646
+  return () => {
+    s = (s * 16807) % 2147483647
+    return (s - 1) / 2147483646
+  }
+}
+
+// Builds a plausible 120-day price history ending at todayPrice, mostly
+// hovering near typicalPrice with small daily noise -- fed into the real
+// dealTruthScore() algorithm so the interactive demo runs genuine scoring
+// logic on a clearly-labeled example, never claiming to be a real product.
+function buildExampleHistory(typicalPrice, todayPrice) {
+  const rand = seededRandom(Math.round(typicalPrice * 97 + todayPrice * 13) || 1)
+  const days = 120
+  const history = []
+  const now = Date.now()
+  const DAY_MS = 24 * 60 * 60 * 1000
+  for (let i = days; i >= 1; i -= 1) {
+    const noise = (rand() - 0.5) * 0.05
+    const price = Math.max(1, Math.round(typicalPrice * (1 + noise) * 100) / 100)
+    history.push({ price, timestamp: now - i * DAY_MS })
+  }
+  history.push({ price: Math.max(1, Math.round(todayPrice * 100) / 100), timestamp: now })
+  return history
+}
+
+function runExampleScore(typicalPrice, todayPrice) {
+  const priceHistory = buildExampleHistory(typicalPrice, todayPrice)
+  return dealTruthScore({
+    title: 'Example product',
+    rating: 4.3,
+    reviews: 2400,
+    priceHistory,
+    offer: {
+      itemPrice: todayPrice,
+      isPrime: true,
+      soldByAmazon: true,
+      shipsFromAmazon: true,
+    },
+  })
 }
 
 // Set VITE_DEALS_API_BASE (e.g. https://bestdealsonline-worker.<account>.workers.dev)
@@ -353,6 +486,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
           <a href="#deals" className="hover:text-yellow-300 transition-colors">Today's Picks</a>
+          <a href="#demo" className="hover:text-yellow-300 transition-colors">How It Works</a>
           <a href="#categories" className="hover:text-yellow-300 transition-colors">Categories</a>
           <a href="#research" className="hover:text-yellow-300 transition-colors">Research</a>
           <a href="/blog/index.html" className="hover:text-yellow-300 transition-colors">Blog</a>
@@ -362,6 +496,7 @@ const Navbar = () => {
       {mobileMenuOpen ? (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-1 text-sm font-semibold">
           <a href="#deals" className="min-h-11 flex items-center hover:text-yellow-300">Today's Picks</a>
+          <a href="#demo" className="min-h-11 flex items-center hover:text-yellow-300">How It Works</a>
           <a href="#categories" className="min-h-11 flex items-center hover:text-yellow-300">Categories</a>
           <a href="#research" className="min-h-11 flex items-center hover:text-yellow-300">Research</a>
           <a href="/blog/index.html" className="min-h-11 flex items-center hover:text-yellow-300">Blog</a>
@@ -566,6 +701,139 @@ const CategoryGrid = ({ counts }) => (
   </section>
 )
 
+const DEMO_PRESETS = [
+  { label: 'Everyday price', typical: 40, today: 39 },
+  { label: 'Solid deal', typical: 60, today: 42 },
+  { label: 'Rare deep drop', typical: 80, today: 34 },
+]
+
+const DealTruthDemo = () => {
+  const [typical, setTypical] = useState(60)
+  const [today, setToday] = useState(42)
+
+  const result = useMemo(() => runExampleScore(typical, today), [typical, today])
+  const scoreColor = result.notMeaningfulDeal
+    ? 'text-slate-500 bg-slate-100'
+    : result.score >= 70
+      ? 'text-emerald-700 bg-emerald-50'
+      : result.score >= 45
+        ? 'text-amber-700 bg-amber-50'
+        : 'text-slate-500 bg-slate-100'
+
+  return (
+    <section id="demo" className="border-y border-slate-200 bg-white">
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <SectionHeader
+          eyebrow="How It Works"
+          title="This is the real scoring algorithm. Try it."
+          body="Drag the sliders below and watch the actual DealTruth engine compute a score, live, in your browser — the same code that scores every real pick on this site. The two numbers below are an example you control, not a real product."
+        />
+
+        <div className="mt-8 grid lg:grid-cols-2 gap-8 items-start">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+              <SlidersHorizontal size={14} /> Example price history — not a real product
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {DEMO_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => {
+                    setTypical(preset.typical)
+                    setToday(preset.today)
+                  }}
+                  className="px-3 py-2 min-h-11 rounded-full border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:border-slate-900 hover:text-slate-950 transition-colors"
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+
+            <label className="block mt-6">
+              <span className="text-sm font-bold text-slate-900">Typical price (last 90 days): ${typical}</span>
+              <input
+                type="range"
+                min="10"
+                max="200"
+                value={typical}
+                onChange={(e) => setTypical(Number(e.target.value))}
+                className="w-full mt-2 accent-slate-900"
+              />
+            </label>
+
+            <label className="block mt-5">
+              <span className="text-sm font-bold text-slate-900">Today's price: ${today}</span>
+              <input
+                type="range"
+                min="5"
+                max="200"
+                value={today}
+                onChange={(e) => setToday(Number(e.target.value))}
+                className="w-full mt-2 accent-slate-900"
+              />
+            </label>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 p-6">
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-extrabold ${scoreColor}`}>
+              <Sparkles size={15} /> DealTruth {result.score}/100
+            </div>
+            {result.notMeaningfulDeal ? (
+              <p className="mt-4 text-sm font-bold text-slate-700">Not a meaningful deal at these numbers.</p>
+            ) : null}
+            <ul className="mt-4 space-y-3 text-sm text-slate-700">
+              <li>{result.explanations.discountLine}</li>
+              <li>{result.explanations.rarityLine}</li>
+              <li>{result.explanations.confidenceLine}</li>
+              <li className="font-bold text-slate-950">{result.explanations.decisionLine}</li>
+            </ul>
+            <p className="mt-6 text-xs text-slate-500 leading-relaxed">
+              This is the same real-discount-vs-median, rarity-over-time, and buy-or-wait logic behind every scored pick on
+              this site — see <a href="/online-deals-methodology.html" className="underline font-bold">our full methodology</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const UseCaseCard = ({ useCase }) => {
+  const Icon = useCase.icon
+  return (
+    <a
+      href={useCase.href}
+      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md flex flex-col"
+    >
+      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-yellow-300 shrink-0">
+        <Icon size={18} />
+      </div>
+      <h3 className="mt-4 font-extrabold text-slate-950 leading-snug">{useCase.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600 flex-1">{useCase.body}</p>
+      <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
+        {useCase.linkLabel} <ArrowUpRight size={15} className="ml-1.5" />
+      </div>
+    </a>
+  )
+}
+
+const UseCasesSection = () => (
+  <section className="container mx-auto px-4 py-12 md:py-16">
+    <SectionHeader
+      eyebrow="Built For How You Actually Shop"
+      title="Ten ways people use this site."
+      body="Not everyone lands here for the same reason. Find yours."
+    />
+    <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {USE_CASES.map((useCase) => (
+        <UseCaseCard key={useCase.title} useCase={useCase} />
+      ))}
+    </div>
+  </section>
+)
+
 const ResearchPairingCard = ({ pairing }) => (
   <a
     href={pairing.href}
@@ -706,6 +974,8 @@ const App = () => {
       <Hero counts={counts} />
       <main>
         <FeaturedDeals items={featured} loading={loading} error={error} />
+        <DealTruthDemo />
+        <UseCasesSection />
         <CategoryGrid counts={counts} />
         <ResearchSection />
         <TrustSection />
