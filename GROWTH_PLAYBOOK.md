@@ -37,6 +37,7 @@ Rules:
 - **Never fabricate**: star ratings, review counts, review quotes, prices, discount percentages, or "reviewers say" claims that aren't verifiable. `data/products.json` placeholder ratings are fake — never surface them as real.
 - Write buying guidance from product attributes and trade-offs (wattage, capacity, materials, sizing), not invented social proof.
 - No fake urgency or countdowns.
+- **No SEO jargon in user-facing copy** — never render words like "intent," "high-converting," "long-tail," "query," or "conversions" to a shopper. Write like you're helping a friend decide. (After running any page generator, also run `python3 scripts/humanize_copy.py`.)
 
 ### Publish sequence
 1. `git pull --ff-only` on `main` in `/Users/richardducat/GITHUB/bestdealsonline`.
