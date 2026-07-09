@@ -205,6 +205,9 @@ const TRUST_LINKS = [
 // link rather than a fabricated one.
 const CATEGORY_RESEARCH = Object.fromEntries(RESEARCH_PAIRINGS.map((p) => [p.category, p]))
 
+// Lets any section reuse the category lifestyle photography by name.
+const CATEGORY_IMAGES = Object.fromEntries(CATEGORIES.map((c) => [c.name, c.image]))
+
 // Ten genuinely distinct ways people actually use this site, each
 // pointing at a real page that already exists -- no invented features.
 const USE_CASES = [
@@ -440,7 +443,7 @@ const DisclosureBanner = () => {
   if (!visible) return null
 
   return (
-    <div className="bg-slate-100 border-b border-slate-200 text-xs text-slate-700">
+    <div className="bg-sand border-b border-linen text-xs text-cocoa">
       <div className="container mx-auto px-4 py-2 flex items-start justify-between gap-3">
         <p className="leading-relaxed">
           <strong>Affiliate disclosure:</strong> As an Amazon Associate, we earn from qualifying purchases.{' '}
@@ -449,7 +452,7 @@ const DisclosureBanner = () => {
         <button
           type="button"
           onClick={() => setVisible(false)}
-          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-900 shrink-0"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-cocoa hover:bg-linen hover:text-ink shrink-0"
           aria-label="Dismiss disclosure"
         >
           <X size={14} />
@@ -463,43 +466,43 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <nav className="bg-slate-950 text-white sticky top-0 z-40 border-b border-slate-900">
+    <nav className="bg-cream/95 backdrop-blur text-ink sticky top-0 z-40 border-b border-linen">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
         <a href="/" className="flex items-center gap-3">
-          <span className="bg-yellow-400 text-slate-950 p-2 rounded-lg">
+          <span className="bg-clay text-cream p-2 rounded-full">
             <Tag size={18} />
           </span>
           <span className="leading-tight">
-            <span className="block font-extrabold tracking-tight text-lg">BestDealsOnline</span>
-            <span className="block text-[10px] text-yellow-300 uppercase tracking-[0.28em]">Amazon Deal Picks</span>
+            <span className="block font-display font-semibold tracking-tight text-xl">BestDealsOnline</span>
+            <span className="block text-[10px] text-clay uppercase tracking-[0.28em]">Researched Amazon Picks</span>
           </span>
         </a>
 
         <button
           type="button"
-          className="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-lg border border-white/10"
+          className="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-full border border-linen text-cocoa"
           onClick={() => setMobileMenuOpen((open) => !open)}
           aria-label="Toggle navigation"
         >
           {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
 
-        <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
-          <a href="#deals" className="hover:text-yellow-300 transition-colors">Today's Picks</a>
-          <a href="#demo" className="hover:text-yellow-300 transition-colors">How It Works</a>
-          <a href="#categories" className="hover:text-yellow-300 transition-colors">Categories</a>
-          <a href="#research" className="hover:text-yellow-300 transition-colors">Research</a>
-          <a href="/blog/index.html" className="hover:text-yellow-300 transition-colors">Blog</a>
+        <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-cocoa">
+          <a href="#deals" className="hover:text-clay transition-colors">Today's Picks</a>
+          <a href="#demo" className="hover:text-clay transition-colors">How It Works</a>
+          <a href="#categories" className="hover:text-clay transition-colors">Categories</a>
+          <a href="#research" className="hover:text-clay transition-colors">Research</a>
+          <a href="/blog/index.html" className="hover:text-clay transition-colors">Blog</a>
         </div>
       </div>
 
       {mobileMenuOpen ? (
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-1 text-sm font-semibold">
-          <a href="#deals" className="min-h-11 flex items-center hover:text-yellow-300">Today's Picks</a>
-          <a href="#demo" className="min-h-11 flex items-center hover:text-yellow-300">How It Works</a>
-          <a href="#categories" className="min-h-11 flex items-center hover:text-yellow-300">Categories</a>
-          <a href="#research" className="min-h-11 flex items-center hover:text-yellow-300">Research</a>
-          <a href="/blog/index.html" className="min-h-11 flex items-center hover:text-yellow-300">Blog</a>
+        <div className="md:hidden px-4 pb-4 flex flex-col gap-1 text-sm font-semibold text-cocoa">
+          <a href="#deals" className="min-h-11 flex items-center hover:text-clay">Today's Picks</a>
+          <a href="#demo" className="min-h-11 flex items-center hover:text-clay">How It Works</a>
+          <a href="#categories" className="min-h-11 flex items-center hover:text-clay">Categories</a>
+          <a href="#research" className="min-h-11 flex items-center hover:text-clay">Research</a>
+          <a href="/blog/index.html" className="min-h-11 flex items-center hover:text-clay">Blog</a>
         </div>
       ) : null}
     </nav>
@@ -507,49 +510,79 @@ const Navbar = () => {
 }
 
 const CategoryChips = ({ counts }) => (
-  <div className="mt-6 -mx-4 px-4 md:mx-0 md:px-0 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible">
+  <div className="mt-7 -mx-4 px-4 md:mx-0 md:px-0 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible">
     {CATEGORIES.map((cat) => (
       <a
         key={cat.href}
         href={cat.href}
-        className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 min-h-11 rounded-full bg-white/10 hover:bg-white/20 text-sm font-semibold text-white transition-colors whitespace-nowrap"
+        className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 min-h-11 rounded-full border border-linen bg-white/70 hover:bg-white hover:border-blush text-sm font-semibold text-cocoa hover:text-clay transition-colors whitespace-nowrap"
       >
         {cat.name}
-        {counts[cat.name] ? <span className="text-yellow-300">· {counts[cat.name]}</span> : null}
+        {counts[cat.name] ? <span className="text-clay">· {counts[cat.name]}</span> : null}
       </a>
     ))}
   </div>
 )
 
+// Hand-drawn underline flourish for the hero headline.
+const Squiggle = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 220 14"
+    className="mt-2 h-3 w-44 md:w-56 text-clay"
+    fill="none"
+  >
+    <path
+      d="M3 10C36 3 62 3 92 8c30 5 58 4 86-3 14-3.5 27-3 39 1"
+      stroke="currentColor"
+      strokeWidth="4"
+      strokeLinecap="round"
+    />
+  </svg>
+)
+
+// Small four-point sparkle used as a decorative accent.
+const SparkleMark = ({ className }) => (
+  <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M12 0c1.2 6.2 4.6 9.7 12 12-7.4 2.3-10.8 5.8-12 12-1.2-6.2-4.6-9.7-12-12 7.4-2.3 10.8-5.8 12-12Z" />
+  </svg>
+)
+
 const Hero = ({ counts }) => (
-  <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white">
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
+  <section className="relative overflow-hidden bg-cream text-ink">
+    {/* Soft blush wash behind the photo side. */}
+    <div aria-hidden="true" className="pointer-events-none absolute -right-32 -top-40 h-[34rem] w-[34rem] rounded-full bg-blush/60 blur-3xl" />
+    <div aria-hidden="true" className="pointer-events-none absolute -left-40 bottom-0 h-72 w-72 rounded-full bg-sand blur-3xl" />
+
+    <div className="container mx-auto px-4 pt-10 pb-14 md:pt-16 md:pb-20 relative">
+      <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
         <div className="min-w-0">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blush bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-clay">
+            <SparkleMark className="h-3 w-3" /> Researched deals, real life
+          </div>
+          <h1 className="mt-5 font-display text-[2.6rem] md:text-6xl font-semibold tracking-tight leading-[1.05]">
             We read the reviews
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">
-              so you don't have to.
-            </span>
+            <span className="block italic text-clay">so you don&rsquo;t have to.</span>
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-slate-200 leading-relaxed">
-            300+ Amazon picks across Electronics, Home, Kitchen, Tools, Kids, Beauty, Fitness &amp; Pets. We dig through
-            what real buyers say breaks, holds up, and disappoints after week one — not just the star average.
+          <Squiggle />
+          <p className="mt-5 max-w-xl text-lg text-cocoa leading-relaxed">
+            300+ Amazon picks across Home, Kitchen, Beauty, Kids and more. We dig through what real buyers say breaks,
+            holds up, and disappoints after week one — not just the star average.
           </p>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-cocoa/70">
             As an Amazon Associate, we earn from qualifying purchases.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-5">
             <a
               href="#deals"
-              className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-yellow-400 text-slate-950 font-extrabold hover:bg-yellow-300 transition-colors text-base"
+              className="inline-flex items-center justify-center min-h-12 px-7 rounded-full bg-clay text-cream font-bold hover:bg-claydark transition-colors text-base shadow-sm"
             >
               See Today's Picks <ArrowUpRight size={16} className="ml-2" />
             </a>
             <a
               href="/online-deals-methodology.html"
-              className="inline-flex items-center min-h-12 text-sm font-bold text-slate-200 hover:text-yellow-300 transition-colors"
+              className="inline-flex items-center min-h-12 text-sm font-bold text-cocoa underline decoration-blush decoration-2 underline-offset-4 hover:text-clay transition-colors"
             >
               How we pick <ArrowUpRight size={14} className="ml-1.5" />
             </a>
@@ -558,23 +591,31 @@ const Hero = ({ counts }) => (
           <CategoryChips counts={counts} />
         </div>
 
-        <div className="hidden lg:grid gap-4">
-          {CATEGORIES.slice(0, 3).map((cat) => (
-            <div key={cat.href} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden flex items-center gap-4 p-3">
-              <img
-                src={cat.image}
-                alt=""
-                width="88"
-                height="88"
-                className="h-20 w-20 rounded-xl object-cover shrink-0"
-                loading="eager"
-              />
-              <div>
-                <div className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-300">{cat.name}</div>
-                <div className="text-sm text-slate-300 mt-1">{cat.description}</div>
-              </div>
-            </div>
-          ))}
+        {/* Editorial photo composition: arched hero image + overlapping accent. */}
+        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+          <SparkleMark className="absolute -top-6 right-8 h-6 w-6 text-clay/70" />
+          <SparkleMark className="absolute top-10 -right-2 h-3.5 w-3.5 text-sage" />
+          <div className="overflow-hidden rounded-t-[9rem] rounded-b-[2rem] border-8 border-white shadow-xl">
+            <img
+              src="/images/categories/home.webp"
+              alt="A calm, sunlit living room with a cozy sofa and warm neutral decor"
+              className="h-[24rem] md:h-[30rem] w-full object-cover"
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
+          <div className="absolute -bottom-8 -left-4 md:-left-10 w-36 md:w-48 overflow-hidden rounded-[1.75rem] border-8 border-white shadow-lg rotate-[-4deg]">
+            <img
+              src="/images/categories/beauty.webp"
+              alt="A tidy marble counter with everyday skincare essentials in soft light"
+              className="aspect-square w-full object-cover"
+              loading="eager"
+            />
+          </div>
+          <div className="absolute top-8 -left-3 md:-left-8 rounded-2xl bg-white/95 shadow-lg border border-linen px-4 py-3 rotate-[2deg]">
+            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-clay">DealTruth check</div>
+            <div className="mt-0.5 text-sm font-bold text-ink">Price history, not hype</div>
+          </div>
         </div>
       </div>
     </div>
@@ -585,14 +626,14 @@ const ProductCard = ({ item }) => {
   const research = CATEGORY_RESEARCH[item.category]
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col">
+    <div className="rounded-3xl border border-linen bg-white shadow-sm overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col">
       <a
         href={item.affiliateLink}
         target="_blank"
         rel="nofollow noopener noreferrer"
         className="group flex flex-col flex-1"
       >
-        <div className="aspect-square overflow-hidden bg-slate-100">
+        <div className="aspect-square overflow-hidden bg-sand/60">
           <img
             src={item.imageUrl}
             alt={cleanTitle(item.title)}
@@ -601,23 +642,23 @@ const ProductCard = ({ item }) => {
           />
         </div>
         <div className="p-4 flex flex-col flex-1">
-          <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{item.category}</div>
-          <h3 className="mt-1.5 font-extrabold text-slate-950 leading-snug">{cleanTitle(item.title)}</h3>
+          <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-clay">{item.category}</div>
+          <h3 className="mt-1.5 font-bold text-ink leading-snug">{cleanTitle(item.title)}</h3>
           {item.dealTruth && !item.dealTruth.notMeaningfulDeal ? (
             <div className="mt-2">
-              <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+              <div className="inline-flex items-center gap-1 text-xs font-extrabold text-sagedark bg-sage/15 px-2 py-0.5 rounded-full">
                 DealTruth {item.dealTruth.score}/100
               </div>
-              <div className="mt-1 text-xs text-slate-500 leading-snug">{item.dealTruth.explanations.discountLine}</div>
+              <div className="mt-1 text-xs text-cocoa leading-snug">{item.dealTruth.explanations.discountLine}</div>
             </div>
           ) : null}
-          <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-xl bg-slate-950 text-white text-sm font-bold group-hover:bg-slate-800 transition-colors">
+          <div className="mt-auto pt-3 inline-flex items-center justify-center min-h-11 rounded-full bg-ink text-cream text-sm font-bold group-hover:bg-clay transition-colors">
             View on Amazon <ExternalLink size={13} className="ml-1.5" />
           </div>
         </div>
       </a>
       {research ? (
-        <a href={research.href} className="block px-4 py-2.5 border-t border-slate-100 text-xs font-bold text-blue-700 hover:bg-slate-50 min-h-11 flex items-center">
+        <a href={research.href} className="block px-4 py-2.5 border-t border-linen text-xs font-bold text-clay hover:bg-cream min-h-11 flex items-center">
           See what buyers say about {item.category.toLowerCase()} &rarr;
         </a>
       ) : null}
@@ -626,21 +667,21 @@ const ProductCard = ({ item }) => {
 }
 
 const ProductCardSkeleton = () => (
-  <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden animate-pulse">
-    <div className="aspect-square bg-slate-100" />
+  <div className="rounded-3xl border border-linen bg-white overflow-hidden animate-pulse">
+    <div className="aspect-square bg-sand" />
     <div className="p-4 space-y-2">
-      <div className="h-2.5 w-16 bg-slate-200 rounded" />
-      <div className="h-4 w-3/4 bg-slate-200 rounded" />
-      <div className="h-9 w-full bg-slate-100 rounded-xl mt-3" />
+      <div className="h-2.5 w-16 bg-linen rounded" />
+      <div className="h-4 w-3/4 bg-linen rounded" />
+      <div className="h-9 w-full bg-sand rounded-full mt-3" />
     </div>
   </div>
 )
 
 const SectionHeader = ({ eyebrow, title, body }) => (
   <div className="max-w-3xl">
-    <div className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">{eyebrow}</div>
-    <h2 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight text-slate-950">{title}</h2>
-    {body ? <p className="mt-3 text-slate-600 text-lg leading-relaxed">{body}</p> : null}
+    <div className="text-xs font-bold uppercase tracking-[0.22em] text-clay">{eyebrow}</div>
+    <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] font-semibold tracking-tight leading-tight text-ink">{title}</h2>
+    {body ? <p className="mt-3 text-cocoa text-lg leading-relaxed">{body}</p> : null}
   </div>
 )
 
@@ -652,7 +693,7 @@ const FeaturedDeals = ({ items, loading, error }) => (
       body="A mix from every category. Click through to see current pricing and availability on Amazon."
     />
     {error ? (
-      <p className="mt-8 text-slate-600">
+      <p className="mt-8 text-cocoa">
         Couldn't load today's picks right now — browse by{' '}
         <a className="underline font-bold" href="#categories">category</a> instead.
       </p>
@@ -669,30 +710,36 @@ const FeaturedDeals = ({ items, loading, error }) => (
 const CategoryTile = ({ cat, count }) => (
   <a
     href={cat.href}
-    className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-4 p-4"
+    className="group overflow-hidden rounded-3xl border border-linen bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl flex flex-col"
   >
-    <img
-      src={cat.image}
-      alt=""
-      width="72"
-      height="72"
-      className="h-16 w-16 rounded-xl object-cover shrink-0"
-      loading="lazy"
-    />
-    <div className="min-w-0">
-      <h3 className="font-extrabold text-slate-950">{cat.name}</h3>
-      <p className="mt-1 text-sm text-slate-600 leading-snug line-clamp-2">{cat.description}</p>
-      {count ? <div className="mt-1.5 text-xs font-bold text-slate-500">{count} picks</div> : null}
+    <div className="aspect-[4/3] overflow-hidden">
+      <img
+        src={cat.image}
+        alt={`${cat.name} — ${cat.description}`}
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
     </div>
-    <ArrowUpRight size={16} className="ml-auto shrink-0 text-slate-400 group-hover:text-slate-900" />
+    <div className="p-5 flex flex-col flex-1">
+      <h3 className="font-display text-xl font-semibold text-ink flex items-center justify-between">
+        {cat.name}
+        <ArrowUpRight size={18} className="shrink-0 text-cocoa/50 transition-colors group-hover:text-clay" />
+      </h3>
+      <p className="mt-1.5 text-sm text-cocoa leading-snug">{cat.description}</p>
+      {count ? <div className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-clay">{count} picks</div> : null}
+    </div>
   </a>
 )
 
 const CategoryGrid = ({ counts }) => (
-  <section id="categories" className="border-y border-slate-200 bg-white">
+  <section id="categories" className="border-y border-linen bg-white">
     <div className="container mx-auto px-4 py-12 md:py-16">
-      <SectionHeader eyebrow="Shop by Category" title="Go straight to what you need." />
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <SectionHeader
+        eyebrow="Shop by Category"
+        title="Go straight to what you need."
+        body="Every room, routine, and person on your list — organized by budget once you're inside."
+      />
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {CATEGORIES.map((cat) => (
           <CategoryTile key={cat.href} cat={cat} count={counts[cat.name]} />
         ))}
@@ -713,15 +760,15 @@ const DealTruthDemo = () => {
 
   const result = useMemo(() => runExampleScore(typical, today), [typical, today])
   const scoreColor = result.notMeaningfulDeal
-    ? 'text-slate-500 bg-slate-100'
+    ? 'text-cocoa bg-linen'
     : result.score >= 70
-      ? 'text-emerald-700 bg-emerald-50'
+      ? 'text-sagedark bg-sage/15'
       : result.score >= 45
         ? 'text-amber-700 bg-amber-50'
-        : 'text-slate-500 bg-slate-100'
+        : 'text-cocoa bg-linen'
 
   return (
-    <section id="demo" className="border-y border-slate-200 bg-white">
+    <section id="demo" className="border-y border-linen bg-sand">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <SectionHeader
           eyebrow="How It Works"
@@ -730,8 +777,8 @@ const DealTruthDemo = () => {
         />
 
         <div className="mt-8 grid lg:grid-cols-2 gap-8 items-start">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+          <div className="rounded-3xl border border-linen bg-white p-6">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-cocoa">
               <SlidersHorizontal size={14} /> Example price history — not a real product
             </div>
 
@@ -744,7 +791,7 @@ const DealTruthDemo = () => {
                     setTypical(preset.typical)
                     setToday(preset.today)
                   }}
-                  className="px-3 py-2 min-h-11 rounded-full border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:border-slate-900 hover:text-slate-950 transition-colors"
+                  className="px-3 py-2 min-h-11 rounded-full border border-linen bg-cream text-xs font-bold text-cocoa hover:border-clay hover:text-clay transition-colors"
                 >
                   {preset.label}
                 </button>
@@ -752,44 +799,44 @@ const DealTruthDemo = () => {
             </div>
 
             <label className="block mt-6">
-              <span className="text-sm font-bold text-slate-900">Typical price (last 90 days): ${typical}</span>
+              <span className="text-sm font-bold text-ink">Typical price (last 90 days): ${typical}</span>
               <input
                 type="range"
                 min="10"
                 max="200"
                 value={typical}
                 onChange={(e) => setTypical(Number(e.target.value))}
-                className="w-full mt-2 accent-slate-900"
+                className="w-full mt-2 accent-clay"
               />
             </label>
 
             <label className="block mt-5">
-              <span className="text-sm font-bold text-slate-900">Today's price: ${today}</span>
+              <span className="text-sm font-bold text-ink">Today's price: ${today}</span>
               <input
                 type="range"
                 min="5"
                 max="200"
                 value={today}
                 onChange={(e) => setToday(Number(e.target.value))}
-                className="w-full mt-2 accent-slate-900"
+                className="w-full mt-2 accent-clay"
               />
             </label>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 p-6">
+          <div className="rounded-3xl border border-linen bg-white p-6">
             <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-extrabold ${scoreColor}`}>
               <Sparkles size={15} /> DealTruth {result.score}/100
             </div>
             {result.notMeaningfulDeal ? (
-              <p className="mt-4 text-sm font-bold text-slate-700">Not a meaningful deal at these numbers.</p>
+              <p className="mt-4 text-sm font-bold text-cocoa">Not a meaningful deal at these numbers.</p>
             ) : null}
-            <ul className="mt-4 space-y-3 text-sm text-slate-700">
+            <ul className="mt-4 space-y-3 text-sm text-cocoa">
               <li>{result.explanations.discountLine}</li>
               <li>{result.explanations.rarityLine}</li>
               <li>{result.explanations.confidenceLine}</li>
-              <li className="font-bold text-slate-950">{result.explanations.decisionLine}</li>
+              <li className="font-bold text-ink">{result.explanations.decisionLine}</li>
             </ul>
-            <p className="mt-6 text-xs text-slate-500 leading-relaxed">
+            <p className="mt-6 text-xs text-cocoa/80 leading-relaxed">
               This is the same real-discount-vs-median, rarity-over-time, and buy-or-wait logic behind every scored pick on
               this site — see <a href="/online-deals-methodology.html" className="underline font-bold">our full methodology</a>.
             </p>
@@ -805,14 +852,14 @@ const UseCaseCard = ({ useCase }) => {
   return (
     <a
       href={useCase.href}
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md flex flex-col"
+      className="rounded-3xl border border-linen bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md flex flex-col"
     >
-      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-yellow-300 shrink-0">
+      <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blush text-clay shrink-0">
         <Icon size={18} />
       </div>
-      <h3 className="mt-4 font-extrabold text-slate-950 leading-snug">{useCase.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600 flex-1">{useCase.body}</p>
-      <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
+      <h3 className="mt-4 font-bold text-ink leading-snug">{useCase.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-cocoa flex-1">{useCase.body}</p>
+      <div className="mt-4 inline-flex items-center text-sm font-bold text-clay">
         {useCase.linkLabel} <ArrowUpRight size={15} className="ml-1.5" />
       </div>
     </a>
@@ -837,13 +884,25 @@ const UseCasesSection = () => (
 const ResearchPairingCard = ({ pairing }) => (
   <a
     href={pairing.href}
-    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+    className="group overflow-hidden rounded-3xl border border-linen bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg flex flex-col"
   >
-    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-700">{pairing.category}</div>
-    <h3 className="mt-3 text-lg font-extrabold text-slate-950 leading-snug">{pairing.title}</h3>
-    <p className="mt-2 text-sm leading-relaxed text-slate-600">{pairing.takeaway}</p>
-    <div className="mt-4 inline-flex items-center text-sm font-bold text-slate-900">
-      Read the research <ArrowUpRight size={15} className="ml-1.5" />
+    {CATEGORY_IMAGES[pairing.category] ? (
+      <div className="aspect-[16/10] overflow-hidden">
+        <img
+          src={CATEGORY_IMAGES[pairing.category]}
+          alt=""
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+      </div>
+    ) : null}
+    <div className="p-5 flex flex-col flex-1">
+      <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-clay">{pairing.category}</div>
+      <h3 className="mt-2 text-lg font-bold text-ink leading-snug">{pairing.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-cocoa flex-1">{pairing.takeaway}</p>
+      <div className="mt-4 inline-flex items-center text-sm font-bold text-clay">
+        Read the research <ArrowUpRight size={15} className="ml-1.5" />
+      </div>
     </div>
   </a>
 )
@@ -862,16 +921,16 @@ const ResearchSection = () => (
     </div>
 
     <div className="mt-10">
-      <div className="text-sm font-bold text-slate-500 uppercase tracking-[0.18em]">More research</div>
+      <div className="text-sm font-bold text-clay uppercase tracking-[0.18em]">More research</div>
       <div className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
         {MORE_RESEARCH.map((post) => (
           <a
             key={post.href}
             href={post.href}
-            className="flex items-baseline gap-3 py-1 text-sm hover:text-slate-950 min-h-11"
+            className="flex items-baseline gap-3 py-1 text-sm text-cocoa hover:text-clay min-h-11"
           >
-            <span className="text-slate-400 font-bold shrink-0">{post.category}</span>
-            <span className="underline decoration-slate-300 underline-offset-2">{post.title}</span>
+            <span className="text-cocoa/50 font-bold shrink-0">{post.category}</span>
+            <span className="underline decoration-blush underline-offset-2">{post.title}</span>
           </a>
         ))}
       </div>
@@ -880,14 +939,15 @@ const ResearchSection = () => (
 )
 
 const TrustSection = () => (
-  <section className="border-t border-slate-200 bg-white">
+  <section className="border-t border-linen bg-white">
     <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+      <div className="rounded-[2rem] border border-blush bg-blush/40 p-6 md:p-10 relative overflow-hidden">
+        <SparkleMark className="absolute top-6 right-8 h-5 w-5 text-clay/50" />
         <div className="flex items-start gap-3">
-          <ShieldCheck size={20} className="mt-1 text-slate-700 shrink-0" />
+          <ShieldCheck size={20} className="mt-1.5 text-clay shrink-0" />
           <div>
-            <h3 className="text-xl font-extrabold text-slate-950">Why trust this site</h3>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
+            <h3 className="font-display text-2xl font-semibold text-ink">Why trust this site</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-cocoa">
               We publish the research before the affiliate link, not after — and we don't invent star ratings, review
               counts, or countdown timers to push a click. Check our methodology and policies yourself; they're always public.
             </p>
@@ -895,7 +955,7 @@ const TrustSection = () => (
               {TRUST_LINKS.map((link) => {
                 const Icon = link.icon
                 return (
-                  <a key={link.href} href={link.href} className="inline-flex items-center gap-1.5 min-h-11 text-slate-700 hover:text-slate-950">
+                  <a key={link.href} href={link.href} className="inline-flex items-center gap-1.5 min-h-11 text-cocoa hover:text-clay">
                     <Icon size={14} /> {link.title}
                   </a>
                 )
@@ -909,43 +969,43 @@ const TrustSection = () => (
 )
 
 const Footer = () => (
-  <footer className="bg-slate-950 text-slate-300 border-t border-slate-900">
+  <footer className="bg-ink text-linen border-t border-cocoa/40">
     <div className="container mx-auto px-4 py-12 grid gap-10 md:grid-cols-[1.2fr_0.9fr_1fr]">
       <div>
-        <div className="flex items-center gap-3 text-white">
-          <span className="bg-yellow-400 text-slate-950 p-2 rounded-lg">
+        <div className="flex items-center gap-3 text-cream">
+          <span className="bg-clay text-cream p-2 rounded-full">
             <Tag size={16} />
           </span>
-          <span className="font-extrabold text-lg">BestDealsOnline</span>
+          <span className="font-display font-semibold text-xl">BestDealsOnline</span>
         </div>
-        <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-linen/70">
           Research-led deal picks, buyer-feedback summaries, and category guides designed to help readers verify live
           price and availability on Amazon before purchasing.
         </p>
       </div>
 
       <div>
-        <div className="text-white font-bold">Core links</div>
+        <div className="text-cream font-bold">Core links</div>
         <ul className="mt-4 space-y-3 text-sm">
-          <li><a href="/about-best-online-deals.html" className="hover:text-yellow-300">About</a></li>
-          <li><a href="/online-deals-methodology.html" className="hover:text-yellow-300">Methodology</a></li>
-          <li><a href="/review-aggregation-guidelines.html" className="hover:text-yellow-300">Review policy</a></li>
-          <li><a href="/blog/index.html" className="hover:text-yellow-300">Research blog</a></li>
-          <li><a href="/contact-best-online-deals.html" className="hover:text-yellow-300">Contact</a></li>
+          <li><a href="/about-best-online-deals.html" className="hover:text-blush">About</a></li>
+          <li><a href="/online-deals-methodology.html" className="hover:text-blush">Methodology</a></li>
+          <li><a href="/review-aggregation-guidelines.html" className="hover:text-blush">Review policy</a></li>
+          <li><a href="/blog/index.html" className="hover:text-blush">Research blog</a></li>
+          <li><a href="/contact-best-online-deals.html" className="hover:text-blush">Contact</a></li>
         </ul>
       </div>
 
       <div>
-        <div className="text-white font-bold">Disclosure</div>
-        <p className="mt-4 text-sm leading-relaxed text-slate-400">
+        <div className="text-cream font-bold">Disclosure</div>
+        <p className="mt-4 text-sm leading-relaxed text-linen/70">
           As an Amazon Associate, we earn from qualifying purchases.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-slate-400">
+        <p className="mt-3 text-sm leading-relaxed text-linen/70">
           Prices and availability are subject to change. Always verify the current listing before you buy.
         </p>
         <a
           href="/affiliate-disclosure.html"
-          className="mt-4 inline-flex items-center text-sm font-bold text-yellow-300 hover:text-yellow-200"
+          className="mt-4 inline-flex items-center text-sm font-bold text-blush hover:text-cream"
         >
           Full disclosure <ExternalLink size={14} className="ml-1.5" />
         </a>
@@ -968,7 +1028,7 @@ const App = () => {
   const featured = useMemo(() => pickFeatured(items, 12), [items])
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-cream text-ink font-sans">
       <DisclosureBanner />
       <Navbar />
       <Hero counts={counts} />
