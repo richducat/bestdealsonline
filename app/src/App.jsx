@@ -606,8 +606,8 @@ const Hero = ({ counts }) => (
           </div>
           <div className="absolute -bottom-8 -left-4 md:-left-10 w-36 md:w-48 overflow-hidden rounded-[1.75rem] border-8 border-white shadow-lg rotate-[-4deg]">
             <img
-              src="/images/categories/beauty.webp"
-              alt="A tidy marble counter with everyday skincare essentials in soft light"
+              src="/images/hero/default.jpg"
+              alt="A woman smiles while shopping on her laptop from her couch"
               className="aspect-square w-full object-cover"
               loading="eager"
             />
