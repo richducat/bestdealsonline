@@ -1,7 +1,10 @@
 # Search Engine Setup (Google, Bing, Yahoo, DuckDuckGo)
 
-This site's sitemap.xml is now generated from all real content pages
-(977 URLs, up from 43 -- see `scripts/gen-sitemap.mjs`). The steps below
+This site's `sitemap.xml` is generated from all real content pages
+(979 URLs -- see `scripts/gen-sitemap.mjs`). A second
+`sitemap-priority.xml` gives crawlers a focused path to the strongest
+category, editorial, trust, and substantial guide pages without removing
+any valid URL from the complete sitemap. The steps below
 get every search engine actually indexing them. None of this can be done
 from the repo alone -- each step needs your own login for that engine's
 webmaster console.
@@ -12,9 +15,9 @@ webmaster console.
 3. Copy the TXT record Google provides.
 4. Add the TXT record in your DNS provider for `bestdealsonline.us`.
 5. Wait for DNS propagation, then click **Verify**.
-6. Open **Sitemaps** and submit `https://bestdealsonline.us/sitemap.xml`. Confirm status is **Success**.
+6. Open **Sitemaps** and submit both `https://bestdealsonline.us/sitemap.xml` and `https://bestdealsonline.us/sitemap-priority.xml`. Confirm both show **Success**.
 7. Run URL inspection and **Request indexing** for a handful of important pages (homepage, a couple of category hubs, a couple of long-tail pages) to seed the crawl -- don't try to do this for all 977, Google will crawl the rest from the sitemap.
-8. Monitor **Coverage** and **Page indexing** reports over the next 2-4 weeks. If you see "Discovered - currently not indexed" on the templated price-tier/seasonal pages at scale, that's the Helpful Content signal mentioned in the audit -- expected for algorithmically-generated pages to take longer to index than hand-written ones, not necessarily a problem to fix immediately.
+8. Monitor **Coverage** and **Page indexing** reports over the next 2-4 weeks. Google chooses what to index; submitting a URL makes it discoverable but does not guarantee inclusion. Persistent "Discovered - currently not indexed" at scale means the templated price-tier/seasonal pages need more original buyer value or consolidation, not repeated sitemap submissions.
 
 ## 2) Bing Webmaster Tools (covers Bing + powers Yahoo + DuckDuckGo)
 Yahoo Search has been powered by Bing since 2019, and DuckDuckGo's core web
@@ -49,7 +52,8 @@ current URL list.
 
 ## 4) After deploying, re-run these when content changes
 ```
-node scripts/gen-sitemap.mjs        # regenerate sitemap.xml from all real pages
+node scripts/gen-sitemap.mjs        # regenerate complete and priority sitemaps
+node scripts/check-indexability.mjs # validate targets, canonicals, dates, and coverage
 node scripts/indexnow_submit.mjs    # push the updated URL list to Bing/Yandex/etc instantly
 ```
 

@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://bestdealsonline.us/sitemap.xml
+Sitemap: https://bestdealsonline.us/sitemap-priority.xml

@@ -89,17 +89,16 @@
     <script defer src="/assets/track.js"></script>
   </head>
   <body>
-    <div id="root"></div>
-    <noscript>
+    <div id="root">
       <!--
-        This site's homepage is a JavaScript app. Search engines that don't
-        reliably execute JavaScript (Bing, Yahoo, DuckDuckGo) would otherwise
-        see a blank page here with no links -- this fallback gives them real,
-        crawlable navigation to every section of the site.
+        Crawlable first response. React replaces this content when the app
+        starts, while crawlers can discover the site's important sections
+        without waiting for JavaScript rendering.
       -->
-      <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; color: #0f172a;">
+      <main style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; color: #382C22;">
         <h1>Best Deals Online</h1>
-        <p>Editorial deal guides and buyer-feedback research for finding the best prices on Amazon, organized by category. Links go to Amazon search results using our affiliate tag; we may earn a commission at no extra cost to you.</p>
+        <p>Editorial deal guides and buyer-feedback research for comparing useful products by category, budget, and real-world buying criteria.</p>
+        <p>Start with a category hub for detailed comparisons, or read an in-depth guide from the research blog. Some links go to Amazon using our affiliate tag; we may earn a commission at no extra cost to you.</p>
         <h2>Shop by category</h2>
         <ul>
           <li><a href="/electronics-deals.html">Electronics deals</a></li>
@@ -120,8 +119,8 @@
           <li><a href="/about-best-online-deals.html">About</a></li>
           <li><a href="/affiliate-disclosure.html">Affiliate disclosure</a></li>
         </ul>
-      </div>
-    </noscript>
+      </main>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
