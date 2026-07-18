@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 
 const ROOT = process.cwd()
 const BASE_URL = 'https://bestdealsonline.us'
-const DENIED_ROOT_HTML = new Set(['example-post.html'])
+const DENIED_ROOT_HTML = new Set(['example-post.html', '404.html'])
 const PRIORITY_ROOT_HTML = new Set([
   'index.html',
   'about-best-online-deals.html',

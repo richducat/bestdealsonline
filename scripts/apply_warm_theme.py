@@ -16,7 +16,11 @@ FONT_LINK = (
     '&display=swap" rel="stylesheet">'
 )
 THEME_LINK = '<link rel="stylesheet" href="/assets/warm-theme.css">'
-INJECT = f"  {FONT_LINK}\n  {THEME_LINK}\n</head>"
+ICON_LINKS = (
+    '<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">\n'
+    '  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">'
+)
+INJECT = f"  {FONT_LINK}\n  {THEME_LINK}\n  {ICON_LINKS}\n</head>"
 
 OG_OLD = "https://bestdealsonline.us/assets/og-default.svg"
 OG_NEW = "https://bestdealsonline.us/assets/og-home.jpg"
@@ -45,6 +49,9 @@ def main():
         if "warm-theme.css" not in html and "</head>" in html:
             html = html.replace("</head>", INJECT, 1)
             themed += 1
+        elif "apple-touch-icon" not in html and "</head>" in html:
+            # Pages themed before icons existed still need the icon links.
+            html = html.replace("</head>", f"  {ICON_LINKS}\n</head>", 1)
 
         html, n = OG_META_RE.subn(r"\g<1>" + OG_NEW + r"\g<2>", html)
         if n:
