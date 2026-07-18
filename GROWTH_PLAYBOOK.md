@@ -24,6 +24,9 @@ Rules:
 - Buyer intent only (someone ready to purchase), not news/informational topics.
 - Check the repo first — do not duplicate an existing page's target query (`ls blog/ *.html`).
 - Prefer topics where we already have related pages to interlink (topic clusters beat orphans).
+- Rotate formats across the week (see "Pillar 2 — Viral-format content" below): buying guides,
+  problem-solver listicles, worth-it/skip-it verdicts, seasonal countdowns 4–6 weeks ahead of peak,
+  and fake-discount exposés framed around price-history honesty.
 
 ### Article requirements
 - File: `blog/<kebab-case-slug>.html`, copy structure from `blog/gan-chargers-what-buyers-like-what-bugs-them-and-how-to-choose.html` (Tailwind CDN, canonical, OG tags, BlogPosting JSON-LD with real publish date, GA4 snippet, `/assets/track.js`).
@@ -46,6 +49,8 @@ Rules:
 4. Commit + push to `origin main` (GitHub Pages deploys automatically).
 5. Wait ~2 minutes, confirm `https://bestdealsonline.us/blog/<slug>.html` returns 200.
 6. `node scripts/indexnow_submit.mjs` (instant Bing/Yandex indexing; Google discovers via the submitted sitemap).
+7. `python3 scripts/gen_pins.py <slug>` then commit and push the new pin image — it lands in
+   `images/pins/` ready for the day's Pinterest upload.
 
 ## Lever 2 — Make the existing 977 pages work
 
@@ -68,6 +73,69 @@ Rules:
 - Disclosure on every page with affiliate links (already sitewide — keep it).
 - Don't state Amazon prices in content (they change; policy risk) — say "check today's price."
 - Monitored by the `amazon-qualified-sales-check` scheduled task (every 5 days).
+
+## Road to 10,000 visitors/week — the free-traffic system
+
+Target: **10,000 visits/week (~43k/mo)**. Realistic timeline from a near-zero base: **5–8 months**
+of compounding, with Pinterest as the accelerant. Nothing below costs money; everything costs
+consistency.
+
+### The honest math
+
+| Source | At month 3 | At month 6–8 | Why it scales |
+|---|---|---|---|
+| Pinterest | 1,500/wk | 4,000–5,000/wk | Pins compound for months; 465M users; core demo = women 25–54 planning purchases |
+| Google organic (979 pages + daily articles) | 700/wk | 3,000–4,000/wk | Long-tail rankings mature at months 3–6; daily fresh content widens the net |
+| Google Discover | 0–300/wk | 500–1,500/wk | Freshness + large images + `max-image-preview:large` (now set sitewide); spiky but big when it hits |
+| Reddit / Facebook groups / X | 300/wk | 500–1,000/wk | Value-first participation; occasional post that pops |
+| Email list (owned) | 100/wk | 500+/wk | Every channel above feeds it; immune to algorithms |
+
+### Pillar 1 — The Pinterest engine (highest priority, needs 30 min/day)
+
+Setup (once, ~1 hour, requires the account owner):
+1. Create a **Pinterest Business account** (free) → claim the website (adds an HTML tag or DNS record — I can inject the tag the moment you have it).
+2. Create 10 boards mirroring the site: Kitchen Finds, Cozy Home, Mom Life Essentials, Beauty on a Budget, Kids' Gear That Lasts, Smart Shopping Tips, Under $25 Finds, Under $50 Finds, Fitness at Home, Pet Parents.
+
+Operating loop (30 min/day, mostly done for you):
+- **`images/pins/` holds ready-made 1000×1500 branded pins** for every blog article — `scripts/gen_pins.py` regenerates them and covers each new daily article automatically.
+- Pin 3–5/day: 2 article pins + 1–2 repins of popular adjacent content. Every pin: keyword-rich title (use the article H1), 2–3 sentence description with search phrases ("air fryer buying guide", "kitchen gadgets worth it"), destination = the article URL.
+- Rule: pins point at **articles and hub pages**, never raw Amazon links (Pinterest suppresses direct affiliate links).
+- Expectation: months 1–2 feel dead (impressions, no clicks). Months 3–4 the compounding starts. Do not stop.
+
+### Pillar 2 — Viral-format content (what actually gets shared in this niche)
+
+The daily article engine now rotates in these proven formats (see article spec above):
+1. **The fake-discount exposé** — "That '50% off' air fryer? It's been that price for 6 months." Righteous-anger content travels; it's also exactly our DealTruth thesis.
+2. **Problem-solver listicles** — "9 under-$25 things that fix the most annoying part of your kitchen." Pinterest gold.
+3. **Seasonal countdowns** — back-to-school (July–Aug), Halloween (Sept), Black Friday prep (Oct–Nov: "what's actually cheaper on BF vs. relabeled"), gift guides (Nov–Dec). Publish 4–6 weeks before peak.
+4. **The "worth it / skip it" verdict** — one product, one clear call. Skimmable, screenshot-able.
+5. **Real-price receipts** — once the PA-API unlocks, publish actual price-history charts; nobody else in this niche shows receipts.
+
+### Pillar 3 — Community seeding (2 hrs/week, human required)
+
+- **Reddit**: participate genuinely in r/Frugal, r/BuyItForLife, r/onebag, r/MealPrepSunday, r/Parenting, r/HomeImprovement. 90% helpful comments, 10% "I wrote up the research on this" links where subreddit rules allow. Never affiliate links directly.
+- **Facebook groups**: "Amazon finds"-style groups have millions of members in the exact demo. Share the article (not the Amazon link) with a personal-voice caption.
+- **X/Threads**: post the fake-discount exposés — screenshots + one punchy line. Tag nothing, sell nothing.
+
+### Pillar 4 — Owned audience
+
+Add a weekly "5 deals worth your time" email once traffic supports it (Beehiiv/MailerLite free tiers; needs account owner). Every article and pin should eventually feed this list — it's the only channel no algorithm can take away.
+
+### Weekly cadence (what runs itself vs. what needs a human)
+
+| When | What | Who |
+|---|---|---|
+| Daily 7am | Trending article published, themed, pinned-image generated | Automated ✅ |
+| Daily (30 min) | Pin 3–5 pins, engage Pinterest | You |
+| Every 5 days 9am | Amazon qualified-sales check | Automated ✅ |
+| Weekly (2 hrs) | Reddit/FB participation + 1 exposé/listicle share | You |
+| Every 2 weeks | GSC: Pages report + Performance queries → retitle underperformers | Ask me |
+| Monthly | KPI review vs. milestones below | Ask me |
+
+### Milestones (visits/week, measured in GA4)
+
+- Week 4: 300–500 · Month 3: 1,500–2,500 · Month 5: 4,000–6,000 · **Month 6–8: 10,000**
+- If a milestone misses by >50%: double Pinterest volume and shift article mix toward whichever format's CTR is winning in GSC.
 
 ## KPIs (check monthly)
 
