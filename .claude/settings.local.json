@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/richardducat/GITHUB/bestdealsonline status --short)",
+      "Bash(git -C /Users/richardducat/GITHUB/bestdealsonline diff --stat)",
+      "Bash(git -C /Users/richardducat/GITHUB/bestdealsonline log --oneline -3)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "WebSearch",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__get_page_text",
+      "mcp__claude-in-chrome__find",
+      "Bash(python3 -c ' *)",
+      "Bash(node scripts/gen-sitemap.mjs)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git push *)",
+      "Bash(node scripts/indexnow_submit.mjs)",
+      "Bash(printf '%s\\\\n' *backpack*)",
+      "Bash(printf '%s\\\\n' *deals.html)",
+      "Bash(grep -v '.html$')",
+      "Bash(python3 scripts/apply_warm_theme.py)",
+      "Bash(python3 scripts/humanize_copy.py)",
+      "Bash(python3 scripts/gen_pins.py dorm-room-essentials-under-50-what-first-year-students-actually-use)",
+      "Bash(python3 -c \"import re,sys;t=open\\('blog/dorm-room-essentials-under-50-what-first-year-students-actually-use.html'\\).read\\(\\);b=re.sub\\(r'<[^>]+>',' ',t\\);print\\(len\\(b.split\\(\\)\\),'words \\(incl. markup-stripped\\)'\\)\")",
+      "Bash(grep -v '\\\\.html$')",
+      "Bash(python3 -c \"import json;d=json.load\\(open\\('data/products.json'\\)\\);print\\(type\\(d\\), len\\(d\\)\\)\")"
+    ]
+  }
+}
