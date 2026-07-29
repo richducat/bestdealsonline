@@ -927,18 +927,51 @@ const DealTruthDemo = () => {
     <section id="demo" className="border-y border-linen bg-sand">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <SectionHeader
-          eyebrow="The DealTruth Checker"
-          title="Is that price actually a deal?"
+          eyebrow="Start Here — Free Deal Checker"
+          title="Paste an Amazon link. We'll tell you if it's really a deal."
           body={
-            'Stores shout "50% off!" — but off of what? Put any price through the same check we run on every pick: the real discount against what it normally sells for, not against a made-up sticker.'
+            'Stores shout "50% off!" — but off of what? Before you buy anything, run the price through the same check we run on every pick. Ten seconds, plain English.'
           }
         />
 
         <div className="mt-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-5 lg:gap-6 items-start">
           {/* Inputs */}
           <div className="rounded-2xl bg-white ring-1 ring-ink/5 shadow-[0_1px_3px_rgba(56,44,34,0.06),0_12px_32px_-12px_rgba(56,44,34,0.12)] p-6 md:p-7">
-            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa/70">
-              <SlidersHorizontal size={13} /> Check a price
+            <label className="block">
+              <span className="text-[13px] font-semibold text-ink">Step 1 — paste the Amazon link</span>
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://www.amazon.com/…"
+                className="mt-2 w-full rounded-xl bg-cream ring-1 ring-ink/10 px-4 py-3.5 text-[15px] text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
+              />
+            </label>
+            {parsedUrl ? (
+              <p className="mt-2.5 text-xs text-cocoa leading-relaxed">
+                {parsedUrl.slugWords ? <span className="font-semibold text-ink">{parsedUrl.slugWords}. </span> : null}
+                Now enter the prices below — or verify its real history on{' '}
+                <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
+                  CamelCamelCamel
+                </a>{' '}
+                ·{' '}
+                <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
+                  Keepa
+                </a>
+              </p>
+            ) : url.trim() ? (
+              <p className="mt-2.5 text-xs text-cocoa/60">That doesn't look like an Amazon product link yet.</p>
+            ) : (
+              <p className="mt-2.5 text-xs text-cocoa/60">
+                No link, or want a hand?{' '}
+                <a href="/deal-check.html" className="underline font-semibold text-clay hover:text-claydark">
+                  Penny will walk you through it →
+                </a>
+              </p>
+            )}
+
+            <div className="mt-6 border-t border-ink/5 pt-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa/70">
+              <SlidersHorizontal size={13} /> Step 2 — set the prices
             </div>
 
             <div className="mt-4 inline-flex flex-wrap gap-1 rounded-2xl bg-linen/60 p-1">
@@ -983,33 +1016,6 @@ const DealTruthDemo = () => {
               optional
             />
 
-            <div className="mt-7 border-t border-ink/5 pt-5">
-              <label className="block">
-                <span className="text-[13px] font-semibold text-ink">Checking a real product?</span>
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="Paste the Amazon link (optional)"
-                  className="mt-2 w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-2.5 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
-                />
-              </label>
-              {parsedUrl ? (
-                <p className="mt-2.5 text-xs text-cocoa leading-relaxed">
-                  {parsedUrl.slugWords ? <span className="font-semibold text-ink">{parsedUrl.slugWords}. </span> : null}
-                  Verify its real price history:{' '}
-                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
-                    CamelCamelCamel
-                  </a>{' '}
-                  ·{' '}
-                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
-                    Keepa
-                  </a>
-                </p>
-              ) : url.trim() ? (
-                <p className="mt-2.5 text-xs text-cocoa/60">That doesn't look like an Amazon product link yet.</p>
-              ) : null}
-            </div>
           </div>
 
           {/* Verdict */}
@@ -1251,8 +1257,8 @@ const App = () => {
       <Navbar />
       <Hero counts={counts} />
       <main>
-        <FeaturedDeals items={featured} loading={loading} error={error} />
         <DealTruthDemo />
+        <FeaturedDeals items={featured} loading={loading} error={error} />
         <UseCasesSection />
         <CategoryGrid counts={counts} />
         <ResearchSection />

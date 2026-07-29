@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Each signed-in user owns exactly their own document tree.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /checks/{checkId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Lead capture from the "help me find a deal" flow: anyone may create,
+    // nobody may read/modify from the client. Field allowlist + size caps
+    // keep junk writes bounded.
+    match /leads/{leadId} {
+      allow create: if
+        request.resource.data.keys().hasOnly(['lookingFor', 'budget', 'email', 'source', 'asin', 'url', 'createdAt']) &&
+        request.resource.data.lookingFor is string && request.resource.data.lookingFor.size() < 300 &&
+        (!('email' in request.resource.data) || (request.resource.data.email is string && request.resource.data.email.size() < 120)) &&
+        (!('budget' in request.resource.data) || (request.resource.data.budget is string && request.resource.data.budget.size() < 40)) &&
+        (!('source' in request.resource.data) || (request.resource.data.source is string && request.resource.data.source.size() < 60)) &&
+        (!('asin' in request.resource.data) || (request.resource.data.asin is string && request.resource.data.asin.size() < 20)) &&
+        (!('url' in request.resource.data) || (request.resource.data.url is string && request.resource.data.url.size() < 500));
+      allow read, update, delete: if false;
+    }
+  }
+}

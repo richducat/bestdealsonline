@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Amazon Deal Checker — Is That Price Actually a Good Deal? | BestDealsOnline</title>
-  <meta name="description" content="Free deal checker: enter what a product usually sells for and today's price, and get an honest 0–100 verdict — including whether that '50% off' sticker is a fake discount." />
+  <meta name="description" content="Paste an Amazon link and find out in seconds if that price is actually a deal. Our free checker walks you through it and catches fake '50% off' stickers." />
   <link rel="canonical" href="https://bestdealsonline.us/deal-check.html" />
 
   <meta property="og:title" content="Amazon Deal Checker — Is That Price Actually a Good Deal?" />
-  <meta property="og:description" content="Enter two prices, get an honest verdict. Catches fake 'was' prices, scores real discounts 0–100, and tells you whether to buy now or wait." />
+  <meta property="og:description" content="Paste an Amazon link, answer two easy questions, get a straight answer. Catches fake 'was' prices and tells you whether to buy now or wait." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bestdealsonline.us/deal-check.html" />
   <meta property="og:image" content="https://bestdealsonline.us/assets/og-home.jpg" />
@@ -44,7 +44,18 @@
     .container{max-width:1100px}
     input[type=range]{accent-color:#B85C38}
     .tabular{font-variant-numeric:tabular-nums}
-    .card{background:#fff;border-radius:1rem;box-shadow:0 0 0 1px rgba(56,44,34,.05),0 1px 3px rgba(56,44,34,.06),0 12px 32px -12px rgba(56,44,34,.12)}
+    .card{background:#fff;border-radius:1.25rem;box-shadow:0 0 0 1px rgba(56,44,34,.05),0 1px 3px rgba(56,44,34,.06),0 12px 32px -12px rgba(56,44,34,.12)}
+    .bubble{max-width:85%;border-radius:1.1rem;padding:.7rem 1rem;line-height:1.5;font-size:.925rem}
+    .bubble-bot{background:#F3EADD;color:#382C22;border-bottom-left-radius:.3rem}
+    .bubble-user{background:#382C22;color:#FAF5EE;border-bottom-right-radius:.3rem;margin-left:auto}
+    .chip-btn{border-radius:9999px;padding:.55rem 1rem;font-size:.8rem;font-weight:600;background:#fff;color:#6B584A;box-shadow:0 0 0 1px rgba(56,44,34,.12);transition:all .15s}
+    .chip-btn:hover{color:#B85C38;box-shadow:0 0 0 1px rgba(184,92,56,.5)}
+    @keyframes popin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .popin{animation:popin .25s ease both}
+    @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+    .dot{width:6px;height:6px;border-radius:50%;background:#6B584A;display:inline-block;animation:blink 1s infinite}
+    .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+    dialog::backdrop{background:rgba(56,44,34,.45)}
   </style>
 
   <script type="application/ld+json">
@@ -56,7 +67,7 @@
     "applicationCategory": "ShoppingApplication",
     "operatingSystem": "Any",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "description": "Free checker that scores any price 0–100 against what the product usually sells for, and flags fake 'was' price discounts."
+    "description": "Paste an Amazon link and get a plain-English verdict on whether the price is actually a deal. Flags fake 'was' price discounts."
   }
   </script>
   <script type="application/ld+json">
@@ -109,36 +120,64 @@
           <span class="block text-[10px] text-clay uppercase tracking-[0.28em]">Researched Amazon Picks</span>
         </span>
       </a>
-      <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-cocoa">
-        <a href="/#deals" class="hover:text-clay transition-colors">Today's Picks</a>
-        <a href="/deal-check.html" class="text-clay">Deal Checker</a>
-        <a href="/#categories" class="hover:text-clay transition-colors">Categories</a>
-        <a href="/blog/index.html" class="hover:text-clay transition-colors">Blog</a>
+      <div class="flex items-center gap-4 md:gap-6 text-sm font-semibold text-cocoa">
+        <a href="/#deals" class="hidden md:inline hover:text-clay transition-colors">Today's Picks</a>
+        <a href="/deal-check.html" class="hidden md:inline text-clay">Deal Checker</a>
+        <a href="/blog/index.html" class="hidden md:inline hover:text-clay transition-colors">Blog</a>
+        <button id="nav-account" type="button" class="inline-flex items-center min-h-10 px-4 rounded-full bg-ink text-cream text-xs font-semibold hover:bg-clay transition-colors">Sign in</button>
       </div>
     </div>
   </nav>
 
-  <header class="container mx-auto px-4 pt-12 md:pt-16 pb-2">
-    <div class="max-w-3xl">
-      <div class="text-xs font-bold uppercase tracking-[0.22em] text-clay">The DealTruth Checker</div>
-      <h1 class="mt-3 font-display text-4xl md:text-[3.2rem] font-semibold tracking-tight leading-[1.08]">Is that price actually a&nbsp;deal?</h1>
-      <p class="mt-4 text-lg text-cocoa leading-relaxed max-w-2xl">
-        Stores shout "50% off!" — but off of what? Enter what a product usually sells for and what it
-        costs today. You get a straight answer in one second — including when the "discount" only
-        exists on the sticker.
-      </p>
-    </div>
+  <header class="container mx-auto px-4 pt-10 md:pt-14 pb-2 text-center">
+    <div class="text-xs font-bold uppercase tracking-[0.22em] text-clay">Free Deal Checker</div>
+    <h1 class="mt-3 font-display text-4xl md:text-[3.1rem] font-semibold tracking-tight leading-[1.08]">Paste an Amazon link.<br class="hidden md:block"> We'll tell you if it's really a deal.</h1>
+    <p class="mt-4 text-lg text-cocoa leading-relaxed max-w-2xl mx-auto">
+      No math, no charts to decode. Answer a couple of easy questions and get a straight answer —
+      including when that "50% off" only exists on the sticker.
+    </p>
   </header>
 
   <main class="container mx-auto px-4 py-8 md:py-10">
-    <div class="grid lg:grid-cols-[0.95fr_1.05fr] gap-5 lg:gap-6 items-start">
 
-      <!-- Inputs -->
+    <!-- ===== THE GUIDED CHECKER ===== -->
+    <div class="max-w-2xl mx-auto card overflow-hidden" id="guide">
+      <div class="flex items-center gap-3 px-5 py-4 border-b border-ink/5 bg-white">
+        <span class="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-clay text-cream font-display font-semibold">P<span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
+        <div class="leading-tight">
+          <div class="text-sm font-bold text-ink">Penny — your deal checker</div>
+          <div class="text-[11px] text-cocoa/70">Answers in plain English. Free.</div>
+        </div>
+        <button id="restart-chat" type="button" class="ml-auto text-[11px] font-semibold text-cocoa/60 hover:text-clay underline">Start over</button>
+      </div>
+
+      <div id="chat-log" class="px-4 md:px-5 py-5 space-y-3 min-h-[280px] max-h-[460px] overflow-y-auto bg-cream/40"></div>
+
+      <div class="px-4 md:px-5 py-4 border-t border-ink/5 bg-white">
+        <div id="chip-row" class="flex flex-wrap gap-2 mb-3"></div>
+        <form id="chat-form" class="flex items-center gap-2">
+          <span id="input-prefix" class="hidden text-sm font-bold text-cocoa/60">$</span>
+          <input id="chat-input" type="text" autocomplete="off"
+            class="w-full rounded-full bg-cream ring-1 ring-ink/10 px-4 py-3 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
+            placeholder="Paste the Amazon link here…" />
+          <button type="submit" class="shrink-0 inline-flex items-center justify-center h-11 w-11 rounded-full bg-clay text-cream hover:bg-claydark transition-colors" aria-label="Send">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 14 0"/><path d="m13 5 7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mt-4 text-center">
+      <button id="toggle-manual" type="button" class="text-xs font-semibold text-cocoa/70 hover:text-clay underline underline-offset-2">
+        Prefer sliders? Open manual mode
+      </button>
+    </div>
+
+    <!-- ===== MANUAL MODE (collapsed by default) ===== -->
+    <div id="manual-wrap" class="hidden mt-6 grid lg:grid-cols-[0.95fr_1.05fr] gap-5 lg:gap-6 items-start">
       <div class="card p-6 md:p-7">
         <div class="text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa/70">Check a price</div>
-
         <div class="mt-4 inline-flex flex-wrap gap-1 rounded-2xl bg-linen/60 p-1" id="presets"></div>
-
         <label class="block mt-7">
           <span class="flex items-baseline justify-between">
             <span class="text-[13px] font-semibold text-ink">What it usually sells for</span>
@@ -152,7 +191,6 @@
             <input id="typical-range" type="range" min="10" max="200" value="60" class="w-full" aria-label="Usual price slider" />
           </div>
         </label>
-
         <label class="block mt-6">
           <span class="text-[13px] font-semibold text-ink">Price today</span>
           <div class="mt-2 flex items-center gap-4">
@@ -163,7 +201,6 @@
             <input id="today-range" type="range" min="5" max="200" value="42" class="w-full" aria-label="Today's price slider" />
           </div>
         </label>
-
         <label class="block mt-6">
           <span class="flex items-baseline justify-between">
             <span class="text-[13px] font-semibold text-ink">Amazon&rsquo;s crossed-out "was" price</span>
@@ -174,18 +211,8 @@
             <input id="was-num" type="number" inputmode="decimal" min="1" placeholder="—" class="w-20 bg-transparent py-2.5 pl-1 text-sm font-bold text-ink outline-none tabular placeholder:text-cocoa/40" />
           </div>
         </label>
-
-        <div class="mt-7 border-t border-ink/5 pt-5">
-          <label class="block">
-            <span class="text-[13px] font-semibold text-ink">Checking a real product?</span>
-            <input id="url-input" type="url" placeholder="Paste the Amazon link (optional)"
-              class="mt-2 w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-2.5 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40" />
-          </label>
-          <p id="url-result" class="mt-2.5 text-xs text-cocoa leading-relaxed hidden"></p>
-        </div>
       </div>
 
-      <!-- Verdict -->
       <div class="card p-6 md:p-7" aria-live="polite">
         <div class="flex items-start justify-between gap-5">
           <div class="min-w-0">
@@ -254,19 +281,24 @@
       </div>
     </div>
 
-    <!-- How to use it on a real listing -->
-    <section class="mt-16 max-w-3xl">
-      <h2 class="font-display text-3xl font-semibold tracking-tight">How to run this on a real Amazon listing</h2>
-      <ol class="mt-6 space-y-4 text-cocoa leading-relaxed list-decimal pl-5">
-        <li><strong class="text-ink">Ignore the crossed-out price.</strong> That "was $89.99" is a reference price the seller chose — often one nobody ever paid. It's the single most common way a weak deal is dressed up as a huge one.</li>
-        <li><strong class="text-ink">Find what it usually sells for.</strong> Paste the product link above and we'll hand you its real price history on CamelCamelCamel or Keepa. Use the price it hovers at most of the year.</li>
-        <li><strong class="text-ink">Enter both numbers here.</strong> The verdict tells you the real discount, how rare it is, and whether the sticker discount is theater.</li>
-        <li><strong class="text-ink">Deep discount? Slow down.</strong> Anything past ~60% off deserves ten seconds of skepticism: check the seller name, the recent reviews, and whether the brand matches the photos. Real clearance exists — so do hijacked listings.</li>
-      </ol>
+    <!-- Signed-in: recent checks -->
+    <section id="my-checks" class="hidden max-w-2xl mx-auto mt-10">
+      <h2 class="font-display text-2xl font-semibold tracking-tight">Your recent checks</h2>
+      <div id="my-checks-list" class="mt-4 card divide-y divide-ink/5"></div>
+    </section>
+
+    <!-- How it works, in three steps -->
+    <section class="mt-16 max-w-3xl mx-auto text-center">
+      <h2 class="font-display text-3xl font-semibold tracking-tight">Three steps. Ten seconds.</h2>
+      <div class="mt-8 grid sm:grid-cols-3 gap-4 text-left">
+        <div class="card p-5"><div class="text-2xl font-display font-semibold text-clay">1</div><p class="mt-2 text-sm text-cocoa leading-relaxed"><strong class="text-ink">Paste the Amazon link</strong> of anything you're about to buy.</p></div>
+        <div class="card p-5"><div class="text-2xl font-display font-semibold text-clay">2</div><p class="mt-2 text-sm text-cocoa leading-relaxed"><strong class="text-ink">Type the price you see.</strong> Penny asks simple questions — no jargon.</p></div>
+        <div class="card p-5"><div class="text-2xl font-display font-semibold text-clay">3</div><p class="mt-2 text-sm text-cocoa leading-relaxed"><strong class="text-ink">Get the truth.</strong> Real deal, everyday price, or a fake discount — in plain words.</p></div>
+      </div>
     </section>
 
     <!-- FAQ (matches the schema above) -->
-    <section class="mt-14 max-w-3xl">
+    <section class="mt-14 max-w-3xl mx-auto">
       <h2 class="font-display text-3xl font-semibold tracking-tight">Questions people ask</h2>
       <div class="mt-6 space-y-6">
         <div><h3 class="font-semibold text-ink">How do I know if an Amazon discount is real?</h3><p class="mt-1.5 text-cocoa leading-relaxed">Compare today's price to what the product usually sells for — not to the crossed-out "was" price. If a "50% off" tag is measured against a list price nobody ever paid, the real discount can be close to zero. That comparison is exactly what this checker does.</p></div>
@@ -275,12 +307,39 @@
       </div>
     </section>
 
-    <!-- Cross-links -->
-    <section class="mt-14 mb-4 card p-6 md:p-8 max-w-3xl">
+    <section class="mt-14 mb-4 card p-6 md:p-8 max-w-3xl mx-auto">
       <h2 class="font-display text-2xl font-semibold">Skip the math — we already ran it</h2>
       <p class="mt-2 text-sm text-cocoa leading-relaxed">Every pick on this site goes through this exact scoring before we list it. Browse <a href="/#deals" class="underline font-semibold text-clay hover:text-claydark">today's picks</a>, or read <a href="/blog/how-to-spot-a-fake-amazon-discount-in-10-seconds.html" class="underline font-semibold text-clay hover:text-claydark">how to spot a fake Amazon discount in 10 seconds</a>.</p>
     </section>
   </main>
+
+  <!-- ===== ACCOUNT MODAL ===== -->
+  <dialog id="account-modal" class="rounded-2xl p-0 w-[92vw] max-w-md bg-white shadow-2xl border-0">
+    <div class="p-6 md:p-7">
+      <div class="flex items-start justify-between">
+        <h2 id="account-title" class="font-display text-2xl font-semibold tracking-tight">Create your free account</h2>
+        <button id="account-close" type="button" class="text-cocoa/50 hover:text-ink text-xl leading-none px-1" aria-label="Close">&times;</button>
+      </div>
+      <p id="account-sub" class="mt-1.5 text-sm text-cocoa leading-relaxed">Save every check, track the overpaying you've dodged, and get your picks on any device.</p>
+
+      <form id="account-form" class="mt-5 space-y-3">
+        <input id="acct-name" type="text" autocomplete="given-name" placeholder="First name"
+          class="w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-3 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40" />
+        <input id="acct-email" type="email" required autocomplete="email" placeholder="Email"
+          class="w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-3 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40" />
+        <input id="acct-password" type="password" required autocomplete="new-password" placeholder="Password (6+ characters)"
+          class="w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-3 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40" />
+        <p id="account-error" class="hidden text-xs font-semibold text-red-700"></p>
+        <button id="account-submit" type="submit" class="w-full inline-flex items-center justify-center min-h-11 rounded-full bg-clay text-cream text-sm font-bold hover:bg-claydark transition-colors">Create account</button>
+      </form>
+
+      <div class="mt-4 flex items-center justify-between text-xs font-semibold">
+        <button id="account-switch" type="button" class="text-clay hover:text-claydark underline underline-offset-2">I already have an account</button>
+        <button id="account-forgot" type="button" class="hidden text-cocoa/60 hover:text-clay underline underline-offset-2">Forgot password?</button>
+      </div>
+      <p class="mt-4 text-[11px] text-cocoa/60 leading-relaxed">Free forever. We never sell your email. As an Amazon Associate, we earn from qualifying purchases.</p>
+    </div>
+  </dialog>
 
   <footer class="bg-ink text-linen border-t border-cocoa/40 mt-12">
     <div class="container mx-auto px-4 py-10 flex flex-wrap items-start justify-between gap-8 text-sm">
@@ -295,16 +354,424 @@
 
   <script type="module">
     import { checkDeal, money, parseAmazonUrl, readTally, recordCheck, verdictShareText } from '/assets/dealcheck-core.js'
+    import * as account from '/assets/bdo-account.js'
 
     const $ = (id) => document.getElementById(id)
 
     const MOODS = {
-      bad: { ring: '#dc2626', chip: 'background:#fef2f2;color:#b91c1c' },
-      flat: { ring: '#a8a29e', chip: 'background:rgba(237,224,206,.8);color:#6B584A' },
-      good: { ring: '#059669', chip: 'background:#ecfdf5;color:#047857' },
-      great: { ring: '#047857', chip: 'background:#ecfdf5;color:#065f46' },
-      caution: { ring: '#d97706', chip: 'background:#fffbeb;color:#b45309' },
+      bad: { ring: '#dc2626', chip: 'background:#fef2f2;color:#b91c1c', emoji: '🚩' },
+      flat: { ring: '#a8a29e', chip: 'background:rgba(237,224,206,.8);color:#6B584A', emoji: '😐' },
+      good: { ring: '#059669', chip: 'background:#ecfdf5;color:#047857', emoji: '✅' },
+      great: { ring: '#047857', chip: 'background:#ecfdf5;color:#065f46', emoji: '🎉' },
+      caution: { ring: '#d97706', chip: 'background:#fffbeb;color:#b45309', emoji: '🧐' },
     }
+
+    // =====================================================================
+    // PENNY — scripted guide. One question at a time, zero jargon.
+    // =====================================================================
+    const chatLog = $('chat-log')
+    const chipRow = $('chip-row')
+    const chatInput = $('chat-input')
+    const chatForm = $('chat-form')
+    const inputPrefix = $('input-prefix')
+
+    const state = {
+      step: 'link',
+      link: null,      // parsed {asin, slugWords, camelUrl, keepaUrl}
+      rawUrl: '',
+      today: null,
+      was: null,
+      usual: null,
+      usualEstimated: false,
+      lead: {},
+      lastResult: null,
+    }
+
+    function scrollChat() { chatLog.scrollTop = chatLog.scrollHeight }
+
+    function addBubble(html, who = 'bot') {
+      const div = document.createElement('div')
+      div.className = `bubble bubble-${who} popin`
+      div.innerHTML = html
+      chatLog.appendChild(div)
+      scrollChat()
+      return div
+    }
+
+    function botSay(html, { delay = 550 } = {}) {
+      return new Promise((resolve) => {
+        const typing = document.createElement('div')
+        typing.className = 'bubble bubble-bot popin'
+        typing.innerHTML = '<span class="dot"></span> <span class="dot"></span> <span class="dot"></span>'
+        chatLog.appendChild(typing)
+        scrollChat()
+        setTimeout(() => {
+          typing.remove()
+          addBubble(html, 'bot')
+          resolve()
+        }, delay)
+      })
+    }
+
+    function setChips(chips) {
+      chipRow.innerHTML = ''
+      for (const chip of chips) {
+        const b = document.createElement('button')
+        b.type = 'button'
+        b.className = 'chip-btn'
+        b.textContent = chip.label
+        b.addEventListener('click', chip.onClick)
+        chipRow.appendChild(b)
+      }
+    }
+
+    function setInputMode({ placeholder, money = false, hidden = false }) {
+      chatForm.style.display = hidden ? 'none' : 'flex'
+      chatInput.placeholder = placeholder || ''
+      inputPrefix.classList.toggle('hidden', !money)
+      chatInput.inputMode = money ? 'decimal' : 'text'
+      if (!hidden) chatInput.focus({ preventScroll: true })
+    }
+
+    function parseMoney(text) {
+      const n = Number(String(text).replace(/[$,\s]/g, ''))
+      return Number.isFinite(n) && n > 0 && n < 100000 ? n : null
+    }
+
+    // ---- steps ----
+    async function stepStart() {
+      state.step = 'link'
+      await botSay("Hi! I'm Penny. 👋 I check whether an Amazon price is <b>actually</b> a deal — takes about ten seconds.")
+      await botSay("Got the product open on Amazon? <b>Paste its link here.</b>")
+      setChips([
+        { label: "I don't have a link", onClick: () => { addBubble("I don't have a link", 'user'); stepLookingFor() } },
+        { label: 'Just let me type prices', onClick: () => { addBubble('Just let me type prices', 'user'); state.link = null; stepToday() } },
+      ])
+      setInputMode({ placeholder: 'Paste the Amazon link here…' })
+    }
+
+    async function handleLink(text) {
+      const parsed = parseAmazonUrl(text)
+      if (!parsed) {
+        await botSay("Hmm, that doesn't look like an Amazon product link. It usually has <b>/dp/</b> in it. Try copying it straight from your browser's address bar — or tap a button below.")
+        return
+      }
+      state.link = parsed
+      state.rawUrl = text.trim()
+      const name = parsed.slugWords ? `<b>${parsed.slugWords}</b>` : 'that product'
+      await botSay(`Found it — ${name}. 🔎`)
+      // quietly log the product interest as a lead signal
+      account.saveLead({ lookingFor: parsed.slugWords || 'amazon product', source: 'link-paste', asin: parsed.asin, url: state.rawUrl.slice(0, 480) }).catch(() => {})
+      stepToday()
+    }
+
+    async function stepToday() {
+      state.step = 'today'
+      await botSay('What price does Amazon show <b>right now</b>? Just the number — like <b>48</b> or <b>48.99</b>.')
+      setChips([])
+      setInputMode({ placeholder: 'Price you see today', money: true })
+    }
+
+    async function stepWas() {
+      state.step = 'was'
+      await botSay('Is there a <b>crossed-out price</b> next to it? (Like <s>$89.99</s>.) Type it if you see one.')
+      setChips([{ label: 'No crossed-out price', onClick: () => { addBubble('No crossed-out price', 'user'); state.was = null; stepUsual() } }])
+      setInputMode({ placeholder: 'The crossed-out price', money: true })
+    }
+
+    async function stepUsual() {
+      state.step = 'usual'
+      await botSay("Last one: what does this <b>usually</b> sell for? A rough guess is fine — what you'd expect to pay on a random Tuesday.")
+      const chips = [{ label: 'No idea', onClick: () => { addBubble('No idea', 'user'); handleNoIdea() } }]
+      setChips(chips)
+      setInputMode({ placeholder: 'Your best guess', money: true })
+    }
+
+    async function handleNoIdea() {
+      if (state.was) {
+        state.usual = Math.round(state.was * 0.72 * 100) / 100
+        state.usualEstimated = true
+        await botSay(`No problem. Crossed-out prices run high, so I'll estimate it usually sells around <b>${money(state.usual)}</b> — a rough guess, not gospel.`)
+        if (state.link) {
+          await botSay(`For the real answer, its full price history is free here: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">CamelCamelCamel</a>.`)
+        }
+        stepVerdict()
+      } else if (state.link) {
+        await botSay(`Easy fix — this chart shows every price it's ever had: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">open its price history</a>. Find the price it sits at most of the year, then type it here.`)
+        setInputMode({ placeholder: 'The usual price from the chart', money: true })
+      } else {
+        await botSay("Without a usual price I can't spot a fake — so paste the product's Amazon link and I'll hand you its real price history.")
+        state.step = 'link'
+        setInputMode({ placeholder: 'Paste the Amazon link here…' })
+      }
+    }
+
+    async function stepVerdict() {
+      state.step = 'verdict'
+      setChips([])
+      setInputMode({ hidden: true })
+      const result = checkDeal(state.usual, state.today, { claimedWas: state.was ?? undefined })
+      state.lastResult = result
+      const mood = MOODS[result.tier.mood]
+
+      // update the manual panel behind the scenes too
+      $('typical-num').value = state.usual; $('typical-range').value = state.usual
+      $('today-num').value = state.today; $('today-range').value = state.today
+      $('was-num').value = state.was ?? ''
+      renderManual()
+
+      const estNote = state.usualEstimated ? ' <span style="opacity:.7">(based on my rough estimate)</span>' : ''
+      await botSay(
+        `<div style="font-weight:700;font-size:1.05rem">${mood.emoji} ${result.tier.label} — ${result.score}/100</div>` +
+        `<div style="margin-top:.35rem;font-weight:600">${result.headline}${estNote}</div>` +
+        `<div style="margin-top:.35rem">${result.subline}</div>` +
+        (result.decision ? `<div style="margin-top:.35rem;font-weight:600">${result.decision.text}</div>` : ''),
+        { delay: 800 }
+      )
+
+      recordCheck(result)
+      const user = account.currentUser()
+      if (user) {
+        account.saveCheck(user, {
+          asin: state.link?.asin ?? null,
+          product: state.link?.slugWords ?? null,
+          usual: state.usual, today: state.today, was: state.was,
+          score: result.score, tier: result.tier.label, savings: result.delta,
+        }).catch(() => {})
+        account.syncTally(user, readTally()).catch(() => {})
+        await botSay('Saved to your account. ✅ Want to check another one?')
+        setChips([{ label: 'Check another', onClick: restart }])
+      } else {
+        await botSay("Want me to <b>remember your checks</b> and add up the overpaying you dodge? Make a free account — just an email and a password.")
+        setChips([
+          { label: 'Create my free account', onClick: () => openAccountModal('signup') },
+          { label: 'Check another price', onClick: restart },
+        ])
+      }
+    }
+
+    // ---- no-link lead path ----
+    async function stepLookingFor() {
+      state.step = 'lookingFor'
+      await botSay("That's fine! Tell me <b>what you're shopping for</b> — like \"air fryer\", \"kids headphones\", \"a gift for my dad who grills\".")
+      setChips([])
+      setInputMode({ placeholder: 'What are you shopping for?' })
+    }
+
+    async function stepBudget() {
+      state.step = 'budget'
+      await botSay("What's your budget?")
+      const budgets = ['Under $25', 'Under $50', 'Under $100', 'Under $200', 'No limit']
+      setChips(budgets.map((b) => ({ label: b, onClick: () => { addBubble(b, 'user'); state.lead.budget = b; stepLeadEmail() } })))
+      setInputMode({ hidden: true })
+    }
+
+    async function stepLeadEmail() {
+      state.step = 'leadEmail'
+      await botSay("Want me to have the team send you the <b>3 best real deals</b> for that? Drop your email — or skip it, no hard feelings.")
+      setChips([{ label: 'Skip', onClick: () => { addBubble('Skip', 'user'); finishLead() } }])
+      setInputMode({ placeholder: 'you@email.com (optional)' })
+    }
+
+    const CATEGORY_MAP = [
+      [/tv|monitor|charg|cable|speaker|headphone|earbud|router|ssd|drive|power bank|dash cam|webcam|tablet|tech|electronic/i, ['Electronics', '/electronics-deals.html']],
+      [/kitchen|air fryer|coffee|espresso|pan|skillet|knife|blender|cook|baking|kettle|rice/i, ['Kitchen', '/kitchen-deals.html']],
+      [/kid|toy|school|backpack|lunch|toddler|baby|child/i, ['Kids', '/kids-deals.html']],
+      [/tool|drill|wrench|garage|work ?glove|grill/i, ['Tools', '/tools-deals.html']],
+      [/beauty|skin|hair|makeup|groom/i, ['Beauty', '/beauty-deals.html']],
+      [/fit|gym|yoga|dumbbell|exercise|workout/i, ['Fitness', '/fitness-deals.html']],
+      [/pet|dog|cat|litter/i, ['Pets', '/pets-deals.html']],
+      [/.*/, ['Home', '/home-deals.html']],
+    ]
+
+    async function finishLead() {
+      const [catName, catHref] = (CATEGORY_MAP.find(([re]) => re.test(state.lead.lookingFor || '')) || CATEGORY_MAP.at(-1))[1]
+      account.saveLead({
+        lookingFor: state.lead.lookingFor || '',
+        budget: state.lead.budget,
+        email: state.lead.email,
+        source: 'penny-no-link',
+      }).catch(() => {})
+      if (state.lead.email) {
+        await botSay("Done — keep an eye on your inbox. 📬")
+      }
+      await botSay(`Meanwhile, our researched <a class="underline font-semibold" style="color:#B85C38" href="${catHref}">${catName} picks</a> are already scored and sorted by budget — that's the fastest path.`)
+      await botSay('And whenever you find a product, come back and <b>paste its link</b> — I\'ll tell you if the price is real.')
+      setChips([{ label: 'I have a link now', onClick: () => { addBubble('I have a link now', 'user'); state.step = 'link'; setInputMode({ placeholder: 'Paste the Amazon link here…' }) } }])
+      setInputMode({ placeholder: 'Paste the Amazon link here…' })
+      state.step = 'link'
+    }
+
+    async function handleText(text) {
+      switch (state.step) {
+        case 'link':
+          if (parseMoney(text) && !/amazon|a\.co|amzn/i.test(text)) {
+            // they typed a price at the link prompt — roll with it
+            addBubble(text, 'user')
+            state.today = parseMoney(text)
+            await botSay(`$${state.today} — got it.`)
+            return stepWas()
+          }
+          addBubble(text.length > 60 ? text.slice(0, 57) + '…' : text, 'user')
+          return handleLink(text)
+        case 'today': {
+          const n = parseMoney(text)
+          addBubble(text, 'user')
+          if (!n) return botSay('Just the number is perfect — like <b>34.99</b>.')
+          state.today = n
+          return stepWas()
+        }
+        case 'was': {
+          const n = parseMoney(text)
+          addBubble(text, 'user')
+          if (!n) return botSay("If there's no crossed-out price, tap the button below — otherwise type the number, like <b>89.99</b>.")
+          state.was = n
+          return stepUsual()
+        }
+        case 'usual': {
+          const n = parseMoney(text)
+          addBubble(text, 'user')
+          if (!n) return botSay('A number works best — your rough guess, like <b>60</b>.')
+          state.usual = n
+          state.usualEstimated = false
+          return stepVerdict()
+        }
+        case 'lookingFor':
+          addBubble(text, 'user')
+          state.lead.lookingFor = text
+          return stepBudget()
+        case 'leadEmail': {
+          addBubble(text, 'user')
+          if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(text.trim())) {
+            state.lead.email = text.trim()
+            return finishLead()
+          }
+          return botSay("That email looks off — double-check it, or tap <b>Skip</b>.")
+        }
+        default:
+          return
+      }
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const text = chatInput.value.trim()
+      if (!text) return
+      chatInput.value = ''
+      handleText(text)
+    })
+
+    function restart() {
+      chatLog.innerHTML = ''
+      Object.assign(state, { step: 'link', link: null, rawUrl: '', today: null, was: null, usual: null, usualEstimated: false, lead: {}, lastResult: null })
+      stepStart()
+    }
+    $('restart-chat').addEventListener('click', restart)
+
+    // =====================================================================
+    // ACCOUNT UI
+    // =====================================================================
+    const modal = $('account-modal')
+    let accountMode = 'signup'
+
+    function openAccountModal(mode) {
+      accountMode = mode
+      $('account-title').textContent = mode === 'signup' ? 'Create your free account' : 'Welcome back'
+      $('account-sub').textContent = mode === 'signup'
+        ? 'Save every check, track the overpaying you’ve dodged, and get your picks on any device.'
+        : 'Sign in to see your saved checks.'
+      $('acct-name').classList.toggle('hidden', mode !== 'signup')
+      $('account-submit').textContent = mode === 'signup' ? 'Create account' : 'Sign in'
+      $('account-switch').textContent = mode === 'signup' ? 'I already have an account' : "I'm new — create an account"
+      $('account-forgot').classList.toggle('hidden', mode !== 'signin')
+      $('account-error').classList.add('hidden')
+      modal.showModal()
+    }
+    window.openAccountModal = openAccountModal
+
+    $('account-close').addEventListener('click', () => modal.close())
+    $('account-switch').addEventListener('click', () => openAccountModal(accountMode === 'signup' ? 'signin' : 'signup'))
+    $('account-forgot').addEventListener('click', async () => {
+      const email = $('acct-email').value.trim()
+      const errEl = $('account-error')
+      if (!email) { errEl.textContent = 'Type your email above first, then tap this again.'; errEl.classList.remove('hidden'); return }
+      try {
+        await account.resetPassword(email)
+        errEl.textContent = 'Reset email sent — check your inbox.'
+        errEl.classList.remove('hidden')
+      } catch (err) {
+        errEl.textContent = account.friendlyAuthError(err)
+        errEl.classList.remove('hidden')
+      }
+    })
+
+    $('account-form').addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const errEl = $('account-error')
+      errEl.classList.add('hidden')
+      const btn = $('account-submit')
+      btn.disabled = true
+      btn.textContent = 'One sec…'
+      try {
+        if (accountMode === 'signup') {
+          await account.signUp($('acct-email').value, $('acct-password').value, $('acct-name').value)
+          const first = ($('acct-name').value.trim() || $('acct-email').value).split(/[@\s]/)[0]
+          $('nav-account').textContent = `Hi, ${first} · Sign out`
+        } else {
+          await account.signIn($('acct-email').value, $('acct-password').value)
+        }
+        modal.close()
+      } catch (err) {
+        errEl.textContent = account.friendlyAuthError(err)
+        errEl.classList.remove('hidden')
+      } finally {
+        btn.disabled = false
+        btn.textContent = accountMode === 'signup' ? 'Create account' : 'Sign in'
+      }
+    })
+
+    async function renderMyChecks(user) {
+      const wrap = $('my-checks')
+      if (!user) { wrap.classList.add('hidden'); return }
+      const checks = await account.loadRecentChecks(user, 8).catch(() => [])
+      if (!checks.length) { wrap.classList.add('hidden'); return }
+      const list = $('my-checks-list')
+      list.innerHTML = checks.map((c) => `
+        <div class="flex items-center justify-between gap-3 px-5 py-3.5">
+          <div class="min-w-0">
+            <div class="text-sm font-semibold text-ink truncate">${(c.product || (c.asin ? 'Amazon item ' + c.asin : 'Price check')).replace(/</g, '&lt;')}</div>
+            <div class="text-xs text-cocoa/70 tabular">usually $${c.usual} · today $${c.today}</div>
+          </div>
+          <span class="shrink-0 text-xs font-bold tabular ${c.score >= 60 ? 'text-emerald-700' : c.score >= 45 ? 'text-amber-700' : 'text-cocoa'}">${c.tier} · ${c.score}</span>
+        </div>`).join('')
+      wrap.classList.remove('hidden')
+    }
+
+    account.watchAuth((user) => {
+      const btn = $('nav-account')
+      if (user) {
+        const name = (user.displayName || user.email || '').split(/[@\s]/)[0]
+        btn.textContent = `Hi, ${name} · Sign out`
+        btn.onclick = () => account.logOut()
+        account.syncTally(user, readTally()).catch(() => {})
+      } else {
+        btn.textContent = 'Sign in'
+        btn.onclick = () => openAccountModal('signin')
+        $('my-checks').classList.add('hidden')
+      }
+      renderMyChecks(user)
+    })
+
+    // =====================================================================
+    // MANUAL MODE (same engine, for slider people)
+    // =====================================================================
+    $('toggle-manual').addEventListener('click', () => {
+      const wrap = $('manual-wrap')
+      const showing = !wrap.classList.contains('hidden')
+      wrap.classList.toggle('hidden')
+      $('toggle-manual').textContent = showing ? 'Prefer sliders? Open manual mode' : 'Hide manual mode'
+      if (!showing) renderManual()
+    })
 
     const PRESETS = [
       { label: 'Everyday price', typical: 40, today: 39, was: '' },
@@ -312,35 +779,28 @@
       { label: 'Rare deep drop', typical: 80, today: 34, was: '' },
       { label: '"50% off!" trap', typical: 50, today: 48, was: 90 },
     ]
-
-    const presetsEl = $('presets')
     const presetButtons = []
     for (const p of PRESETS) {
-      const btn = document.createElement('button')
-      btn.type = 'button'
-      btn.textContent = p.label
-      btn.addEventListener('click', () => {
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.textContent = p.label
+      b.addEventListener('click', () => {
         $('typical-num').value = p.typical; $('typical-range').value = p.typical
         $('today-num').value = p.today; $('today-range').value = p.today
         $('was-num').value = p.was
-        render()
+        renderManual()
       })
-      presetsEl.appendChild(btn)
-      presetButtons.push({ btn, p })
+      $('presets').appendChild(b)
+      presetButtons.push({ b, p })
     }
-
     function highlightPresets() {
       const t = Number($('typical-num').value), d = Number($('today-num').value), w = String($('was-num').value)
-      for (const { btn, p } of presetButtons) {
+      for (const { b, p } of presetButtons) {
         const active = t === p.typical && d === p.today && w === String(p.was)
-        btn.className = `px-3.5 py-2 min-h-10 rounded-xl text-xs font-semibold transition-all ${
-          active ? 'bg-white text-ink shadow-sm' : 'text-cocoa hover:text-ink'
-        }`
-        btn.style.boxShadow = active ? '0 0 0 1px rgba(56,44,34,.05), 0 1px 2px rgba(56,44,34,.08)' : 'none'
+        b.className = `px-3.5 py-2 min-h-10 rounded-xl text-xs font-semibold transition-all ${active ? 'bg-white text-ink shadow-sm' : 'text-cocoa hover:text-ink'}`
       }
     }
 
-    // Animated count-up for the score reveal.
     let displayedScore = 0
     let scoreRaf = null
     function animateScore(target) {
@@ -350,8 +810,7 @@
       const start = performance.now()
       const step = (now) => {
         const t = Math.min(1, (now - start) / 500)
-        const eased = 1 - (1 - t) ** 3
-        displayedScore = Math.round(from + (target - from) * eased)
+        displayedScore = Math.round(from + (target - from) * (1 - (1 - t) ** 3))
         $('score').textContent = displayedScore
         if (t < 1) scoreRaf = requestAnimationFrame(step)
       }
@@ -378,30 +837,28 @@
     }
 
     let tallyTimer = null
-    let lastResult = null
+    let lastManualResult = null
 
-    function render() {
+    function renderManual() {
       const typical = Math.max(1, Number($('typical-num').value) || 1)
       const today = Math.max(1, Number($('today-num').value) || 1)
       const wasRaw = $('was-num').value
       const claimedWas = wasRaw === '' ? undefined : Number(wasRaw)
 
       const result = checkDeal(typical, today, { claimedWas })
-      lastResult = result
+      lastManualResult = result
       const mood = MOODS[result.tier.mood]
 
       const chip = $('tier-chip')
       chip.textContent = result.tier.label
       chip.style.cssText = mood.chip + ';box-shadow:inset 0 0 0 1px rgba(56,44,34,.08)'
-
       $('headline').textContent = result.headline
       $('subline').textContent = result.subline
 
       animateScore(result.score)
       const C = 2 * Math.PI * 52
-      const ring = $('ring')
-      ring.setAttribute('stroke', mood.ring)
-      ring.setAttribute('stroke-dashoffset', (C * (1 - Math.max(0, Math.min(100, result.score)) / 100)).toFixed(1))
+      $('ring').setAttribute('stroke', mood.ring)
+      $('ring').setAttribute('stroke-dashoffset', (C * (1 - Math.max(0, Math.min(100, result.score)) / 100)).toFixed(1))
 
       const bars = $('claim-bars')
       if (result.claimedDiscount != null) {
@@ -420,15 +877,11 @@
       drawSpark(result.history, result.baseline, today, mood.ring)
 
       const pl = $('percentile-line')
-      if (result.percentileLine) { pl.textContent = result.percentileLine; pl.classList.remove('hidden') }
-      else pl.classList.add('hidden')
-
+      if (result.percentileLine) { pl.textContent = result.percentileLine; pl.classList.remove('hidden') } else pl.classList.add('hidden')
       const dl = $('decision-line')
-      if (result.decision) { dl.textContent = result.decision.text; dl.classList.remove('hidden') }
-      else dl.classList.add('hidden')
+      if (result.decision) { dl.textContent = result.decision.text; dl.classList.remove('hidden') } else dl.classList.add('hidden')
 
       highlightPresets()
-
       clearTimeout(tallyTimer)
       tallyTimer = setTimeout(() => { updateTally(recordCheck(result)) }, 900)
     }
@@ -441,32 +894,17 @@
       }
     }
 
-    // Sync number <-> range pairs.
     for (const key of ['typical', 'today']) {
-      $(`${key}-num`).addEventListener('input', () => { $(`${key}-range`).value = $(`${key}-num`).value; render() })
-      $(`${key}-range`).addEventListener('input', () => { $(`${key}-num`).value = $(`${key}-range`).value; render() })
+      $(`${key}-num`).addEventListener('input', () => { $(`${key}-range`).value = $(`${key}-num`).value; renderManual() })
+      $(`${key}-range`).addEventListener('input', () => { $(`${key}-num`).value = $(`${key}-range`).value; renderManual() })
     }
-    $('was-num').addEventListener('input', render)
-
-    $('url-input').addEventListener('input', () => {
-      const parsed = parseAmazonUrl($('url-input').value)
-      const out = $('url-result')
-      if (parsed) {
-        out.innerHTML = `${parsed.slugWords ? `<strong class="text-ink font-semibold">${parsed.slugWords.replace(/</g, '&lt;')}.</strong> ` : ''}Verify its real price history: <a class="underline font-semibold text-clay hover:text-claydark" target="_blank" rel="noopener noreferrer" href="${parsed.camelUrl}">CamelCamelCamel</a> · <a class="underline font-semibold text-clay hover:text-claydark" target="_blank" rel="noopener noreferrer" href="${parsed.keepaUrl}">Keepa</a>`
-        out.classList.remove('hidden')
-      } else if ($('url-input').value.trim()) {
-        out.textContent = "That doesn't look like an Amazon product link yet."
-        out.classList.remove('hidden')
-      } else {
-        out.classList.add('hidden')
-      }
-    })
+    $('was-num').addEventListener('input', renderManual)
 
     $('copy-btn').addEventListener('click', () => {
-      if (!lastResult) return
+      if (!lastManualResult) return
       const typical = Math.max(1, Number($('typical-num').value) || 1)
       const today = Math.max(1, Number($('today-num').value) || 1)
-      const text = verdictShareText(typical, today, lastResult)
+      const text = verdictShareText(typical, today, lastManualResult)
       if (navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(text).then(() => {
           $('copy-btn').textContent = 'Copied!'
@@ -475,8 +913,10 @@
       }
     })
 
+    // boot
     updateTally(readTally())
-    render()
+    renderManual()
+    stepStart()
   </script>
 </body>
 </html>
