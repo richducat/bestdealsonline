@@ -34,4 +34,10 @@ if (existsSync(oldAssets)) {
 cpSync(join(distDir, 'index.html'), join(repoRoot, 'index.html'))
 cpSync(join(distDir, 'assets'), join(repoRoot, 'assets'), { recursive: true })
 
+// The standalone /deal-check.html page imports the scoring engine as
+// native ESM straight from /assets/, so keep those copies in lockstep
+// with the app's source on every build.
+cpSync(join(process.cwd(), 'src', 'dealtruth.js'), join(repoRoot, 'assets', 'dealtruth.js'))
+cpSync(join(process.cwd(), 'src', 'dealcheck-core.js'), join(repoRoot, 'assets', 'dealcheck-core.js'))
+
 console.log('Copied build output to repo root.')

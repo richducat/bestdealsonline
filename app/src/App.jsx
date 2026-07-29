@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowUpRight,
   Baby,
@@ -20,7 +20,7 @@ import {
   Wallet,
   X,
 } from 'lucide-react'
-import { dealTruthScore } from './dealtruth.js'
+import { checkDeal, money, parseAmazonUrl, readTally, recordCheck, verdictShareText } from './dealcheck-core.js'
 
 const CATEGORIES = [
   {
@@ -340,52 +340,6 @@ function pickFeatured(items, count) {
   return picked
 }
 
-// Deterministic seeded PRNG so the demo's "example" history is stable
-// across re-renders instead of jittering on every slider move.
-function seededRandom(seed) {
-  let s = seed % 2147483647
-  if (s <= 0) s += 2147483646
-  return () => {
-    s = (s * 16807) % 2147483647
-    return (s - 1) / 2147483646
-  }
-}
-
-// Builds a plausible 120-day price history ending at todayPrice, mostly
-// hovering near typicalPrice with small daily noise -- fed into the real
-// dealTruthScore() algorithm so the interactive demo runs genuine scoring
-// logic on a clearly-labeled example, never claiming to be a real product.
-function buildExampleHistory(typicalPrice, todayPrice) {
-  const rand = seededRandom(Math.round(typicalPrice * 97 + todayPrice * 13) || 1)
-  const days = 120
-  const history = []
-  const now = Date.now()
-  const DAY_MS = 24 * 60 * 60 * 1000
-  for (let i = days; i >= 1; i -= 1) {
-    const noise = (rand() - 0.5) * 0.05
-    const price = Math.max(1, Math.round(typicalPrice * (1 + noise) * 100) / 100)
-    history.push({ price, timestamp: now - i * DAY_MS })
-  }
-  history.push({ price: Math.max(1, Math.round(todayPrice * 100) / 100), timestamp: now })
-  return history
-}
-
-function runExampleScore(typicalPrice, todayPrice) {
-  const priceHistory = buildExampleHistory(typicalPrice, todayPrice)
-  return dealTruthScore({
-    title: 'Example product',
-    rating: 4.3,
-    reviews: 2400,
-    priceHistory,
-    offer: {
-      itemPrice: todayPrice,
-      isPrime: true,
-      soldByAmazon: true,
-      shipsFromAmazon: true,
-    },
-  })
-}
-
 // Set VITE_DEALS_API_BASE (e.g. https://bestdealsonline-worker.<account>.workers.dev)
 // to switch from the static product list to live DealTruth-scored deals.
 // Unset by default -- the site works exactly as it does today until this
@@ -490,7 +444,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-cocoa">
           <a href="#deals" className="hover:text-clay transition-colors">Today's Picks</a>
-          <a href="#demo" className="hover:text-clay transition-colors">How It Works</a>
+          <a href="#demo" className="hover:text-clay transition-colors">Deal Checker</a>
           <a href="#categories" className="hover:text-clay transition-colors">Categories</a>
           <a href="#research" className="hover:text-clay transition-colors">Research</a>
           <a href="/blog/index.html" className="hover:text-clay transition-colors">Blog</a>
@@ -500,7 +454,7 @@ const Navbar = () => {
       {mobileMenuOpen ? (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-1 text-sm font-semibold text-cocoa">
           <a href="#deals" className="min-h-11 flex items-center hover:text-clay">Today's Picks</a>
-          <a href="#demo" className="min-h-11 flex items-center hover:text-clay">How It Works</a>
+          <a href="#demo" className="min-h-11 flex items-center hover:text-clay">Deal Checker</a>
           <a href="#categories" className="min-h-11 flex items-center hover:text-clay">Categories</a>
           <a href="#research" className="min-h-11 flex items-center hover:text-clay">Research</a>
           <a href="/blog/index.html" className="min-h-11 flex items-center hover:text-clay">Blog</a>
@@ -760,46 +714,225 @@ const CategoryGrid = ({ counts }) => (
 )
 
 const DEMO_PRESETS = [
-  { label: 'Everyday price', typical: 40, today: 39 },
-  { label: 'Solid deal', typical: 60, today: 42 },
-  { label: 'Rare deep drop', typical: 80, today: 34 },
+  { label: 'Everyday price', typical: 40, today: 39, was: '' },
+  { label: 'Solid deal', typical: 60, today: 42, was: '' },
+  { label: 'Rare deep drop', typical: 80, today: 34, was: '' },
+  { label: '"50% off!" trap', typical: 50, today: 48, was: 90 },
 ]
+
+// Verdict styling per tier mood, on the site's warm palette.
+const MOOD_STYLES = {
+  bad: { text: 'text-clay', ring: '#B85C38', chip: 'bg-clay/10 text-claydark border-clay/30' },
+  flat: { text: 'text-cocoa', ring: '#6B584A', chip: 'bg-linen text-cocoa border-linen' },
+  good: { text: 'text-sagedark', ring: '#77816B', chip: 'bg-sage/15 text-sagedark border-sage/40' },
+  great: { text: 'text-sagedark', ring: '#5C6652', chip: 'bg-sage/25 text-sagedark border-sage/50' },
+  caution: { text: 'text-amber-700', ring: '#b45309', chip: 'bg-amber-50 text-amber-800 border-amber-200' },
+}
+
+// Animated count-up so the score reveal feels like a reveal.
+function useCountUp(target, duration = 500) {
+  const [value, setValue] = useState(target)
+  const fromRef = useRef(target)
+  useEffect(() => {
+    const from = fromRef.current
+    if (from === target) return undefined
+    const start = performance.now()
+    let raf
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - (1 - t) ** 3
+      const next = Math.round(from + (target - from) * eased)
+      setValue(next)
+      if (t < 1) raf = requestAnimationFrame(tick)
+      else fromRef.current = target
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, duration])
+  return value
+}
+
+// SVG ring meter for the 0-100 score.
+const ScoreRing = ({ score, color }) => {
+  const displayed = useCountUp(score)
+  const r = 52
+  const c = 2 * Math.PI * r
+  return (
+    <div className="relative h-32 w-32 shrink-0">
+      <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+        <circle cx="60" cy="60" r={r} fill="none" stroke="#EDE0CE" strokeWidth="10" />
+        <circle
+          cx="60"
+          cy="60"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - Math.max(0, Math.min(100, score)) / 100)}
+          style={{ transition: 'stroke-dashoffset 0.5s ease, stroke 0.3s ease' }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="text-3xl font-extrabold text-ink leading-none tabular-nums">{displayed}</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-cocoa mt-1">of 100</div>
+      </div>
+    </div>
+  )
+}
+
+// 120-day example price chart: history line, dashed usual-price line,
+// today's price dot. Clearly labeled as a simulated example.
+const PriceSparkline = ({ history, baseline, todayPrice, ringColor }) => {
+  const W = 340
+  const H = 96
+  const PAD = 8
+  const prices = history.map((h) => h.price)
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
+  const span = Math.max(0.01, max - min)
+  const x = (i) => PAD + (i / (history.length - 1)) * (W - PAD * 2)
+  const y = (p) => PAD + (1 - (p - min) / span) * (H - PAD * 2)
+  const path = history.map((h, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(h.price).toFixed(1)}`).join(' ')
+  const baselineY = Number.isFinite(baseline) ? y(baseline) : null
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Example price history chart">
+        {baselineY != null ? (
+          <line x1={PAD} x2={W - PAD} y1={baselineY} y2={baselineY} stroke="#6B584A" strokeWidth="1" strokeDasharray="4 4" opacity="0.5" />
+        ) : null}
+        <path d={path} fill="none" stroke="#B85C38" strokeWidth="1.5" opacity="0.55" />
+        <circle cx={x(history.length - 1)} cy={y(todayPrice)} r="4.5" fill={ringColor} stroke="#fff" strokeWidth="2" />
+      </svg>
+      <div className="flex items-center justify-between text-[10px] text-cocoa/70 font-semibold">
+        <span>120 days ago</span>
+        <span className="inline-flex items-center gap-1">
+          <span className="inline-block w-4 border-t border-dashed border-cocoa/60" /> usual price
+        </span>
+        <span>today</span>
+      </div>
+    </div>
+  )
+}
+
+// Claimed-vs-real discount bars: the "Amazon says -47%, reality -4%" moment.
+const ClaimVsReal = ({ claimedPct, realPct }) => (
+  <div className="mt-4 space-y-2">
+    {[
+      { label: 'The sticker claims', pct: claimedPct, color: 'bg-cocoa/30', textColor: 'text-cocoa' },
+      { label: 'Real drop vs usual price', pct: Math.max(0, realPct), color: 'bg-clay', textColor: 'text-claydark' },
+    ].map((bar) => (
+      <div key={bar.label}>
+        <div className="flex items-baseline justify-between text-xs font-bold">
+          <span className="text-cocoa">{bar.label}</span>
+          <span className={`${bar.textColor} tabular-nums`}>{bar.pct <= 0 ? '0' : Math.round(bar.pct)}% off</span>
+        </div>
+        <div className="mt-1 h-2 rounded-full bg-linen overflow-hidden">
+          <div
+            className={`h-full rounded-full ${bar.color} transition-all duration-500`}
+            style={{ width: `${Math.max(2, Math.min(100, bar.pct))}%` }}
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+)
+
+const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
+  return (
+    <label className="block mt-5">
+      <span className="flex items-baseline justify-between">
+        <span className="text-sm font-bold text-ink">{label}</span>
+        {hint ? <span className="text-[11px] text-cocoa/70">{hint}</span> : null}
+      </span>
+      <div className="mt-2 flex items-center gap-3">
+        <div className="flex items-center rounded-xl border border-linen bg-cream px-3 focus-within:border-clay">
+          <span className="text-sm font-bold text-cocoa">$</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={optional ? undefined : min}
+            max={max}
+            value={value}
+            placeholder={optional ? '—' : undefined}
+            onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
+            className="w-20 bg-transparent py-2.5 pl-1 text-sm font-extrabold text-ink outline-none tabular-nums"
+          />
+        </div>
+        {!optional ? (
+          <input
+            type="range"
+            min={min}
+            max={max}
+            value={Number(value) || min}
+            onChange={(e) => onChange(Number(e.target.value))}
+            className="w-full accent-clay"
+            aria-label={`${label} slider`}
+          />
+        ) : null}
+      </div>
+    </label>
+  )
+}
 
 const DealTruthDemo = () => {
   const [typical, setTypical] = useState(60)
   const [today, setToday] = useState(42)
+  const [was, setWas] = useState('')
+  const [url, setUrl] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [tally, setTally] = useState(() => readTally())
 
-  const result = useMemo(() => runExampleScore(typical, today), [typical, today])
-  const scoreColor = result.notMeaningfulDeal
-    ? 'text-cocoa bg-linen'
-    : result.score >= 70
-      ? 'text-sagedark bg-sage/15'
-      : result.score >= 45
-        ? 'text-amber-700 bg-amber-50'
-        : 'text-cocoa bg-linen'
+  const typicalNum = Math.max(1, Number(typical) || 1)
+  const todayNum = Math.max(1, Number(today) || 1)
+  const wasNum = was === '' ? null : Number(was)
+
+  const result = useMemo(
+    () => checkDeal(typicalNum, todayNum, { claimedWas: wasNum ?? undefined }),
+    [typicalNum, todayNum, wasNum]
+  )
+  const parsedUrl = useMemo(() => parseAmazonUrl(url), [url])
+  const mood = MOOD_STYLES[result.tier.mood]
+
+  // Count a "check" once the numbers settle, so the tally feels like a
+  // running scorecard without incrementing on every slider pixel.
+  useEffect(() => {
+    const timer = setTimeout(() => setTally(recordCheck(result)), 900)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typicalNum, todayNum, wasNum])
+
+  const copyVerdict = () => {
+    const text = verdictShareText(typicalNum, todayNum, result)
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1600)
+      })
+    }
+  }
 
   return (
     <section id="demo" className="border-y border-linen bg-sand">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <SectionHeader
-          eyebrow="How It Works"
-          title="How we spot a real discount"
+          eyebrow="The DealTruth Checker"
+          title="Is that price actually a deal?"
           body={
-            'Stores love to shout "50% off!" — but off of what? Before we call anything a deal, we compare today\'s price to what the product normally costs. You can try it yourself with the example below.'
+            'Stores shout "50% off!" — but off of what? Put any price through the same check we run on every pick: the real discount against what it normally sells for, not against a made-up sticker.'
           }
         />
 
-        <div className="mt-8 grid lg:grid-cols-2 gap-8 items-start">
+        <div className="mt-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-6 lg:gap-8 items-start">
+          {/* Inputs */}
           <div className="rounded-3xl border border-linen bg-white p-6">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-cocoa">
-              <SlidersHorizontal size={14} /> Try it — you set both prices
+              <SlidersHorizontal size={14} /> Check a price
             </div>
-            <p className="mt-2 text-sm text-cocoa leading-relaxed">
-              Pretend you're eyeing a product. Move the two sliders (or tap a preset) and we'll tell you whether
-              that price is actually worth jumping on. This is just an example — not a real product.
-            </p>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               {DEMO_PRESETS.map((preset) => (
                 <button
                   key={preset.label}
@@ -807,6 +940,7 @@ const DealTruthDemo = () => {
                   onClick={() => {
                     setTypical(preset.typical)
                     setToday(preset.today)
+                    setWas(preset.was)
                   }}
                   className="px-3 py-2 min-h-11 rounded-full border border-linen bg-cream text-xs font-bold text-cocoa hover:border-clay hover:text-clay transition-colors"
                 >
@@ -815,50 +949,100 @@ const DealTruthDemo = () => {
               ))}
             </div>
 
-            <label className="block mt-6">
-              <span className="text-sm font-bold text-ink">What it usually costs: ${typical}</span>
-              <input
-                type="range"
-                min="10"
-                max="200"
-                value={typical}
-                onChange={(e) => setTypical(Number(e.target.value))}
-                className="w-full mt-2 accent-clay"
-              />
-            </label>
+            <PriceField
+              label="What it usually sells for"
+              hint="not the crossed-out price"
+              value={typical}
+              onChange={setTypical}
+              min={10}
+              max={200}
+            />
+            <PriceField label="Price today" value={today} onChange={setToday} min={5} max={200} />
+            <PriceField
+              label={'Amazon’s crossed-out "was" price'}
+              hint="optional — catches fake sales"
+              value={was}
+              onChange={setWas}
+              min={5}
+              max={400}
+              optional
+            />
 
-            <label className="block mt-5">
-              <span className="text-sm font-bold text-ink">What it costs today: ${today}</span>
-              <input
-                type="range"
-                min="5"
-                max="200"
-                value={today}
-                onChange={(e) => setToday(Number(e.target.value))}
-                className="w-full mt-2 accent-clay"
-              />
-            </label>
+            <div className="mt-6 border-t border-linen pt-5">
+              <label className="block">
+                <span className="text-sm font-bold text-ink">Checking a real product?</span>
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="Paste the Amazon link (optional)"
+                  className="mt-2 w-full rounded-xl border border-linen bg-cream px-3 py-2.5 text-sm text-ink outline-none focus:border-clay placeholder:text-cocoa/50"
+                />
+              </label>
+              {parsedUrl ? (
+                <p className="mt-2 text-xs text-cocoa leading-relaxed">
+                  {parsedUrl.slugWords ? <span className="font-bold text-ink">{parsedUrl.slugWords}. </span> : null}
+                  Verify its real price history:{' '}
+                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-bold text-clay">
+                    CamelCamelCamel
+                  </a>{' '}
+                  ·{' '}
+                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-bold text-clay">
+                    Keepa
+                  </a>
+                </p>
+              ) : url.trim() ? (
+                <p className="mt-2 text-xs text-cocoa/70">That doesn't look like an Amazon product link yet.</p>
+              ) : null}
+            </div>
           </div>
 
-          <div className="rounded-3xl border border-linen bg-white p-6">
-            <div className="text-xs font-bold uppercase tracking-[0.14em] text-cocoa">Our verdict on this price</div>
-            <div className={`mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-extrabold ${scoreColor}`}>
-              <Sparkles size={15} /> Deal score: {result.score} out of 100
+          {/* Verdict */}
+          <div className="rounded-3xl border border-linen bg-white p-6" aria-live="polite">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-[0.08em] ${mood.chip}`}>
+                  {result.tier.label}
+                </span>
+                <h3 className={`mt-3 font-display text-2xl md:text-[1.7rem] font-semibold leading-tight ${mood.text}`}>
+                  {result.headline}
+                </h3>
+                <p className="mt-2 text-sm text-cocoa leading-relaxed">{result.subline}</p>
+              </div>
+              <ScoreRing score={result.score} color={mood.ring} />
             </div>
-            <p className="mt-2 text-xs text-cocoa">The higher the score, the better a time it is to buy.</p>
-            {result.notMeaningfulDeal ? (
-              <p className="mt-4 text-sm font-bold text-cocoa">At these numbers, this isn't really a deal — we'd wait.</p>
+
+            {result.claimedDiscount != null ? (
+              <ClaimVsReal claimedPct={result.claimedDiscount * 100} realPct={result.discount * 100} />
             ) : null}
-            <ul className="mt-4 space-y-3 text-sm text-cocoa">
-              <li>{result.explanations.discountLine}</li>
-              <li>{result.explanations.rarityLine}</li>
-              <li>{result.explanations.confidenceLine}</li>
-              <li className="font-bold text-ink">{result.explanations.decisionLine}</li>
+
+            <div className="mt-5 rounded-2xl border border-linen bg-cream/60 p-4">
+              <PriceSparkline history={result.history} baseline={result.baseline} todayPrice={todayNum} ringColor={mood.ring} />
+            </div>
+
+            <ul className="mt-4 space-y-1.5 text-sm text-cocoa">
+              {result.percentileLine ? <li>{result.percentileLine}</li> : null}
+              {result.decision ? <li className="font-bold text-ink">{result.decision.text}</li> : null}
+              <li className="text-xs text-cocoa/70">
+                Example scoring on a simulated history — the same math our live picks go through.{' '}
+                <a href="/online-deals-methodology.html" className="underline">How we pick deals</a>
+              </li>
             </ul>
-            <p className="mt-6 text-xs text-cocoa/80 leading-relaxed">
-              Every scored pick on this site goes through this exact check: how big the discount really is, and how rarely
-              the price drops this low. Curious? Read <a href="/online-deals-methodology.html" className="underline font-bold">how we pick deals</a>.
-            </p>
+
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-linen pt-4">
+              <button
+                type="button"
+                onClick={copyVerdict}
+                className="inline-flex items-center gap-1.5 min-h-11 px-4 rounded-full bg-ink text-cream text-xs font-bold hover:bg-clay transition-colors"
+              >
+                <Sparkles size={13} /> {copied ? 'Copied!' : 'Copy this verdict'}
+              </button>
+              {tally.checks >= 3 ? (
+                <span className="text-xs text-cocoa font-semibold tabular-nums">
+                  {tally.checks} checks run{tally.avoided >= 1 ? ` · ${money(tally.avoided)} of overpaying dodged` : ''}
+                </span>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
