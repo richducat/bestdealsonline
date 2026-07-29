@@ -49,7 +49,13 @@ async function* walk(dir) {
 
 function urlFor(rel) {
   const clean = rel.split(path.sep).join('/')
-  return clean === 'index.html' ? `${BASE_URL}/` : `${BASE_URL}/${clean}`
+  if (clean === 'index.html') return `${BASE_URL}/`
+  // All pages canonicalize WITH .html — the sitemap must match rel=canonical exactly.
+  return `${BASE_URL}/${clean}`
+}
+
+function isRedirectStub(html) {
+  return html.includes('http-equiv="refresh"')
 }
 
 function xmlEscape(value) {
@@ -96,6 +102,7 @@ for await (const filePath of walk(ROOT)) {
   const stat = await fs.stat(filePath)
   const fallbackDate = stat.mtime.toISOString().slice(0, 10)
   const html = await fs.readFile(filePath, 'utf8')
+  if (isRedirectStub(html)) continue // consolidated doorway pages: not in sitemap
   urls.push({
     rel,
     loc: urlFor(rel),
