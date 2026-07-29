@@ -106,33 +106,43 @@ export function checkDeal(typical, today, options = {}) {
   const pct = Math.round(Math.abs(discount) * 100)
   const claimedPct = claimedDiscount != null ? Math.round(claimedDiscount * 100) : null
 
+  // Every verdict leads with a command — what to DO — then one plain
+  // sentence of why. No analyst talk.
+  let action
   let headline
   let subline
 
   if (tier.key === 'fake') {
-    headline = `The "${claimedPct}% off" tag doesn't hold up`
+    action = "Skip it — that sale tag is a trick"
+    headline = `"${claimedPct}% off" is fake`
     subline =
       discount < 0
-        ? `Measured against what this actually sells for, you'd still pay ${money(delta)} more than usual. The crossed-out price is inflated.`
-        : `Measured against what this actually sells for, the real discount is ${pct}%. The crossed-out price is inflated.`
+        ? `That crossed-out price is made up. This thing normally costs ${money(typical)} — so this "sale" actually charges you ${money(delta)} EXTRA. Don't fall for it.`
+        : `That crossed-out price is made up. This thing normally costs ${money(typical)}, so you'd really only save ${money(delta)} — not the ${claimedPct}% they're yelling about.`
   } else if (tier.key === 'overpriced') {
-    headline = `${money(delta)} above the usual price`
-    subline = `Today's price is ${pct}% higher than what this normally sells for. There's no reason to buy at this number.`
+    action = "Don't buy it today"
+    headline = `You'd pay ${money(delta)} too much`
+    subline = `It normally costs ${money(typical)}. Today they want ${money(today)}. Wait, and that ${money(delta)} stays in your pocket.`
   } else if (tier.key === 'everyday') {
-    headline = 'This is the normal price'
-    subline = 'No real savings here. If you need it, buy it — but nothing about this price should rush you.'
+    action = 'No rush — this is the everyday price'
+    headline = "There's no sale happening here"
+    subline = `This is what it always costs. Need it today? Fine, buy it. Don't need it today? Nothing is slipping away.`
   } else if (tier.key === 'mild') {
-    headline = `A small dip — ${money(delta)} below usual`
-    subline = `${pct}% off is within this product's normal price movement. It reaches this price often, so there's no urgency.`
+    action = 'Wait if you can'
+    headline = `Only ${money(delta)} off — it drops this low all the time`
+    subline = `This isn't a special price; it hits this number every few weeks. Waiting costs you almost nothing.`
   } else if (tier.key === 'solid') {
-    headline = `A real discount — ${money(delta)} below usual`
-    subline = `${pct}% under its typical price is a genuine deal, not a relabeled sticker.`
+    action = `Buy it — you're really saving ${money(delta)}`
+    headline = 'This one is an actual deal'
+    subline = `It normally costs ${money(typical)} and today it's ${money(today)}. That's a real ${pct}% off, not sticker games.`
   } else if (tier.key === 'strong') {
-    headline = `A strong drop — ${money(delta)} below usual`
-    subline = `${pct}% off is the kind of price that shows up a few times a year. If you already planned to buy, this is a good moment.`
+    action = `Buy it now — prices like this don't hang around`
+    headline = `${money(delta)} off is as good as this gets`
+    subline = `It normally costs ${money(typical)}. A drop to ${money(today)} only happens a few times a year — if you were going to buy it anyway, this is the moment.`
   } else {
-    headline = `${pct}% off deserves a closer look`
-    subline = `Discounts this deep are sometimes real clearance — and sometimes an inflated listing, a counterfeit, or a third-party seller worth checking. Verify the seller name and recent reviews first.`
+    action = 'Check the seller before you buy'
+    headline = `${pct}% off is almost too good to be true`
+    subline = `Sometimes this is real clearance. Sometimes it's a knockoff or a shady seller. Take ten seconds: make sure it's sold by the real brand or Amazon, and skim the newest reviews.`
   }
 
   // Percentile sentence, All-Aboard-Deals style: score semantics anyone
@@ -157,6 +167,7 @@ export function checkDeal(typical, today, options = {}) {
     claimedDiscount,
     claimGap,
     delta,
+    action,
     headline,
     subline,
     percentileLine,

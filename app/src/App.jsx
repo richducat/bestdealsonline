@@ -927,10 +927,10 @@ const DealTruthDemo = () => {
     <section id="demo" className="border-y border-linen bg-sand">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <SectionHeader
-          eyebrow="Start Here — Free Deal Checker"
-          title="Paste an Amazon link. We'll tell you if it's really a deal."
+          eyebrow="Start Here — Free, 10 Seconds"
+          title="Stop wasting money on fake Amazon sales."
           body={
-            'Stores shout "50% off!" — but off of what? Before you buy anything, run the price through the same check we run on every pick. Ten seconds, plain English.'
+            'A lot of those "50% off!" tags are measured against prices nobody ever paid. Before you buy anything, check it here — you\'ll get told buy it, wait, or it\'s a fake sale. In plain English.'
           }
         />
 
@@ -1026,9 +1026,10 @@ const DealTruthDemo = () => {
                   {result.tier.label}
                 </span>
                 <h3 className="mt-3.5 text-[1.55rem] font-bold tracking-tight leading-tight text-ink">
-                  {result.headline}
+                  {result.action}
                 </h3>
-                <p className="mt-2 text-sm text-cocoa leading-relaxed">{result.subline}</p>
+                <p className="mt-2 text-sm font-semibold text-ink leading-snug">{result.headline}</p>
+                <p className="mt-1.5 text-sm text-cocoa leading-relaxed">{result.subline}</p>
               </div>
               <ScoreRing score={result.score} color={mood.ring} />
             </div>

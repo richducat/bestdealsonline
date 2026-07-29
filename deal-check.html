@@ -130,11 +130,12 @@
   </nav>
 
   <header class="container mx-auto px-4 pt-10 md:pt-14 pb-2 text-center">
-    <div class="text-xs font-bold uppercase tracking-[0.22em] text-clay">Free Deal Checker</div>
-    <h1 class="mt-3 font-display text-4xl md:text-[3.1rem] font-semibold tracking-tight leading-[1.08]">Paste an Amazon link.<br class="hidden md:block"> We'll tell you if it's really a deal.</h1>
+    <div class="text-xs font-bold uppercase tracking-[0.22em] text-clay">Free · Takes 10 Seconds</div>
+    <h1 class="mt-3 font-display text-4xl md:text-[3.1rem] font-semibold tracking-tight leading-[1.08]">Stop wasting money on<br class="hidden md:block"> fake Amazon sales.</h1>
     <p class="mt-4 text-lg text-cocoa leading-relaxed max-w-2xl mx-auto">
-      No math, no charts to decode. Answer a couple of easy questions and get a straight answer —
-      including when that "50% off" only exists on the sticker.
+      A lot of those "50% off!" tags are tricks — the discount is measured against a price nobody ever paid.
+      Before you buy <em>anything</em>, paste the link below. Penny tells you <b>buy it</b>, <b>wait</b>, or
+      <b>it's a fake sale</b> — in plain English.
     </p>
   </header>
 
@@ -145,8 +146,8 @@
       <div class="flex items-center gap-3 px-5 py-4 border-b border-ink/5 bg-white">
         <span class="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-clay text-cream font-display font-semibold">P<span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
         <div class="leading-tight">
-          <div class="text-sm font-bold text-ink">Penny — your deal checker</div>
-          <div class="text-[11px] text-cocoa/70">Answers in plain English. Free.</div>
+          <div class="text-sm font-bold text-ink">Penny — your deal-checking bestie</div>
+          <div class="text-[11px] text-cocoa/70">Tells you the truth about Amazon prices. Free.</div>
         </div>
         <button id="restart-chat" type="button" class="ml-auto text-[11px] font-semibold text-cocoa/60 hover:text-clay underline">Start over</button>
       </div>
@@ -217,8 +218,9 @@
         <div class="flex items-start justify-between gap-5">
           <div class="min-w-0">
             <span id="tier-chip" class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em]" style="box-shadow:inset 0 0 0 1px rgba(56,44,34,.08)"></span>
-            <h2 id="headline" class="mt-3.5 text-[1.55rem] font-bold tracking-tight leading-tight text-ink"></h2>
-            <p id="subline" class="mt-2 text-sm text-cocoa leading-relaxed"></p>
+            <h2 id="action-line" class="mt-3.5 text-[1.55rem] font-bold tracking-tight leading-tight text-ink"></h2>
+            <p id="headline" class="mt-2 text-sm font-semibold text-ink leading-snug"></p>
+            <p id="subline" class="mt-1.5 text-sm text-cocoa leading-relaxed"></p>
           </div>
           <div class="relative h-32 w-32 shrink-0">
             <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90">
@@ -464,25 +466,52 @@
     // ---- steps ----
     async function stepStart() {
       state.step = 'link'
-      await botSay("Hi! I'm Penny. 👋 I check whether an Amazon price is <b>actually</b> a deal — takes about ten seconds.")
-      await botSay("Got the product open on Amazon? <b>Paste its link here.</b>")
+      await botSay("hiii, I'm Penny!! 👋💕 ok so real talk — half those Amazon \"sales\" are not actually sales. Before you buy <i>anything</i>, I'll tell you straight up: <b>buy it</b>, <b>wait</b>, or <b>they're playing you</b>.")
+      await botSay("about to buy something?? ooh — <b>paste the link here</b>, let's look at it together 👀")
       setChips([
+        { label: '✨ Show me how it works first', onClick: () => { addBubble('Show me how it works first', 'user'); stepExample() } },
         { label: "I don't have a link", onClick: () => { addBubble("I don't have a link", 'user'); stepLookingFor() } },
         { label: 'Just let me type prices', onClick: () => { addBubble('Just let me type prices', 'user'); state.link = null; stepToday() } },
       ])
       setInputMode({ placeholder: 'Paste the Amazon link here…' })
     }
 
+    // Zero-effort demo: shows the fake-sale catch before asking for anything.
+    async function stepExample() {
+      setChips([])
+      setInputMode({ hidden: true })
+      await botSay("ok watch this 🍿 say you're eyeing a blender and Amazon shows: <s>$89.99</s> <b>$48</b>. that's like half off!! amazing right??")
+      await botSay('…is what they WANT you to think. watch what happens when I actually check it:', { delay: 700 })
+      const result = checkDeal(50, 48, { claimedWas: 89.99 })
+      await botSay(verdictBubbleHtml(result), { delay: 1100 })
+      await botSay("yeah. that blender is <b>$50 literally every day</b>. they made up the $89.99 so $48 would feel like a steal. you'd be \"saving\" two dollars. 🙃 <b>that's the trick I catch</b> — before your money leaves your pocket.")
+      await botSay("ok now you try!! paste the link of anything you're thinking about buying 💅")
+      state.step = 'link'
+      setChips([{ label: "I don't have a link", onClick: () => { addBubble("I don't have a link", 'user'); stepLookingFor() } }])
+      setInputMode({ placeholder: 'Paste the Amazon link here…' })
+    }
+
+    // One consistent verdict card: big command first, reason second.
+    function verdictBubbleHtml(result, estNote = '') {
+      const mood = MOODS[result.tier.mood]
+      return (
+        `<div style="font-size:1.15rem;font-weight:800;line-height:1.3">${mood.emoji} ${result.action}</div>` +
+        `<div style="margin-top:.45rem;font-weight:600">${result.headline}${estNote}</div>` +
+        `<div style="margin-top:.35rem">${result.subline}</div>` +
+        `<div style="margin-top:.5rem;font-size:.8rem;opacity:.75">Deal score: ${result.score}/100</div>`
+      )
+    }
+
     async function handleLink(text) {
       const parsed = parseAmazonUrl(text)
       if (!parsed) {
-        await botSay("Hmm, that doesn't look like an Amazon product link. It usually has <b>/dp/</b> in it. Try copying it straight from your browser's address bar — or tap a button below.")
+        await botSay("hmm that one's not opening for me 🤔 it should be an Amazon product link (they've got <b>/dp/</b> in the middle). try copying it right from the address bar — or just tap a button below!")
         return
       }
       state.link = parsed
       state.rawUrl = text.trim()
       const name = parsed.slugWords ? `<b>${parsed.slugWords}</b>` : 'that product'
-      await botSay(`Found it — ${name}. 🔎`)
+      await botSay(`ooh found it — ${name} 👀 ok let's see what they're up to.`)
       // quietly log the product interest as a lead signal
       account.saveLead({ lookingFor: parsed.slugWords || 'amazon product', source: 'link-paste', asin: parsed.asin, url: state.rawUrl.slice(0, 480) }).catch(() => {})
       stepToday()
@@ -490,21 +519,21 @@
 
     async function stepToday() {
       state.step = 'today'
-      await botSay('What price does Amazon show <b>right now</b>? Just the number — like <b>48</b> or <b>48.99</b>.')
+      await botSay("what price is on your screen <b>right now</b>? just the number, like <b>48.99</b> — I'll do all the math, obviously 💁‍♀️")
       setChips([])
       setInputMode({ placeholder: 'Price you see today', money: true })
     }
 
     async function stepWas() {
       state.step = 'was'
-      await botSay('Is there a <b>crossed-out price</b> next to it? (Like <s>$89.99</s>.) Type it if you see one.')
+      await botSay("is there one of those <b>crossed-out prices</b> next to it? like <s>$89.99</s>? type it if you see one — that's usually where the lie lives 👁️")
       setChips([{ label: 'No crossed-out price', onClick: () => { addBubble('No crossed-out price', 'user'); state.was = null; stepUsual() } }])
       setInputMode({ placeholder: 'The crossed-out price', money: true })
     }
 
     async function stepUsual() {
       state.step = 'usual'
-      await botSay("Last one: what does this <b>usually</b> sell for? A rough guess is fine — what you'd expect to pay on a random Tuesday.")
+      await botSay("last one and then I spill: what does this thing cost on a <b>normal, boring, no-sale day</b>? total guess is fine, I just need a ballpark 🎯")
       const chips = [{ label: 'No idea', onClick: () => { addBubble('No idea', 'user'); handleNoIdea() } }]
       setChips(chips)
       setInputMode({ placeholder: 'Your best guess', money: true })
@@ -514,13 +543,13 @@
       if (state.was) {
         state.usual = Math.round(state.was * 0.72 * 100) / 100
         state.usualEstimated = true
-        await botSay(`No problem. Crossed-out prices run high, so I'll estimate it usually sells around <b>${money(state.usual)}</b> — a rough guess, not gospel.`)
+        await botSay(`no worries! those crossed-out prices always run high, so I'll guess it normally goes for around <b>${money(state.usual)}</b> — rough math, not gospel 🤷‍♀️`)
         if (state.link) {
-          await botSay(`For the real answer, its full price history is free here: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">CamelCamelCamel</a>.`)
+          await botSay(`if you want the receipts, its whole price history is free right here: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">CamelCamelCamel</a> 🧾`)
         }
         stepVerdict()
       } else if (state.link) {
-        await botSay(`Easy fix — this chart shows every price it's ever had: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">open its price history</a>. Find the price it sits at most of the year, then type it here.`)
+        await botSay(`easy fix!! this chart shows every price it's ever had: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">tap here</a> — find the price it sits at most of the year and type it in 📈`)
         setInputMode({ placeholder: 'The usual price from the chart', money: true })
       } else {
         await botSay("Without a usual price I can't spot a fake — so paste the product's Amazon link and I'll hand you its real price history.")
@@ -543,22 +572,24 @@
       $('was-num').value = state.was ?? ''
       renderManual()
 
+      const PRE_VERDICT = {
+        bad: "ok I checked… and I'm mad on your behalf 😤",
+        flat: 'ok checked it! here’s the tea ☕',
+        good: 'oooh ok good news!! 🎉',
+        great: 'WAIT. ok this one’s actually good!! 🎉🎉',
+        caution: 'hmm ok hold on a sec… 🤨',
+      }
+      await botSay(PRE_VERDICT[result.tier.mood] || 'ok, here’s the deal:', { delay: 600 })
       const estNote = state.usualEstimated ? ' <span style="opacity:.7">(based on my rough estimate)</span>' : ''
-      await botSay(
-        `<div style="font-weight:700;font-size:1.05rem">${mood.emoji} ${result.tier.label} — ${result.score}/100</div>` +
-        `<div style="margin-top:.35rem;font-weight:600">${result.headline}${estNote}</div>` +
-        `<div style="margin-top:.35rem">${result.subline}</div>` +
-        (result.decision ? `<div style="margin-top:.35rem;font-weight:600">${result.decision.text}</div>` : ''),
-        { delay: 800 }
-      )
+      await botSay(verdictBubbleHtml(result, estNote), { delay: 900 })
 
       // Tell them what number to hold out for — that's how the tool
       // helps FIND the best price, not just judge this one.
       const { good, great } = targets(state.usual)
       if (result.tier.key === 'solid' || result.tier.key === 'strong' || result.tier.key === 'verify') {
-        await botSay(`For reference: a good deal on this is <b>${money(good)} or less</b>, and a jackpot price is around <b>${money(great)}</b>.`)
+        await botSay(`for the record: a good deal on this is <b>${money(good)} or less</b>, and <b>${money(great)}</b> is jackpot territory 🎰`)
       } else {
-        await botSay(`Here's the number to hold out for: a real deal on this is <b>${money(good)} or less</b>. See it at <b>${money(great)}</b>? That's the jackpot — grab it.`)
+        await botSay(`here's your magic number, write it on your hand ✍️ — a REAL deal on this is <b>${money(good)} or less</b>. and if you ever see <b>${money(great)}</b>?? run, don't walk.`)
       }
 
       recordCheck(result)
@@ -582,7 +613,7 @@
         { label: 'Check another price', onClick: restart },
       ]
       if (!user) {
-        await botSay("Want me to <b>remember your checks</b> and add up the overpaying you dodge? Make a free account — just an email and a password.")
+        await botSay("btw — want me to <b>remember all your checks</b> and keep a running total of the money I've saved you? make a free account, it's literally just an email and a password 💾")
         chips.splice(1, 0, { label: 'Create my free account', onClick: () => openAccountModal('signup') })
       }
       setChips(chips)
@@ -599,7 +630,7 @@
         return
       }
       await botSay(compareLinksHtml(words, state.today))
-      await botSay('One heads-up: match the exact model and check shipping before you celebrate — "almost the same" is how the knockoffs get you.')
+      await botSay("one heads-up bestie: make sure it's the <b>exact same model</b> and check shipping before you celebrate — \"almost the same\" is how the knockoffs get you 🥸")
       setChips([{ label: 'Check another price', onClick: restart }])
       setInputMode({ hidden: true })
     }
@@ -607,14 +638,14 @@
     // ---- no-link lead path ----
     async function stepLookingFor() {
       state.step = 'lookingFor'
-      await botSay("That's fine! Tell me <b>what you're shopping for</b> — like \"air fryer\", \"kids headphones\", \"a gift for my dad who grills\".")
+      await botSay("totally fine!! just tell me <b>what you're shopping for</b> — like \"air fryer\" or \"kids headphones\" or \"a gift for my dad who grills\" 🛍️")
       setChips([])
       setInputMode({ placeholder: 'What are you shopping for?' })
     }
 
     async function stepBudget() {
       state.step = 'budget'
-      await botSay("What's your budget?")
+      await botSay("ok and what are we working with — what's the budget? 💸")
       const budgets = ['Under $25', 'Under $50', 'Under $100', 'Under $200', 'No limit']
       setChips(budgets.map((b) => ({ label: b, onClick: () => { addBubble(b, 'user'); state.lead.budget = b; stepLeadEmail() } })))
       setInputMode({ hidden: true })
@@ -622,7 +653,7 @@
 
     async function stepLeadEmail() {
       state.step = 'leadEmail'
-      await botSay("Want me to have the team send you the <b>3 best real deals</b> for that? Drop your email — or skip it, no hard feelings.")
+      await botSay("ooh ok — want the team to send you the <b>3 best REAL deals</b> for that? drop your email! or skip it, zero hard feelings 🤝")
       setChips([{ label: 'Skip', onClick: () => { addBubble('Skip', 'user'); finishLead() } }])
       setInputMode({ placeholder: 'you@email.com (optional)' })
     }
@@ -647,10 +678,10 @@
         source: 'penny-no-link',
       }).catch(() => {})
       if (state.lead.email) {
-        await botSay("Done — keep an eye on your inbox. 📬")
+        await botSay("done!! keep an eye on your inbox 📬")
       }
-      await botSay(`Meanwhile, our researched <a class="underline font-semibold" style="color:#B85C38" href="${catHref}">${catName} picks</a> are already scored and sorted by budget — that's the fastest path.`)
-      await botSay('And whenever you find a product, come back and <b>paste its link</b> — I\'ll tell you if the price is real.')
+      await botSay(`meanwhile — our <a class="underline font-semibold" style="color:#B85C38" href="${catHref}">${catName} picks</a> are already checked and sorted by budget. someone did the homework for you (it was me. I did it) 😌`)
+      await botSay("and when you find the thing? come back and <b>paste its link</b> — I'll tell you if the price is legit before you tap buy 💅")
       setChips([{ label: 'I have a link now', onClick: () => { addBubble('I have a link now', 'user'); state.step = 'link'; setInputMode({ placeholder: 'Paste the Amazon link here…' }) } }])
       setInputMode({ placeholder: 'Paste the Amazon link here…' })
       state.step = 'link'
@@ -671,7 +702,7 @@
         case 'today': {
           const n = parseMoney(text)
           addBubble(text, 'user')
-          if (!n) return botSay('Just the number is perfect — like <b>34.99</b>.')
+          if (!n) return botSay('just the number is perfect — like <b>34.99</b> ✨')
           state.today = n
           return stepWas()
         }
@@ -910,6 +941,7 @@
       const chip = $('tier-chip')
       chip.textContent = result.tier.label
       chip.style.cssText = mood.chip + ';box-shadow:inset 0 0 0 1px rgba(56,44,34,.08)'
+      $('action-line').textContent = result.action
       $('headline').textContent = result.headline
       $('subline').textContent = result.subline
 
