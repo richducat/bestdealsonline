@@ -110,29 +110,29 @@ export function checkDeal(typical, today, options = {}) {
   let subline
 
   if (tier.key === 'fake') {
-    headline = `That "${claimedPct}% off" is sticker theater`
+    headline = `The "${claimedPct}% off" tag doesn't hold up`
     subline =
       discount < 0
-        ? `The sale tag says ${claimedPct}% off, but against what this actually sells for you'd still overpay ${money(delta)}. The "was" price is doing the lying.`
-        : `The sale tag says ${claimedPct}% off, but the real drop vs its everyday price is ${pct}%. The discount lives in the sticker, not the price.`
+        ? `Measured against what this actually sells for, you'd still pay ${money(delta)} more than usual. The crossed-out price is inflated.`
+        : `Measured against what this actually sells for, the real discount is ${pct}%. The crossed-out price is inflated.`
   } else if (tier.key === 'overpriced') {
-    headline = `You'd overpay ${money(delta)}`
-    subline = `Today's price is ${pct}% above what this normally sells for. Walk away — this is how "sale season" quietly costs you money.`
+    headline = `${money(delta)} above the usual price`
+    subline = `Today's price is ${pct}% higher than what this normally sells for. There's no reason to buy at this number.`
   } else if (tier.key === 'everyday') {
-    headline = 'This is just the normal price'
+    headline = 'This is the normal price'
     subline = 'No real savings here. If you need it, buy it — but nothing about this price should rush you.'
   } else if (tier.key === 'mild') {
-    headline = `A small dip — saves you ${money(delta)}`
-    subline = `${pct}% off is inside this product's normal wobble. It hits this price all the time; you're not missing anything by waiting.`
+    headline = `A small dip — ${money(delta)} below usual`
+    subline = `${pct}% off is within this product's normal price movement. It reaches this price often, so there's no urgency.`
   } else if (tier.key === 'solid') {
-    headline = `A real deal — saves you ${money(delta)}`
-    subline = `${pct}% below its usual price is a genuine discount, not sticker theater.`
+    headline = `A real discount — ${money(delta)} below usual`
+    subline = `${pct}% under its typical price is a genuine deal, not a relabeled sticker.`
   } else if (tier.key === 'strong') {
-    headline = `A strong drop — saves you ${money(delta)}`
-    subline = `${pct}% off is the kind of price that shows up a few times a year. If you were going to buy it anyway, this is the moment.`
+    headline = `A strong drop — ${money(delta)} below usual`
+    subline = `${pct}% off is the kind of price that shows up a few times a year. If you already planned to buy, this is a good moment.`
   } else {
-    headline = `${pct}% off is almost too good`
-    subline = `Discounts this deep are sometimes real clearance — and sometimes an inflated "was" price, a counterfeit, or a hijacked listing. Check the seller name and recent reviews before you jump.`
+    headline = `${pct}% off deserves a closer look`
+    subline = `Discounts this deep are sometimes real clearance — and sometimes an inflated listing, a counterfeit, or a third-party seller worth checking. Verify the seller name and recent reviews first.`
   }
 
   // Percentile sentence, All-Aboard-Deals style: score semantics anyone

@@ -720,13 +720,13 @@ const DEMO_PRESETS = [
   { label: '"50% off!" trap', typical: 50, today: 48, was: 90 },
 ]
 
-// Verdict styling per tier mood, on the site's warm palette.
+// Verdict styling per tier mood, on the checker's dark instrument palette.
 const MOOD_STYLES = {
-  bad: { text: 'text-clay', ring: '#B85C38', chip: 'bg-clay/10 text-claydark border-clay/30' },
-  flat: { text: 'text-cocoa', ring: '#6B584A', chip: 'bg-linen text-cocoa border-linen' },
-  good: { text: 'text-sagedark', ring: '#77816B', chip: 'bg-sage/15 text-sagedark border-sage/40' },
-  great: { text: 'text-sagedark', ring: '#5C6652', chip: 'bg-sage/25 text-sagedark border-sage/50' },
-  caution: { text: 'text-amber-700', ring: '#b45309', chip: 'bg-amber-50 text-amber-800 border-amber-200' },
+  bad: { text: 'text-[#e05a5a]', ring: '#d03b3b', chip: 'bg-[#d03b3b]/15 text-[#e05a5a] border-[#d03b3b]/40' },
+  flat: { text: 'text-[#c3c2b7]', ring: '#898781', chip: 'bg-[#232322] text-[#c3c2b7] border-[#2c2c2a]' },
+  good: { text: 'text-[#2fbf2f]', ring: '#0ca30c', chip: 'bg-[#0ca30c]/15 text-[#2fbf2f] border-[#0ca30c]/35' },
+  great: { text: 'text-[#2fbf2f]', ring: '#0ca30c', chip: 'bg-[#0ca30c]/25 text-[#2fbf2f] border-[#0ca30c]/50' },
+  caution: { text: 'text-[#fab219]', ring: '#fab219', chip: 'bg-[#fab219]/15 text-[#fab219] border-[#fab219]/40' },
 }
 
 // Animated count-up so the score reveal feels like a reveal.
@@ -760,7 +760,7 @@ const ScoreRing = ({ score, color }) => {
   return (
     <div className="relative h-32 w-32 shrink-0">
       <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="#EDE0CE" strokeWidth="10" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="#2c2c2a" strokeWidth="10" />
         <circle
           cx="60"
           cy="60"
@@ -775,8 +775,8 @@ const ScoreRing = ({ score, color }) => {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-3xl font-extrabold text-ink leading-none tabular-nums">{displayed}</div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-cocoa mt-1">of 100</div>
+        <div className="text-3xl font-extrabold text-white leading-none tabular-nums">{displayed}</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#898781] mt-1">of 100</div>
       </div>
     </div>
   )
@@ -801,15 +801,15 @@ const PriceSparkline = ({ history, baseline, todayPrice, ringColor }) => {
     <div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Example price history chart">
         {baselineY != null ? (
-          <line x1={PAD} x2={W - PAD} y1={baselineY} y2={baselineY} stroke="#6B584A" strokeWidth="1" strokeDasharray="4 4" opacity="0.5" />
+          <line x1={PAD} x2={W - PAD} y1={baselineY} y2={baselineY} stroke="#898781" strokeWidth="1" strokeDasharray="4 4" opacity="0.55" />
         ) : null}
-        <path d={path} fill="none" stroke="#B85C38" strokeWidth="1.5" opacity="0.55" />
-        <circle cx={x(history.length - 1)} cy={y(todayPrice)} r="4.5" fill={ringColor} stroke="#fff" strokeWidth="2" />
+        <path d={path} fill="none" stroke="#c3c2b7" strokeWidth="1.5" opacity="0.6" />
+        <circle cx={x(history.length - 1)} cy={y(todayPrice)} r="4.5" fill={ringColor} stroke="#0d0d0c" strokeWidth="2" />
       </svg>
-      <div className="flex items-center justify-between text-[10px] text-cocoa/70 font-semibold">
+      <div className="flex items-center justify-between text-[10px] text-[#898781] font-semibold">
         <span>120 days ago</span>
         <span className="inline-flex items-center gap-1">
-          <span className="inline-block w-4 border-t border-dashed border-cocoa/60" /> usual price
+          <span className="inline-block w-4 border-t border-dashed border-[#898781]" /> usual price
         </span>
         <span>today</span>
       </div>
@@ -818,21 +818,21 @@ const PriceSparkline = ({ history, baseline, todayPrice, ringColor }) => {
 }
 
 // Claimed-vs-real discount bars: the "Amazon says -47%, reality -4%" moment.
-const ClaimVsReal = ({ claimedPct, realPct }) => (
-  <div className="mt-4 space-y-2">
+const ClaimVsReal = ({ claimedPct, realPct, realColor }) => (
+  <div className="mt-5 space-y-3">
     {[
-      { label: 'The sticker claims', pct: claimedPct, color: 'bg-cocoa/30', textColor: 'text-cocoa' },
-      { label: 'Real drop vs usual price', pct: Math.max(0, realPct), color: 'bg-clay', textColor: 'text-claydark' },
+      { label: 'The sticker claims', pct: claimedPct, color: '#57534e', textColor: 'text-[#c3c2b7]' },
+      { label: 'Real drop vs usual price', pct: Math.max(0, realPct), color: realColor, textColor: 'text-white' },
     ].map((bar) => (
       <div key={bar.label}>
-        <div className="flex items-baseline justify-between text-xs font-bold">
-          <span className="text-cocoa">{bar.label}</span>
+        <div className="flex items-baseline justify-between text-xs font-semibold">
+          <span className="text-[#898781]">{bar.label}</span>
           <span className={`${bar.textColor} tabular-nums`}>{bar.pct <= 0 ? '0' : Math.round(bar.pct)}% off</span>
         </div>
-        <div className="mt-1 h-2 rounded-full bg-linen overflow-hidden">
+        <div className="mt-1.5 h-1.5 rounded-full bg-[#2c2c2a] overflow-hidden">
           <div
-            className={`h-full rounded-full ${bar.color} transition-all duration-500`}
-            style={{ width: `${Math.max(2, Math.min(100, bar.pct))}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.max(2, Math.min(100, bar.pct))}%`, background: bar.color }}
           />
         </div>
       </div>
@@ -842,14 +842,14 @@ const ClaimVsReal = ({ claimedPct, realPct }) => (
 
 const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
   return (
-    <label className="block mt-5">
+    <label className="block mt-6">
       <span className="flex items-baseline justify-between">
-        <span className="text-sm font-bold text-ink">{label}</span>
-        {hint ? <span className="text-[11px] text-cocoa/70">{hint}</span> : null}
+        <span className="text-sm font-semibold text-white">{label}</span>
+        {hint ? <span className="text-[11px] text-[#898781]">{hint}</span> : null}
       </span>
-      <div className="mt-2 flex items-center gap-3">
-        <div className="flex items-center rounded-xl border border-linen bg-cream px-3 focus-within:border-clay">
-          <span className="text-sm font-bold text-cocoa">$</span>
+      <div className="mt-2.5 flex items-center gap-4">
+        <div className="flex items-center rounded-xl border border-[#2c2c2a] bg-[#232322] px-3 focus-within:border-[#898781] transition-colors">
+          <span className="text-sm font-semibold text-[#898781]">$</span>
           <input
             type="number"
             inputMode="decimal"
@@ -858,7 +858,7 @@ const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
             value={value}
             placeholder={optional ? '—' : undefined}
             onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
-            className="w-20 bg-transparent py-2.5 pl-1 text-sm font-extrabold text-ink outline-none tabular-nums"
+            className="w-20 bg-transparent py-2.5 pl-1 text-sm font-bold text-white outline-none tabular-nums placeholder:text-[#57534e]"
           />
         </div>
         {!optional ? (
@@ -868,7 +868,7 @@ const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
             max={max}
             value={Number(value) || min}
             onChange={(e) => onChange(Number(e.target.value))}
-            className="w-full accent-clay"
+            className="w-full accent-[#0ca30c]"
             aria-label={`${label} slider`}
           />
         ) : null}
@@ -925,28 +925,37 @@ const DealTruthDemo = () => {
           }
         />
 
-        <div className="mt-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-6 lg:gap-8 items-start">
+        <div className="mt-8 rounded-[1.75rem] border border-[#2c2c2a] bg-[#0d0d0c] p-4 md:p-6 shadow-xl">
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-4 md:gap-6 items-start">
           {/* Inputs */}
-          <div className="rounded-3xl border border-linen bg-white p-6">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-cocoa">
+          <div className="rounded-2xl border border-[#2c2c2a] bg-[#1a1a19] p-6">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#898781]">
               <SlidersHorizontal size={14} /> Check a price
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              {DEMO_PRESETS.map((preset) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => {
-                    setTypical(preset.typical)
-                    setToday(preset.today)
-                    setWas(preset.was)
-                  }}
-                  className="px-3 py-2 min-h-11 rounded-full border border-linen bg-cream text-xs font-bold text-cocoa hover:border-clay hover:text-clay transition-colors"
-                >
-                  {preset.label}
-                </button>
-              ))}
+              {DEMO_PRESETS.map((preset) => {
+                const active =
+                  Number(typical) === preset.typical && Number(today) === preset.today && String(was) === String(preset.was)
+                return (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setTypical(preset.typical)
+                      setToday(preset.today)
+                      setWas(preset.was)
+                    }}
+                    className={`px-3 py-2 min-h-11 rounded-full border text-xs font-semibold transition-colors ${
+                      active
+                        ? 'border-[#898781] bg-[#232322] text-white'
+                        : 'border-[#2c2c2a] bg-transparent text-[#c3c2b7] hover:border-[#898781] hover:text-white'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                )
+              })}
             </div>
 
             <PriceField
@@ -968,81 +977,82 @@ const DealTruthDemo = () => {
               optional
             />
 
-            <div className="mt-6 border-t border-linen pt-5">
+            <div className="mt-7 border-t border-[#2c2c2a] pt-5">
               <label className="block">
-                <span className="text-sm font-bold text-ink">Checking a real product?</span>
+                <span className="text-sm font-semibold text-white">Checking a real product?</span>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="Paste the Amazon link (optional)"
-                  className="mt-2 w-full rounded-xl border border-linen bg-cream px-3 py-2.5 text-sm text-ink outline-none focus:border-clay placeholder:text-cocoa/50"
+                  className="mt-2.5 w-full rounded-xl border border-[#2c2c2a] bg-[#232322] px-3 py-2.5 text-sm text-white outline-none focus:border-[#898781] placeholder:text-[#57534e] transition-colors"
                 />
               </label>
               {parsedUrl ? (
-                <p className="mt-2 text-xs text-cocoa leading-relaxed">
-                  {parsedUrl.slugWords ? <span className="font-bold text-ink">{parsedUrl.slugWords}. </span> : null}
+                <p className="mt-2.5 text-xs text-[#c3c2b7] leading-relaxed">
+                  {parsedUrl.slugWords ? <span className="font-semibold text-white">{parsedUrl.slugWords}. </span> : null}
                   Verify its real price history:{' '}
-                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-bold text-clay">
+                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#5da2f0]">
                     CamelCamelCamel
                   </a>{' '}
                   ·{' '}
-                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-bold text-clay">
+                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#5da2f0]">
                     Keepa
                   </a>
                 </p>
               ) : url.trim() ? (
-                <p className="mt-2 text-xs text-cocoa/70">That doesn't look like an Amazon product link yet.</p>
+                <p className="mt-2.5 text-xs text-[#898781]">That doesn't look like an Amazon product link yet.</p>
               ) : null}
             </div>
           </div>
 
           {/* Verdict */}
-          <div className="rounded-3xl border border-linen bg-white p-6" aria-live="polite">
+          <div className="rounded-2xl border border-[#2c2c2a] bg-[#1a1a19] p-6" aria-live="polite">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-[0.08em] ${mood.chip}`}>
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] ${mood.chip}`}>
                   {result.tier.label}
                 </span>
-                <h3 className={`mt-3 font-display text-2xl md:text-[1.7rem] font-semibold leading-tight ${mood.text}`}>
+                <h3 className="mt-3.5 text-2xl md:text-[1.6rem] font-semibold tracking-tight leading-tight text-white">
                   {result.headline}
                 </h3>
-                <p className="mt-2 text-sm text-cocoa leading-relaxed">{result.subline}</p>
+                <p className="mt-2.5 text-sm text-[#c3c2b7] leading-relaxed">{result.subline}</p>
               </div>
               <ScoreRing score={result.score} color={mood.ring} />
             </div>
 
             {result.claimedDiscount != null ? (
-              <ClaimVsReal claimedPct={result.claimedDiscount * 100} realPct={result.discount * 100} />
+              <ClaimVsReal claimedPct={result.claimedDiscount * 100} realPct={result.discount * 100} realColor={mood.ring} />
             ) : null}
 
-            <div className="mt-5 rounded-2xl border border-linen bg-cream/60 p-4">
+            <div className="mt-5 rounded-xl border border-[#2c2c2a] bg-[#0d0d0c] p-4">
               <PriceSparkline history={result.history} baseline={result.baseline} todayPrice={todayNum} ringColor={mood.ring} />
             </div>
 
-            <ul className="mt-4 space-y-1.5 text-sm text-cocoa">
+            <ul className="mt-4 space-y-1.5 text-sm text-[#c3c2b7]">
               {result.percentileLine ? <li>{result.percentileLine}</li> : null}
-              {result.decision ? <li className="font-bold text-ink">{result.decision.text}</li> : null}
-              <li className="text-xs text-cocoa/70">
+              {result.decision ? <li className="font-semibold text-white">{result.decision.text}</li> : null}
+              <li className="text-xs text-[#898781]">
                 Example scoring on a simulated history — the same math our live picks go through.{' '}
-                <a href="/online-deals-methodology.html" className="underline">How we pick deals</a>
+                <a href="/online-deals-methodology.html" className="underline hover:text-[#c3c2b7]">How we pick deals</a>
               </li>
             </ul>
 
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-linen pt-4">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#2c2c2a] pt-4">
               <button
                 type="button"
                 onClick={copyVerdict}
-                className="inline-flex items-center gap-1.5 min-h-11 px-4 rounded-full bg-ink text-cream text-xs font-bold hover:bg-clay transition-colors"
+                className="inline-flex items-center gap-1.5 min-h-11 px-4 rounded-full bg-white text-[#0d0d0c] text-xs font-bold hover:bg-[#c3c2b7] transition-colors"
               >
                 <Sparkles size={13} /> {copied ? 'Copied!' : 'Copy this verdict'}
               </button>
               {tally.checks >= 3 ? (
-                <span className="text-xs text-cocoa font-semibold tabular-nums">
+                <span className="text-xs text-[#898781] font-semibold tabular-nums">
                   {tally.checks} checks run{tally.avoided >= 1 ? ` · ${money(tally.avoided)} of overpaying dodged` : ''}
                 </span>
               ) : null}
             </div>
+          </div>
           </div>
         </div>
       </div>
