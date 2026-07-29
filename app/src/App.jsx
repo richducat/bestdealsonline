@@ -720,13 +720,14 @@ const DEMO_PRESETS = [
   { label: '"50% off!" trap', typical: 50, today: 48, was: 90 },
 ]
 
-// Verdict styling per tier mood, on the checker's dark instrument palette.
+// Verdict styling per tier mood — clear signal colors that still sit
+// comfortably on the site's warm palette.
 const MOOD_STYLES = {
-  bad: { text: 'text-[#e05a5a]', ring: '#d03b3b', chip: 'bg-[#d03b3b]/15 text-[#e05a5a] border-[#d03b3b]/40' },
-  flat: { text: 'text-[#c3c2b7]', ring: '#898781', chip: 'bg-[#232322] text-[#c3c2b7] border-[#2c2c2a]' },
-  good: { text: 'text-[#2fbf2f]', ring: '#0ca30c', chip: 'bg-[#0ca30c]/15 text-[#2fbf2f] border-[#0ca30c]/35' },
-  great: { text: 'text-[#2fbf2f]', ring: '#0ca30c', chip: 'bg-[#0ca30c]/25 text-[#2fbf2f] border-[#0ca30c]/50' },
-  caution: { text: 'text-[#fab219]', ring: '#fab219', chip: 'bg-[#fab219]/15 text-[#fab219] border-[#fab219]/40' },
+  bad: { text: 'text-red-700', ring: '#dc2626', chip: 'bg-red-50 text-red-700 ring-red-600/15' },
+  flat: { text: 'text-cocoa', ring: '#a8a29e', chip: 'bg-linen/80 text-cocoa ring-ink/5' },
+  good: { text: 'text-emerald-700', ring: '#059669', chip: 'bg-emerald-50 text-emerald-700 ring-emerald-600/15' },
+  great: { text: 'text-emerald-800', ring: '#047857', chip: 'bg-emerald-50 text-emerald-800 ring-emerald-600/20' },
+  caution: { text: 'text-amber-700', ring: '#d97706', chip: 'bg-amber-50 text-amber-700 ring-amber-600/20' },
 }
 
 // Animated count-up so the score reveal feels like a reveal.
@@ -760,14 +761,14 @@ const ScoreRing = ({ score, color }) => {
   return (
     <div className="relative h-32 w-32 shrink-0">
       <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="#2c2c2a" strokeWidth="10" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="#EDE0CE" strokeWidth="8" />
         <circle
           cx="60"
           cy="60"
           r={r}
           fill="none"
           stroke={color}
-          strokeWidth="10"
+          strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - Math.max(0, Math.min(100, score)) / 100)}
@@ -775,8 +776,8 @@ const ScoreRing = ({ score, color }) => {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-3xl font-extrabold text-white leading-none tabular-nums">{displayed}</div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#898781] mt-1">of 100</div>
+        <div className="text-[2rem] font-bold text-ink leading-none tabular-nums tracking-tight">{displayed}</div>
+        <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-cocoa/70 mt-1">of 100</div>
       </div>
     </div>
   )
@@ -795,21 +796,29 @@ const PriceSparkline = ({ history, baseline, todayPrice, ringColor }) => {
   const x = (i) => PAD + (i / (history.length - 1)) * (W - PAD * 2)
   const y = (p) => PAD + (1 - (p - min) / span) * (H - PAD * 2)
   const path = history.map((h, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(h.price).toFixed(1)}`).join(' ')
+  const area = `${path} L${x(history.length - 1).toFixed(1)},${H - PAD} L${x(0).toFixed(1)},${H - PAD} Z`
   const baselineY = Number.isFinite(baseline) ? y(baseline) : null
 
   return (
     <div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Example price history chart">
+        <defs>
+          <linearGradient id="dt-area" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#B85C38" stopOpacity="0.10" />
+            <stop offset="100%" stopColor="#B85C38" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={area} fill="url(#dt-area)" />
         {baselineY != null ? (
-          <line x1={PAD} x2={W - PAD} y1={baselineY} y2={baselineY} stroke="#898781" strokeWidth="1" strokeDasharray="4 4" opacity="0.55" />
+          <line x1={PAD} x2={W - PAD} y1={baselineY} y2={baselineY} stroke="#6B584A" strokeWidth="1" strokeDasharray="3 4" opacity="0.4" />
         ) : null}
-        <path d={path} fill="none" stroke="#c3c2b7" strokeWidth="1.5" opacity="0.6" />
-        <circle cx={x(history.length - 1)} cy={y(todayPrice)} r="4.5" fill={ringColor} stroke="#0d0d0c" strokeWidth="2" />
+        <path d={path} fill="none" stroke="#B98A6E" strokeWidth="1.5" strokeLinejoin="round" />
+        <circle cx={x(history.length - 1)} cy={y(todayPrice)} r="4.5" fill={ringColor} stroke="#fff" strokeWidth="2" />
       </svg>
-      <div className="flex items-center justify-between text-[10px] text-[#898781] font-semibold">
+      <div className="mt-1 flex items-center justify-between text-[10px] text-cocoa/60 font-semibold">
         <span>120 days ago</span>
-        <span className="inline-flex items-center gap-1">
-          <span className="inline-block w-4 border-t border-dashed border-[#898781]" /> usual price
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-4 border-t border-dashed border-cocoa/50" /> usual price
         </span>
         <span>today</span>
       </div>
@@ -821,15 +830,15 @@ const PriceSparkline = ({ history, baseline, todayPrice, ringColor }) => {
 const ClaimVsReal = ({ claimedPct, realPct, realColor }) => (
   <div className="mt-5 space-y-3">
     {[
-      { label: 'The sticker claims', pct: claimedPct, color: '#57534e', textColor: 'text-[#c3c2b7]' },
-      { label: 'Real drop vs usual price', pct: Math.max(0, realPct), color: realColor, textColor: 'text-white' },
+      { label: 'The sticker claims', pct: claimedPct, color: '#C9B7A0', textColor: 'text-cocoa' },
+      { label: 'Real drop vs usual price', pct: Math.max(0, realPct), color: realColor, textColor: 'text-ink' },
     ].map((bar) => (
       <div key={bar.label}>
         <div className="flex items-baseline justify-between text-xs font-semibold">
-          <span className="text-[#898781]">{bar.label}</span>
+          <span className="text-cocoa/80">{bar.label}</span>
           <span className={`${bar.textColor} tabular-nums`}>{bar.pct <= 0 ? '0' : Math.round(bar.pct)}% off</span>
         </div>
-        <div className="mt-1.5 h-1.5 rounded-full bg-[#2c2c2a] overflow-hidden">
+        <div className="mt-1.5 h-1.5 rounded-full bg-linen overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${Math.max(2, Math.min(100, bar.pct))}%`, background: bar.color }}
@@ -844,12 +853,12 @@ const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
   return (
     <label className="block mt-6">
       <span className="flex items-baseline justify-between">
-        <span className="text-sm font-semibold text-white">{label}</span>
-        {hint ? <span className="text-[11px] text-[#898781]">{hint}</span> : null}
+        <span className="text-[13px] font-semibold text-ink">{label}</span>
+        {hint ? <span className="text-[11px] text-cocoa/60">{hint}</span> : null}
       </span>
-      <div className="mt-2.5 flex items-center gap-4">
-        <div className="flex items-center rounded-xl border border-[#2c2c2a] bg-[#232322] px-3 focus-within:border-[#898781] transition-colors">
-          <span className="text-sm font-semibold text-[#898781]">$</span>
+      <div className="mt-2 flex items-center gap-4">
+        <div className="flex items-center rounded-xl bg-cream ring-1 ring-ink/10 px-3 transition-shadow focus-within:ring-2 focus-within:ring-clay/40">
+          <span className="text-sm font-semibold text-cocoa/60">$</span>
           <input
             type="number"
             inputMode="decimal"
@@ -858,7 +867,7 @@ const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
             value={value}
             placeholder={optional ? '—' : undefined}
             onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
-            className="w-20 bg-transparent py-2.5 pl-1 text-sm font-bold text-white outline-none tabular-nums placeholder:text-[#57534e]"
+            className="w-20 bg-transparent py-2.5 pl-1 text-sm font-bold text-ink outline-none tabular-nums placeholder:text-cocoa/40"
           />
         </div>
         {!optional ? (
@@ -868,7 +877,7 @@ const PriceField = ({ label, hint, value, onChange, min, max, optional }) => {
             max={max}
             value={Number(value) || min}
             onChange={(e) => onChange(Number(e.target.value))}
-            className="w-full accent-[#0ca30c]"
+            className="w-full accent-clay"
             aria-label={`${label} slider`}
           />
         ) : null}
@@ -925,15 +934,14 @@ const DealTruthDemo = () => {
           }
         />
 
-        <div className="mt-8 rounded-[1.75rem] border border-[#2c2c2a] bg-[#0d0d0c] p-4 md:p-6 shadow-xl">
-          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-4 md:gap-6 items-start">
+        <div className="mt-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-5 lg:gap-6 items-start">
           {/* Inputs */}
-          <div className="rounded-2xl border border-[#2c2c2a] bg-[#1a1a19] p-6">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#898781]">
-              <SlidersHorizontal size={14} /> Check a price
+          <div className="rounded-2xl bg-white ring-1 ring-ink/5 shadow-[0_1px_3px_rgba(56,44,34,0.06),0_12px_32px_-12px_rgba(56,44,34,0.12)] p-6 md:p-7">
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa/70">
+              <SlidersHorizontal size={13} /> Check a price
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 inline-flex flex-wrap gap-1 rounded-2xl bg-linen/60 p-1">
               {DEMO_PRESETS.map((preset) => {
                 const active =
                   Number(typical) === preset.typical && Number(today) === preset.today && String(was) === String(preset.was)
@@ -946,10 +954,8 @@ const DealTruthDemo = () => {
                       setToday(preset.today)
                       setWas(preset.was)
                     }}
-                    className={`px-3 py-2 min-h-11 rounded-full border text-xs font-semibold transition-colors ${
-                      active
-                        ? 'border-[#898781] bg-[#232322] text-white'
-                        : 'border-[#2c2c2a] bg-transparent text-[#c3c2b7] hover:border-[#898781] hover:text-white'
+                    className={`px-3.5 py-2 min-h-10 rounded-xl text-xs font-semibold transition-all ${
+                      active ? 'bg-white text-ink shadow-sm ring-1 ring-ink/5' : 'text-cocoa hover:text-ink'
                     }`}
                   >
                     {preset.label}
@@ -977,46 +983,46 @@ const DealTruthDemo = () => {
               optional
             />
 
-            <div className="mt-7 border-t border-[#2c2c2a] pt-5">
+            <div className="mt-7 border-t border-ink/5 pt-5">
               <label className="block">
-                <span className="text-sm font-semibold text-white">Checking a real product?</span>
+                <span className="text-[13px] font-semibold text-ink">Checking a real product?</span>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="Paste the Amazon link (optional)"
-                  className="mt-2.5 w-full rounded-xl border border-[#2c2c2a] bg-[#232322] px-3 py-2.5 text-sm text-white outline-none focus:border-[#898781] placeholder:text-[#57534e] transition-colors"
+                  className="mt-2 w-full rounded-xl bg-cream ring-1 ring-ink/10 px-3.5 py-2.5 text-sm text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
                 />
               </label>
               {parsedUrl ? (
-                <p className="mt-2.5 text-xs text-[#c3c2b7] leading-relaxed">
-                  {parsedUrl.slugWords ? <span className="font-semibold text-white">{parsedUrl.slugWords}. </span> : null}
+                <p className="mt-2.5 text-xs text-cocoa leading-relaxed">
+                  {parsedUrl.slugWords ? <span className="font-semibold text-ink">{parsedUrl.slugWords}. </span> : null}
                   Verify its real price history:{' '}
-                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#5da2f0]">
+                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
                     CamelCamelCamel
                   </a>{' '}
                   ·{' '}
-                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#5da2f0]">
+                  <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
                     Keepa
                   </a>
                 </p>
               ) : url.trim() ? (
-                <p className="mt-2.5 text-xs text-[#898781]">That doesn't look like an Amazon product link yet.</p>
+                <p className="mt-2.5 text-xs text-cocoa/60">That doesn't look like an Amazon product link yet.</p>
               ) : null}
             </div>
           </div>
 
           {/* Verdict */}
-          <div className="rounded-2xl border border-[#2c2c2a] bg-[#1a1a19] p-6" aria-live="polite">
-            <div className="flex items-start justify-between gap-4">
+          <div className="rounded-2xl bg-white ring-1 ring-ink/5 shadow-[0_1px_3px_rgba(56,44,34,0.06),0_12px_32px_-12px_rgba(56,44,34,0.12)] p-6 md:p-7" aria-live="polite">
+            <div className="flex items-start justify-between gap-5">
               <div className="min-w-0">
-                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] ${mood.chip}`}>
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] ring-1 ${mood.chip}`}>
                   {result.tier.label}
                 </span>
-                <h3 className="mt-3.5 text-2xl md:text-[1.6rem] font-semibold tracking-tight leading-tight text-white">
+                <h3 className="mt-3.5 text-[1.55rem] font-bold tracking-tight leading-tight text-ink">
                   {result.headline}
                 </h3>
-                <p className="mt-2.5 text-sm text-[#c3c2b7] leading-relaxed">{result.subline}</p>
+                <p className="mt-2 text-sm text-cocoa leading-relaxed">{result.subline}</p>
               </div>
               <ScoreRing score={result.score} color={mood.ring} />
             </div>
@@ -1025,34 +1031,33 @@ const DealTruthDemo = () => {
               <ClaimVsReal claimedPct={result.claimedDiscount * 100} realPct={result.discount * 100} realColor={mood.ring} />
             ) : null}
 
-            <div className="mt-5 rounded-xl border border-[#2c2c2a] bg-[#0d0d0c] p-4">
+            <div className="mt-5 rounded-xl bg-cream/70 ring-1 ring-ink/5 p-4">
               <PriceSparkline history={result.history} baseline={result.baseline} todayPrice={todayNum} ringColor={mood.ring} />
             </div>
 
-            <ul className="mt-4 space-y-1.5 text-sm text-[#c3c2b7]">
+            <ul className="mt-4 space-y-1.5 text-sm text-cocoa">
               {result.percentileLine ? <li>{result.percentileLine}</li> : null}
-              {result.decision ? <li className="font-semibold text-white">{result.decision.text}</li> : null}
-              <li className="text-xs text-[#898781]">
+              {result.decision ? <li className="font-semibold text-ink">{result.decision.text}</li> : null}
+              <li className="text-xs text-cocoa/60">
                 Example scoring on a simulated history — the same math our live picks go through.{' '}
-                <a href="/online-deals-methodology.html" className="underline hover:text-[#c3c2b7]">How we pick deals</a>
+                <a href="/online-deals-methodology.html" className="underline hover:text-cocoa">How we pick deals</a>
               </li>
             </ul>
 
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#2c2c2a] pt-4">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink/5 pt-4">
               <button
                 type="button"
                 onClick={copyVerdict}
-                className="inline-flex items-center gap-1.5 min-h-11 px-4 rounded-full bg-white text-[#0d0d0c] text-xs font-bold hover:bg-[#c3c2b7] transition-colors"
+                className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-full bg-ink text-cream text-xs font-semibold hover:bg-clay transition-colors"
               >
                 <Sparkles size={13} /> {copied ? 'Copied!' : 'Copy this verdict'}
               </button>
               {tally.checks >= 3 ? (
-                <span className="text-xs text-[#898781] font-semibold tabular-nums">
+                <span className="text-xs text-cocoa/70 font-semibold tabular-nums">
                   {tally.checks} checks run{tally.avoided >= 1 ? ` · ${money(tally.avoided)} of overpaying dodged` : ''}
                 </span>
               ) : null}
             </div>
-          </div>
           </div>
         </div>
       </div>
