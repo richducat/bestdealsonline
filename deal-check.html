@@ -438,6 +438,29 @@
       return Number.isFinite(n) && n > 0 && n < 100000 ? n : null
     }
 
+    // Cross-store "beat this price" links — no APIs, just pre-filled
+    // searches. Google Shopping compares most stores at once.
+    function compareLinksHtml(words, priceToBeat) {
+      const q = encodeURIComponent(words)
+      const stores = [
+        ['Google Shopping (all stores)', `https://www.google.com/search?tbm=shop&q=${q}`],
+        ['Walmart', `https://www.walmart.com/search?q=${q}`],
+        ['Target', `https://www.target.com/s?searchTerm=${q}`],
+        ['eBay', `https://www.ebay.com/sch/i.html?_nkw=${q}`],
+      ]
+      const links = stores
+        .map(([name, href]) => `<a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${href}">${name}</a>`)
+        .join(' &nbsp;·&nbsp; ')
+      return `Anything under <b>${money(priceToBeat)}</b> beats Amazon right now:<br>${links}`
+    }
+
+    // What a real deal looks like for this product, from its usual price.
+    function targets(usual) {
+      const good = Math.floor(usual * 0.85)
+      const great = Math.floor(usual * 0.7)
+      return { good, great }
+    }
+
     // ---- steps ----
     async function stepStart() {
       state.step = 'link'
@@ -529,6 +552,15 @@
         { delay: 800 }
       )
 
+      // Tell them what number to hold out for — that's how the tool
+      // helps FIND the best price, not just judge this one.
+      const { good, great } = targets(state.usual)
+      if (result.tier.key === 'solid' || result.tier.key === 'strong' || result.tier.key === 'verify') {
+        await botSay(`For reference: a good deal on this is <b>${money(good)} or less</b>, and a jackpot price is around <b>${money(great)}</b>.`)
+      } else {
+        await botSay(`Here's the number to hold out for: a real deal on this is <b>${money(good)} or less</b>. See it at <b>${money(great)}</b>? That's the jackpot — grab it.`)
+      }
+
       recordCheck(result)
       const user = account.currentUser()
       if (user) {
@@ -537,17 +569,39 @@
           product: state.link?.slugWords ?? null,
           usual: state.usual, today: state.today, was: state.was,
           score: result.score, tier: result.tier.label, savings: result.delta,
+          targetGood: good, targetGreat: great,
         }).catch(() => {})
         account.syncTally(user, readTally()).catch(() => {})
-        await botSay('Saved to your account. ✅ Want to check another one?')
-        setChips([{ label: 'Check another', onClick: restart }])
-      } else {
-        await botSay("Want me to <b>remember your checks</b> and add up the overpaying you dodge? Make a free account — just an email and a password.")
-        setChips([
-          { label: 'Create my free account', onClick: () => openAccountModal('signup') },
-          { label: 'Check another price', onClick: restart },
-        ])
       }
+      offerNextMoves(user)
+    }
+
+    async function offerNextMoves(user) {
+      const chips = [
+        { label: 'Can another store beat it?', onClick: () => { addBubble('Can another store beat it?', 'user'); stepCompare() } },
+        { label: 'Check another price', onClick: restart },
+      ]
+      if (!user) {
+        await botSay("Want me to <b>remember your checks</b> and add up the overpaying you dodge? Make a free account — just an email and a password.")
+        chips.splice(1, 0, { label: 'Create my free account', onClick: () => openAccountModal('signup') })
+      }
+      setChips(chips)
+      setInputMode({ hidden: true })
+    }
+
+    async function stepCompare() {
+      const words = state.link?.slugWords || state.lead.lookingFor
+      if (!words) {
+        state.step = 'compareWords'
+        await botSay('Sure — what is the product? Two or three words is plenty, like <b>anker 65w charger</b>.')
+        setChips([])
+        setInputMode({ placeholder: 'e.g. anker 65w charger' })
+        return
+      }
+      await botSay(compareLinksHtml(words, state.today))
+      await botSay('One heads-up: match the exact model and check shipping before you celebrate — "almost the same" is how the knockoffs get you.')
+      setChips([{ label: 'Check another price', onClick: restart }])
+      setInputMode({ hidden: true })
     }
 
     // ---- no-link lead path ----
@@ -636,6 +690,10 @@
           state.usualEstimated = false
           return stepVerdict()
         }
+        case 'compareWords':
+          addBubble(text, 'user')
+          state.lead.lookingFor = text
+          return stepCompare()
         case 'lookingFor':
           addBubble(text, 'user')
           state.lead.lookingFor = text
