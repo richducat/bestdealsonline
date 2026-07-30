@@ -1003,10 +1003,26 @@
       }
     })
 
-    // boot
-    updateTally(readTally())
-    renderManual()
-    stepStart()
+    // boot — if the homepage handed us a link (?u=...), skip straight to
+    // checking it instead of re-asking for what we already have.
+    async function boot() {
+      updateTally(readTally())
+      renderManual()
+      const handedUrl = new URLSearchParams(location.search).get('u')
+      if (handedUrl && parseAmazonUrl(handedUrl)) {
+        state.step = 'link'
+        await botSay("hiii, I'm Penny!! 👋💕 ok, you brought a link — love that. give me one sec…")
+        addBubble(handedUrl.length > 60 ? handedUrl.slice(0, 57) + '…' : handedUrl, 'user')
+        handleLink(handedUrl)
+      } else if (handedUrl) {
+        await botSay("hiii, I'm Penny!! 👋💕 hmm — the link that came over doesn't look like an Amazon product page. paste it again straight from your address bar?")
+        state.step = 'link'
+        setInputMode({ placeholder: 'Paste the Amazon link here…' })
+      } else {
+        stepStart()
+      }
+    }
+    boot()
   </script>
 </body>
 </html>

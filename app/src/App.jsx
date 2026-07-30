@@ -937,30 +937,41 @@ const DealTruthDemo = () => {
         <div className="mt-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-5 lg:gap-6 items-start">
           {/* Inputs */}
           <div className="rounded-2xl bg-white ring-1 ring-ink/5 shadow-[0_1px_3px_rgba(56,44,34,0.06),0_12px_32px_-12px_rgba(56,44,34,0.12)] p-6 md:p-7">
-            <label className="block">
-              <span className="text-[13px] font-semibold text-ink">Step 1 — paste the Amazon link</span>
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://www.amazon.com/…"
-                className="mt-2 w-full rounded-xl bg-cream ring-1 ring-ink/10 px-4 py-3.5 text-[15px] text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
-              />
-            </label>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const target = url.trim()
+                  ? `/deal-check.html?u=${encodeURIComponent(url.trim())}`
+                  : '/deal-check.html'
+                window.location.href = target
+              }}
+            >
+              <label className="block">
+                <span className="text-[13px] font-semibold text-ink">Step 1 — paste the Amazon link</span>
+                <div className="mt-2 flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    placeholder="https://www.amazon.com/…"
+                    className="w-full rounded-xl bg-cream ring-1 ring-ink/10 px-4 py-3.5 text-[15px] text-ink outline-none transition-shadow focus:ring-2 focus:ring-clay/40 placeholder:text-cocoa/40"
+                  />
+                  <button
+                    type="submit"
+                    className="shrink-0 inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-clay text-cream text-sm font-bold hover:bg-claydark transition-colors"
+                  >
+                    Check it →
+                  </button>
+                </div>
+              </label>
+            </form>
             {parsedUrl ? (
               <p className="mt-2.5 text-xs text-cocoa leading-relaxed">
                 {parsedUrl.slugWords ? <span className="font-semibold text-ink">{parsedUrl.slugWords}. </span> : null}
-                Now enter the prices below — or verify its real history on{' '}
-                <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
-                  CamelCamelCamel
-                </a>{' '}
-                ·{' '}
-                <a href={parsedUrl.keepaUrl} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-clay hover:text-claydark">
-                  Keepa
-                </a>
+                Hit <span className="font-semibold text-ink">Check it</span> and Penny takes over — or set the prices yourself below.
               </p>
             ) : url.trim() ? (
-              <p className="mt-2.5 text-xs text-cocoa/60">That doesn't look like an Amazon product link yet.</p>
+              <p className="mt-2.5 text-xs text-cocoa/60">That doesn't look like an Amazon product link yet — copy it straight from your browser's address bar.</p>
             ) : (
               <p className="mt-2.5 text-xs text-cocoa/60">
                 No link, or want a hand?{' '}
