@@ -1,0 +1,13 @@
+<!doctype html>
+<!-- Local test harness: mimics the Amazon product-page DOM the content
+     script reads, so the overlay can be verified without loading Amazon. -->
+<html>
+<head><meta charset="utf-8"><title>Mock Amazon Product</title></head>
+<body style="font-family:sans-serif;padding:40px">
+  <h1 id="productTitle">Ninja Professional Blender 1000W</h1>
+  <div id="corePrice_feature_div"><span class="a-price"><span class="a-offscreen">$48.00</span></span></div>
+  <div class="basisPrice"><span class="a-offscreen">$89.99</span></div>
+  <p>List price above should be detected as the crossed-out "was" price.</p>
+  <script src="../dist/content.js"></script>
+</body>
+</html>
