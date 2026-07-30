@@ -289,6 +289,28 @@
       <div id="my-checks-list" class="mt-4 card divide-y divide-ink/5"></div>
     </section>
 
+    <!-- 1-tap checker (bookmarklet) -->
+    <section class="mt-16 max-w-2xl mx-auto">
+      <div class="card p-6 md:p-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.16em] text-clay">New — Zero Typing</div>
+        <h2 class="mt-2 font-display text-2xl md:text-3xl font-semibold tracking-tight">Check prices with one tap, right from Amazon</h2>
+        <p class="mt-3 text-sm text-cocoa leading-relaxed">
+          Add the <b>Ask Penny</b> button to your bookmarks bar. Then on any Amazon product page, tap it —
+          Penny grabs the price and the crossed-out price straight off the page and gives you the verdict.
+          No copying, no typing.
+        </p>
+        <div class="mt-5 flex flex-wrap items-center gap-4">
+          <a id="bookmarklet" href="#"
+            class="inline-flex items-center gap-2 min-h-12 px-6 rounded-xl bg-clay text-cream text-sm font-bold hover:bg-claydark transition-colors cursor-grab"
+            title="Drag me to your bookmarks bar">🛍️ Ask Penny</a>
+          <span class="text-xs text-cocoa/70 leading-relaxed">← <b>drag this button</b> up to your bookmarks bar<br>(on a computer — press Cmd/Ctrl+Shift+B if the bar is hidden)</span>
+        </div>
+        <p class="mt-4 text-xs text-cocoa/70 leading-relaxed">
+          Then: open any product on Amazon → tap <b>Ask Penny</b> in your bookmarks → get the verdict. That's the whole thing.
+        </p>
+      </div>
+    </section>
+
     <!-- How it works, in three steps -->
     <section class="mt-16 max-w-3xl mx-auto text-center">
       <h2 class="font-display text-3xl font-semibold tracking-tight">Three steps. Ten seconds.</h2>
@@ -1003,17 +1025,41 @@
       }
     })
 
-    // boot — if the homepage handed us a link (?u=...), skip straight to
-    // checking it instead of re-asking for what we already have.
+    // boot — if the homepage or the bookmarklet handed us data (?u, ?p
+    // price, ?w was-price, ?t title), use it instead of asking again.
+    // With the bookmarklet the whole check is zero-typing.
     async function boot() {
       updateTally(readTally())
       renderManual()
-      const handedUrl = new URLSearchParams(location.search).get('u')
+      const qs = new URLSearchParams(location.search)
+      const handedUrl = qs.get('u')
+      const handedPrice = parseMoney(qs.get('p') || '')
+      const handedWas = parseMoney(qs.get('w') || '')
+      const handedTitle = (qs.get('t') || '').slice(0, 120)
+
       if (handedUrl && parseAmazonUrl(handedUrl)) {
         state.step = 'link'
+        state.link = parseAmazonUrl(handedUrl)
+        state.rawUrl = handedUrl.trim()
+        if (handedTitle && !state.link.slugWords) state.link.slugWords = handedTitle
+        const name = state.link.slugWords ? `<b>${state.link.slugWords}</b>` : 'your product'
         await botSay("hiii, I'm Penny!! 👋💕 ok, you brought a link — love that. give me one sec…")
-        addBubble(handedUrl.length > 60 ? handedUrl.slice(0, 57) + '…' : handedUrl, 'user')
-        handleLink(handedUrl)
+        await botSay(`ooh found it — ${name} 👀`)
+        account.saveLead({ lookingFor: state.link.slugWords || 'amazon product', source: handedPrice ? 'bookmarklet' : 'link-handoff', asin: state.link.asin, url: state.rawUrl.slice(0, 480) }).catch(() => {})
+
+        if (handedPrice) {
+          state.today = handedPrice
+          await botSay(`I grabbed the price right off the page: <b>${money(handedPrice)}</b> ✂️`)
+          if (handedWas && handedWas > handedPrice) {
+            state.was = handedWas
+            await botSay(`and I see the crossed-out <s>${money(handedWas)}</s> they're flashing… we'll see about that 👁️`)
+            handleNoIdea() // estimates the usual price from the inflated "was" and goes straight to the verdict
+          } else {
+            stepUsual()
+          }
+        } else {
+          stepToday()
+        }
       } else if (handedUrl) {
         await botSay("hiii, I'm Penny!! 👋💕 hmm — the link that came over doesn't look like an Amazon product page. paste it again straight from your address bar?")
         state.step = 'link'
@@ -1023,6 +1069,26 @@
       }
     }
     boot()
+
+    // Build the "Ask Penny" bookmarklet: runs ON the Amazon page the
+    // shopper is viewing, reads the visible price / crossed-out price /
+    // title from the DOM, and opens the checker with everything filled.
+    // User-initiated, on their own page — same model as every price
+    // extension; no automated crawling anywhere.
+    ;(function initBookmarklet() {
+      const src = function () {
+        function txt(sel) { var e = document.querySelector(sel); return e ? e.textContent.trim() : '' }
+        function num(s) { var m = String(s).replace(/,/g, '').match(/\d+(?:\.\d{1,2})?/); return m ? m[0] : '' }
+        if (!/amazon\./i.test(location.hostname)) { alert('Open an Amazon product page first, then tap Ask Penny.'); return }
+        var price = num(txt('#corePrice_feature_div .a-offscreen') || txt('#corePriceDisplay_desktop_feature_div .a-price .a-offscreen') || txt('#corePriceDisplay_mobile_feature_div .a-price .a-offscreen') || txt('span.a-price .a-offscreen'))
+        var was = num(txt('.basisPrice .a-offscreen') || txt('span[data-a-strike="true"] .a-offscreen') || txt('.a-text-price .a-offscreen'))
+        var title = (txt('#productTitle') || document.title.replace(/Amazon\.com\s*:?\s*/i, '')).slice(0, 110)
+        var u = 'https://bestdealsonline.us/deal-check.html?u=' + encodeURIComponent(location.origin + location.pathname)
+          + (price ? '&p=' + price : '') + (was && was !== price ? '&w=' + was : '') + '&t=' + encodeURIComponent(title)
+        window.open(u, '_blank')
+      }
+      document.getElementById('bookmarklet').setAttribute('href', 'javascript:(' + encodeURIComponent(src.toString()) + ')()')
+    })()
   </script>
 </body>
 </html>
