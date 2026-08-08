@@ -1,13 +1,55 @@
 <!doctype html>
-<!-- Local test harness: mimics the Amazon product-page DOM the content
-     script reads, so the overlay can be verified without loading Amazon. -->
+<!-- Local test harness + screenshot stage: mimics the DOM shape the
+     content script reads (generic product-page look, deliberately not
+     Amazon's design), so the overlay can be verified and captured
+     without loading Amazon. ?deal=fake|good picks the scenario. -->
 <html>
-<head><meta charset="utf-8"><title>Mock Amazon Product</title></head>
-<body style="font-family:sans-serif;padding:40px">
-  <h1 id="productTitle">Ninja Professional Blender 1000W</h1>
-  <div id="corePrice_feature_div"><span class="a-price"><span class="a-offscreen">$48.00</span></span></div>
-  <div class="basisPrice"><span class="a-offscreen">$89.99</span></div>
-  <p>List price above should be detected as the crossed-out "was" price.</p>
-  <script src="../dist/content.js"></script>
+<head>
+<meta charset="utf-8">
+<title>Product page (test)</title>
+<style>
+  body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;background:#fff;color:#111}
+  .top{background:#f6f6f6;border-bottom:1px solid #e5e5e5;padding:14px 32px;font-weight:700;color:#555}
+  .wrap{max-width:1100px;margin:0 auto;padding:36px 32px;display:grid;grid-template-columns:380px 1fr;gap:44px}
+  .img{background:#f2f2f2;border-radius:12px;height:380px;display:flex;align-items:center;justify-content:center;font-size:110px}
+  h1{font-size:24px;line-height:1.3;margin:0 0 10px;font-weight:650}
+  .stars{color:#e89a1c;font-size:14px;margin-bottom:14px}
+  .badge{display:inline-block;background:#c0392b;color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;margin-right:8px}
+  .price-row{font-size:15px;color:#333;margin:12px 0}
+  .now{font-size:30px;font-weight:700}
+  .was-line{color:#777;font-size:14px;margin-top:4px}
+  .bullets{margin-top:18px;color:#333;font-size:14px;line-height:1.7}
+  .btn{margin-top:22px;background:#ffd814;border:1px solid #d5b60a;border-radius:999px;padding:12px 28px;font-weight:700;font-size:14px;cursor:default}
+</style>
+</head>
+<body>
+<div class="top">shopping-site.example</div>
+<div class="wrap">
+  <div class="img">🥤</div>
+  <div>
+    <h1 id="productTitle">Ninja Professional Blender 1000W — 72oz Pitcher, Total Crushing Blades</h1>
+    <div class="stars">★★★★☆ <span style="color:#555">(12,438 ratings)</span></div>
+    <span class="badge">Limited time deal</span>
+    <div class="price-row">
+      <div id="corePrice_feature_div"><span class="a-price"><span class="a-offscreen now">$48.00</span></span></div>
+      <div class="was-line">List price: <s class="basisPrice"><span class="a-offscreen">$89.99</span></s></div>
+    </div>
+    <div class="bullets">
+      • 1000-watt motor crushes ice in seconds<br>
+      • 72oz pitcher for family-size batches<br>
+      • Dishwasher-safe parts
+    </div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+<script>
+  // ?deal=good → a genuine markdown scenario instead of the fake-sale one
+  const q = new URLSearchParams(location.search)
+  if (q.get('deal') === 'good') {
+    document.querySelector('.now').textContent = '$42.00'
+    document.querySelector('.basisPrice .a-offscreen').textContent = '$58.00'
+  }
+</script>
+<script src="../dist/content.js"></script>
 </body>
 </html>
