@@ -51,5 +51,18 @@
   }
 </script>
 <script src="../dist/content.js"></script>
+<script>
+  // ?deal=fake → simulate the shopper correcting the usual price to $50,
+  // which exposes the fake "47% off" (shadow root is open in the overlay).
+  if (q.get('deal') === 'fake') {
+    setTimeout(() => {
+      const host = [...document.querySelectorAll('div')].find(d => d.shadowRoot && d.shadowRoot.getElementById('penny-usual'))
+      if (host) {
+        host.shadowRoot.getElementById('penny-usual').value = '50'
+        host.shadowRoot.getElementById('penny-recheck').click()
+      }
+    }, 800)
+  }
+</script>
 </body>
 </html>
