@@ -11,7 +11,7 @@ const GTAG_BLOCK = `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', '${GA_ID}', (function(){try{var K='bdo.internalTraffic';var q=new URLSearchParams(location.search).get('internal');if(q==='1'||q==='true'){localStorage.setItem(K,'1');}else if(q==='0'||q==='false'){localStorage.removeItem(K);}return localStorage.getItem(K)==='1'?{traffic_type:'internal'}:{};}catch(e){return {};}})());
+      gtag('config', '${GA_ID}', (function(){try{var A=/HeadlessChrome|Electron|Claude|PhantomJS|Puppeteer|Playwright|Selenium|Cypress|Lighthouse|GTmetrix|crawler|spider|bot/i;try{if(navigator.webdriver===true||A.test(navigator.userAgent||'')){return {traffic_type:'internal'};}}catch(e){}var K='bdo.internalTraffic';var q=new URLSearchParams(location.search).get('internal');if(q==='1'||q==='true'){localStorage.setItem(K,'1');}else if(q==='0'||q==='false'){localStorage.removeItem(K);}return localStorage.getItem(K)==='1'?{traffic_type:'internal'}:{};}catch(e){return {};}})());
     </script>
     <script defer src="/assets/track.js"></script>
 `
