@@ -53,8 +53,10 @@ export const TIERS = {
 }
 
 export function money(n) {
-  const abs = Math.abs(n)
-  return abs >= 100 ? `$${Math.round(abs)}` : `$${abs.toFixed(abs % 1 ? 2 : 0)}`
+  // Round to cents first: float math (139.99 - 94.99) leaves 45.000000001,
+  // which used to render as "$45.00" instead of "$45".
+  const abs = Math.round(Math.abs(n) * 100) / 100
+  return abs % 1 === 0 ? `$${abs}` : `$${abs.toFixed(2)}`
 }
 
 // checkDeal(typical, today, options)
@@ -180,6 +182,21 @@ export function checkDeal(typical, today, options = {}) {
       confidence: engine.explanations.confidenceLine,
     },
   }
+}
+
+// Real price-history chart for an ASIN, straight from CamelCamelCamel's
+// public chart service. The image carries their own branding + short URL,
+// which is how they intend it to be embedded; we always attribute and
+// link back to the product page. Free, no API key, no scraping.
+// The rendered image includes a Lowest / Highest / Current price table —
+// that's what lets a shopper read the real numbers instead of guessing.
+export function priceHistoryChart(asin, options = {}) {
+  const { width = 725, height = 340, range = '1y' } = options
+  if (!asin) return null
+  return (
+    `https://charts.camelcamelcamel.com/us/${asin}/amazon-new.png` +
+    `?force=1&zero=0&w=${width}&h=${height}&desired=false&legend=1&ilt=1&tp=${range}&fo=0&lang=en`
+  )
 }
 
 // Pulls an ASIN out of a pasted Amazon URL so we can hand the user a

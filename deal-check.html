@@ -46,6 +46,7 @@
     .tabular{font-variant-numeric:tabular-nums}
     .card{background:#fff;border-radius:1.25rem;box-shadow:0 0 0 1px rgba(56,44,34,.05),0 1px 3px rgba(56,44,34,.06),0 12px 32px -12px rgba(56,44,34,.12)}
     .bubble{max-width:85%;border-radius:1.1rem;padding:.7rem 1rem;line-height:1.5;font-size:.925rem}
+  .bubble:has(img){max-width:100%;width:100%}
     .bubble-bot{background:#F3EADD;color:#382C22;border-bottom-left-radius:.3rem}
     .bubble-user{background:#382C22;color:#FAF5EE;border-bottom-right-radius:.3rem;margin-left:auto}
     .chip-btn{border-radius:9999px;padding:.55rem 1rem;font-size:.8rem;font-weight:600;background:#fff;color:#6B584A;box-shadow:0 0 0 1px rgba(56,44,34,.12);transition:all .15s}
@@ -382,7 +383,7 @@
   </footer>
 
   <script type="module">
-    import { checkDeal, money, parseAmazonUrl, readTally, recordCheck, verdictShareText } from '/assets/dealcheck-core.js'
+    import { checkDeal, money, parseAmazonUrl, priceHistoryChart, readTally, recordCheck, verdictShareText } from '/assets/dealcheck-core.js'
     import * as account from '/assets/bdo-account.js'
 
     const $ = (id) => document.getElementById(id)
@@ -541,7 +542,27 @@
       await botSay(`ooh found it — ${name} 👀 ok let's see what they're up to.`)
       // quietly log the product interest as a lead signal
       account.saveLead({ lookingFor: parsed.slugWords || 'amazon product', source: 'link-paste', asin: parsed.asin, url: state.rawUrl.slice(0, 480) }).catch(() => {})
+      await showChart()
       stepToday()
+    }
+
+    // Drops the REAL price history into the conversation. This is what
+    // turns "guess the usual price" into "read it off the chart".
+    async function showChart() {
+      if (!state.link?.asin) return false
+      const src = priceHistoryChart(state.link.asin)
+      await botSay("and here's its <b>real price history</b> — every price this thing has actually been 👇", { delay: 500 })
+      addBubble(
+        `<img src="${src}" alt="Real price history for this product"
+              style="display:block;width:100%;max-width:100%;border-radius:10px;background:#fff"
+              onerror="this.closest('.bubble').style.display='none'">
+         <div style="margin-top:6px;font-size:11px;opacity:.7">Price history by
+           <a href="${state.link.camelUrl}" target="_blank" rel="noopener noreferrer" style="color:#B85C38;font-weight:600">CamelCamelCamel</a>
+         </div>`,
+        'bot'
+      )
+      state.chartShown = true
+      return true
     }
 
     async function stepToday() {
@@ -560,26 +581,36 @@
 
     async function stepUsual() {
       state.step = 'usual'
-      await botSay("last one and then I spill: what does this thing cost on a <b>normal, boring, no-sale day</b>? total guess is fine, I just need a ballpark 🎯")
+      if (state.chartShown) {
+        await botSay("last one — and you don't have to guess, just <b>read it off the chart</b> ☝️ look at the little table at the bottom: what does the <b>Highest</b> column say? that's what it costs when nobody's pretending to have a sale.")
+      } else {
+        await botSay("last one and then I spill: what does this thing cost on a <b>normal, boring, no-sale day</b>? total guess is fine, I just need a ballpark 🎯")
+      }
       const chips = [{ label: 'No idea', onClick: () => { addBubble('No idea', 'user'); handleNoIdea() } }]
       setChips(chips)
-      setInputMode({ placeholder: 'Your best guess', money: true })
+      setInputMode({ placeholder: state.chartShown ? 'The "Highest" number' : 'Your best guess', money: true })
     }
 
     async function handleNoIdea() {
+      // Best case: the real chart is already in the conversation — no
+      // guessing needed, just point at the number.
+      if (state.chartShown) {
+        await botSay("you don't need to know it — <b>scroll up to the chart</b> ☝️ at the bottom there's a little row that says <b>Lowest / Highest / Current</b>. type me the <b>Highest</b> one. that's real data, not a guess 💅")
+        state.step = 'usual'
+        setChips([])
+        setInputMode({ placeholder: 'The "Highest" number', money: true })
+        return
+      }
       if (state.was) {
         state.usual = Math.round(state.was * 0.72 * 100) / 100
         state.usualEstimated = true
         await botSay(`no worries! those crossed-out prices always run high, so I'll guess it normally goes for around <b>${money(state.usual)}</b> — rough math, not gospel 🤷‍♀️`)
-        if (state.link) {
-          await botSay(`if you want the receipts, its whole price history is free right here: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">CamelCamelCamel</a> 🧾`)
-        }
         stepVerdict()
       } else if (state.link) {
         await botSay(`easy fix!! this chart shows every price it's ever had: <a class="underline font-semibold" style="color:#B85C38" target="_blank" rel="noopener noreferrer" href="${state.link.camelUrl}">tap here</a> — find the price it sits at most of the year and type it in 📈`)
         setInputMode({ placeholder: 'The usual price from the chart', money: true })
       } else {
-        await botSay("Without a usual price I can't spot a fake — so paste the product's Amazon link and I'll hand you its real price history.")
+        await botSay("without a usual price I can't spot a fake — paste the product's Amazon link and I'll pull up its real price history for you 📈")
         state.step = 'link'
         setInputMode({ placeholder: 'Paste the Amazon link here…' })
       }
@@ -1058,11 +1089,11 @@
           if (handedWas && handedWas > handedPrice) {
             state.was = handedWas
             await botSay(`and I see the crossed-out <s>${money(handedWas)}</s> they're flashing… we'll see about that 👁️`)
-            handleNoIdea() // estimates the usual price from the inflated "was" and goes straight to the verdict
-          } else {
-            stepUsual()
           }
+          await showChart()
+          stepUsual()
         } else {
+          await showChart()
           stepToday()
         }
       } else if (handedUrl) {

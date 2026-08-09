@@ -20,7 +20,7 @@ import {
   Wallet,
   X,
 } from 'lucide-react'
-import { checkDeal, money, parseAmazonUrl, readTally, recordCheck, verdictShareText } from './dealcheck-core.js'
+import { checkDeal, money, parseAmazonUrl, priceHistoryChart, readTally, recordCheck, verdictShareText } from './dealcheck-core.js'
 
 const CATEGORIES = [
   {
@@ -1049,15 +1049,37 @@ const DealTruthDemo = () => {
               <ClaimVsReal claimedPct={result.claimedDiscount * 100} realPct={result.discount * 100} realColor={mood.ring} />
             ) : null}
 
-            <div className="mt-5 rounded-xl bg-cream/70 ring-1 ring-ink/5 p-4">
-              <PriceSparkline history={result.history} baseline={result.baseline} todayPrice={todayNum} ringColor={mood.ring} />
-            </div>
+            {/* With a real product link we show its actual price history
+                instead of the illustrative curve. */}
+            {parsedUrl?.asin ? (
+              <div className="mt-5 rounded-xl bg-white ring-1 ring-ink/5 p-3">
+                <img
+                  src={priceHistoryChart(parsedUrl.asin)}
+                  alt="Real price history for this product"
+                  className="block w-full rounded-lg"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+                <div className="mt-1.5 text-[11px] text-cocoa/60">
+                  Real price history by{' '}
+                  <a href={parsedUrl.camelUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-clay hover:text-claydark">
+                    CamelCamelCamel
+                  </a>{' '}
+                  — read the <b>Highest</b> column for the usual price.
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 rounded-xl bg-cream/70 ring-1 ring-ink/5 p-4">
+                <PriceSparkline history={result.history} baseline={result.baseline} todayPrice={todayNum} ringColor={mood.ring} />
+              </div>
+            )}
 
             <ul className="mt-4 space-y-1.5 text-sm text-cocoa">
               {result.percentileLine ? <li>{result.percentileLine}</li> : null}
               {result.decision ? <li className="font-semibold text-ink">{result.decision.text}</li> : null}
               <li className="text-xs text-cocoa/60">
-                Example scoring on a simulated history — the same math our live picks go through.{' '}
+                {parsedUrl?.asin
+                  ? 'Verdict based on the prices you entered, checked against this product’s real history. '
+                  : 'Illustrative example — the same math our live picks go through. '}
                 <a href="/online-deals-methodology.html" className="underline hover:text-cocoa">How we pick deals</a>
               </li>
             </ul>
