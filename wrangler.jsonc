@@ -6,7 +6,14 @@
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    // Every canonical URL on this site ends in .html (sitemap, rel=canonical, og:url).
+    // The default "auto-trailing-slash" would 307 every /page.html to /page and
+    // un-canonicalize the whole site the moment DNS points here. "none" serves
+    // the .html files as-is; _redirects maps the extensionless aliases and every
+    // retired doorway URL to their .html targets with real 301s.
+    "html_handling": "none",
+    "not_found_handling": "404-page"
   },
   "compatibility_flags": [
     "nodejs_compat"

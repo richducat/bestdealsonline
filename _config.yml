@@ -1,0 +1,23 @@
+# GitHub Pages builds this site with Jekyll. Nothing here needs processing (no front
+# matter anywhere), so this file exists only to keep internal files out of the
+# published site. Before this list, every strategy doc, build script, ops script
+# and worker source was publicly served at https://bestdealsonline.us/<path>.
+exclude:
+  - "*.md"
+  - scripts
+  - ops
+  - worker
+  - app
+  - seo
+  - marketing
+  - _to_delete
+  - .claude
+  - data/README.md
+  - extension/src
+  - extension/dist
+  - extension/STORE-LISTING.md
+  - firestore.rules
+  - wrangler.jsonc
+  - package.json
+  - package-lock.json
+  - node_modules

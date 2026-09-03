@@ -1,0 +1,4 @@
+# Cloudflare Workers static assets / Pages headers file. Ignored by GitHub Pages.
+# Keeps the workers.dev preview copy out of search engines; only the custom domain should be indexed.
+https://bestdealsonline.richducat.workers.dev/*
+  X-Robots-Tag: noindex
