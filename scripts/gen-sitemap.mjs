@@ -28,7 +28,8 @@ const PRIORITY_ROOT_HTML = new Set([
 
 function shouldSkip(filePath) {
   const rel = path.relative(ROOT, filePath).split(path.sep).join('/')
-  return rel.startsWith('app/') || rel.startsWith('images/categories/') ||
+  // extension/ holds the Chrome extension source, store kit and its test harness page — never site content.
+  return rel.startsWith('app/') || rel.startsWith('images/categories/') || rel.startsWith('extension/') ||
     rel.startsWith('node_modules/') || rel.includes('/node_modules/') || rel.startsWith('.git/')
 }
 
